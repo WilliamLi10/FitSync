@@ -1,10 +1,7 @@
 const SideBar = () => {
     return (
-        <div className="fixed top-0 left-0 h-screen w-16 m-0 flex flex-col bg-gray-900 text-white shadow-lg">
-            <i>A</i>
-            <i>B</i>
-            <i>C</i>
-            <i>D</i>
+        <div className="h-screen w-1/6 border-r-[2px] border-black border-solid text-center">
+            <h1 className="text-xl">Current Plan</h1>
         </div>
 
     );
