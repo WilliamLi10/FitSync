@@ -1,39 +1,378 @@
 import { useState } from "react";
 import WorkoutContainer from "./WorkoutContainer";
 import Workout from "./Workout";
-import { useDrop } from "react-dnd";
-function stringDifferences(str1, str2) {
-  let differences = [];
-
-  const minLength = Math.min(str1.length, str2.length);
-
-  for (let i = 0; i < minLength; i++) {
-    if (str1[i] !== str2[i]) {
-      differences.push({ index: i, char1: str1[i], char2: str2[i] });
-    }
-  }
-
-  // Check for extra characters in the longer string
-  if (str1.length !== str2.length) {
-    const longerString = str1.length > str2.length ? str1 : str2;
-    for (let i = minLength; i < longerString.length; i++) {
-      differences.push({ index: i, char1: str1[i], char2: str2[i] });
-    }
-  }
-
-  return differences;
-}
+import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
 const WorkoutDisplay = (props) => {
+  const [curWeek, setCurWeek] = useState({
+    "Week 1": [
+      {
+        id: 1,
+        name: "Day 1",
+        date: "4/20/2023",
+        time: "4-6pm",
+        warmup: [
+          {
+            Exercise: "Light Cardio",
+            Duration: "5-10",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Foam-Rolling",
+            Duration: "2-3",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Squat Pyramid Sets",
+            Duration: "3 Sets",
+            Unit: "",
+            Desc: "",
+          },
+        ],
+        mainExercises: [
+          {
+            Exercise: "Competition Squat",
+            Sets: 3,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 315,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+            Type: "Constant",
+          },
+          {
+            Exercise: "Competition Squat",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 270,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 4,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 245,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 205,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+        ],
+        accessories: [
+          {
+            Exercise: "SLDL",
+            Sets: 4,
+            Reps: 9,
+            Weight: 225,
+            Notes: "Perform at 8RPE with 1.0.1 tempo",
+            Rest: 90,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Pull-ups",
+            Sets: 2,
+            Weight: null,
+            Reps: null,
+            Notes: "Perform AMRAP sets",
+            Rest: 60,
+            Unit: "sec",
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: "Day 2",
+        date: "4/21/2023",
+        time: "4-6pm",
+        warmup: [
+          {
+            Exercise: "Light Cardio",
+            Duration: "5-10",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Foam-Rolling",
+            Duration: "2-3",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Squat Pyramid Sets",
+            Duration: "3 Sets",
+            Unit: "",
+            Desc: "",
+          },
+        ],
+        mainExercises: [
+          {
+            Exercise: "Competition Squat",
+            Sets: 3,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 315,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+            Type: "Constant",
+          },
+          {
+            Exercise: "Competition Squat",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 270,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 4,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 245,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 205,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+        ],
+        accessories: [
+          {
+            Exercise: "SLDL",
+            Sets: 4,
+            Reps: 9,
+            Weight: 225,
+            Notes: "Perform at 8RPE with 1.0.1 tempo",
+            Rest: 90,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Pull-ups",
+            Sets: 2,
+            Weight: null,
+            Reps: null,
+            Notes: "Perform AMRAP sets",
+            Rest: 60,
+            Unit: "sec",
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: "Day 3",
+        date: "4/23/2023",
+        time: "4-6pm",
+        warmup: [
+          {
+            Exercise: "Light Cardio",
+            Duration: "5-10",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Foam-Rolling",
+            Duration: "2-3",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Squat Pyramid Sets",
+            Duration: "3 Sets",
+            Unit: "",
+            Desc: "",
+          },
+        ],
+        mainExercises: [
+          {
+            Exercise: "Competition Squat",
+            Sets: 3,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 315,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+            Type: "Constant",
+          },
+          {
+            Exercise: "Competition Squat",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 270,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 4,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 245,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 205,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+        ],
+        accessories: [
+          {
+            Exercise: "SLDL",
+            Sets: 4,
+            Reps: 9,
+            Weight: 225,
+            Notes: "Perform at 8RPE with 1.0.1 tempo",
+            Rest: 90,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Pull-ups",
+            Sets: 2,
+            Weight: null,
+            Reps: null,
+            Notes: "Perform AMRAP sets",
+            Rest: 60,
+            Unit: "sec",
+          },
+        ],
+      },
+      {
+        id: 4,
+        name: "Day 4",
+        date: "4/24/2023",
+        time: "4-6pm",
+        warmup: [
+          {
+            Exercise: "Light Cardio",
+            Duration: "5-10",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Foam-Rolling",
+            Duration: "2-3",
+            Unit: "min",
+            Desc: "",
+          },
+          {
+            Exercise: "Squat Pyramid Sets",
+            Duration: "3 Sets",
+            Unit: "",
+            Desc: "",
+          },
+        ],
+        mainExercises: [
+          {
+            Exercise: "Competition Squat",
+            Sets: 3,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 315,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+            Type: "Constant",
+          },
+          {
+            Exercise: "Competition Squat",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 270,
+            Tempo: "1.0.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 4,
+            Reps: 3,
+            Intensity: "80%",
+            Weight: 245,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Competition Pause Bench",
+            Sets: 2,
+            Reps: 5,
+            Intensity: "68%",
+            Weight: 205,
+            Tempo: "1.1.1",
+            Rest: 180,
+            Unit: "sec",
+          },
+        ],
+        accessories: [
+          {
+            Exercise: "SLDL",
+            Sets: 4,
+            Reps: 9,
+            Weight: 225,
+            Notes: "Perform at 8RPE with 1.0.1 tempo",
+            Rest: 90,
+            Unit: "sec",
+          },
+          {
+            Exercise: "Pull-ups",
+            Sets: 2,
+            Weight: null,
+            Reps: null,
+            Notes: "Perform AMRAP sets",
+            Rest: 60,
+            Unit: "sec",
+          },
+        ],
+      },
+    ],
+  });
   const [workoutOrder, setWorkoutOrder] = useState([
-    { dayOfWeek: "Sun", date: "10", workoutid: "2" },
-    { dayOfWeek: "Mon", date: "11", workoutid: "8" },
-    { dayOfWeek: "Tue", date: "12", workoutid: "8" },
-    { dayOfWeek: "Wed", date: "13", workoutid: "1" },
-    { dayOfWeek: "Thu", date: "14", workoutid: "4" },
-    { dayOfWeek: "Fri", date: "15", workoutid: "3" },
-    { dayOfWeek: "Sat", date: "16", workoutid: "8" },
+    { dayOfWeek: "Sun", date: "4/20/2023"},
+    { dayOfWeek: "Mon", date: "4/21/2023"},
+    { dayOfWeek: "Tue", date: "4/22/2023"},
+    { dayOfWeek: "Wed", date: "4/23/2023" },
+    { dayOfWeek: "Thu", date: "4/24/2023" },
+    { dayOfWeek: "Fri", date: "4/25/2023" },
+    { dayOfWeek: "Sat", date: "4/26/2023" },
   ]);
-  const updateWorkoutBoard = async (newDate, newWorkoutid) => {
+  const updateWorkoutBoard =  (newDate, newWorkoutid) => {
     console.log(workoutOrder);
     console.log(newDate, newWorkoutid);
     const newOrder = workoutOrder.map((day) => {
@@ -55,16 +394,17 @@ const WorkoutDisplay = (props) => {
       return { ...day };
     });
 
-    await setWorkoutOrder(newOrder);
+    setWorkoutOrder(newOrder);
   };
 
-  const workouts = {
-    8: <Workout time="" name="Rest" id="8" />,
-    1: <Workout time="9-11AM" name="Day1" id="1" />,
-    2: <Workout time="Test" name="Day2" id="2" />,
-    3: <Workout time="Test" name="Day3" id="3" />,
-    4: <Workout time="Test" name="Day4" id="4" />,
-  };
+  const workouts = {};
+  curWeek["Week 1"].forEach(function(curWorkout) {
+    workouts[curWorkout.id] = <Workout id = {curWorkout.id} workout = {curWorkout} />;
+
+  });
+
+  
+
   return (
     <div className={props.className}>
       {workoutOrder.map((day) => (
@@ -76,6 +416,7 @@ const WorkoutDisplay = (props) => {
           updateWorkoutBoard={updateWorkoutBoard}
         />
       ))}
+      {!curWeek ? <NoActiveWorkoutOverlay /> : ""}
     </div>
   );
 };

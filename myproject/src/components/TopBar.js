@@ -23,7 +23,7 @@ const TopBar = (props) => {
   return (
     <>
       <nav
-        className="w-screen h-16 flex justify-between gap-4 border-b-2 border-black border-solid text-lg
+        className="w-screen h-16 flex justify-between gap-4 border-b-2 border-black border-solid text-2xl
         pl-10 pr-10"
       >
         <div className="h-1/2 mt-3 flex items-center gap-8">
@@ -37,7 +37,7 @@ const TopBar = (props) => {
         >
           <p>{props.UserInfo.name}</p>
           <DropDownMenu
-        className={` bg-white absolute top-14 right-[2.9rem] w-30 h-30 px-0 py-4
+        className={` bg-white z-50 absolute top-14 right-[2.9rem] w-30 h-30 px-0 py-4
      border-black border-solid border-2 rounded-lg transform transition-transform duration-[250ms] ease-in-out ${
        showMenu ? "scale-100" : "scale-0"
      }`}
