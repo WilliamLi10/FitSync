@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WorkoutContainer from "./WorkoutContainer";
 import Workout from "./Workout";
 import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
@@ -372,36 +372,34 @@ const WorkoutDisplay = (props) => {
     { dayOfWeek: "Fri", date: "4/25/2023" },
     { dayOfWeek: "Sat", date: "4/26/2023" },
   ]);
-  const updateWorkoutBoard =  (newDate, newWorkoutid) => {
-    console.log(workoutOrder);
-    console.log(newDate, newWorkoutid);
-    const newOrder = workoutOrder.map((day) => {
-      if (day.dayOfWeek == newDate) {
-        console.log("New");
-        return { ...day, workoutid: newWorkoutid };
-      }
-      if (day.workoutid === newWorkoutid) {
-        console.log(
-          "returning:",
-          newDate,
-          day.dayOfWeek,
-          newWorkoutid,
-          day.workoutid
-        );
-        return { ...day, workoutid: "8" };
-      }
-
-      return { ...day };
-    });
-
-    setWorkoutOrder(newOrder);
-  };
+  
 
   const workouts = {};
   curWeek["Week 1"].forEach(function(curWorkout) {
     workouts[curWorkout.id] = <Workout id = {curWorkout.id} workout = {curWorkout} />;
 
   });
+  
+  useEffect(() => {
+    console.log("Use Effect")
+    const newOrder = [];
+    let i = 0;
+    workoutOrder.forEach(function(day) {
+
+      if(i < curWeek["Week 1"].length && day.date === curWeek["Week 1"][i].date){
+        newOrder.push({...day, workoutid: curWeek["Week 1"][i].id});
+        i += 1;
+
+      }
+      else{
+        newOrder.push({...day});
+
+      }
+    });
+
+    setWorkoutOrder(newOrder);
+    
+  }, []);
 
   
 
@@ -413,7 +411,6 @@ const WorkoutDisplay = (props) => {
           date={day.date}
           workout={day.workoutid === "8" ? "" : workouts[day.workoutid]}
           workoutid={day.workoutid === "8" ? "" : day.workoutid}
-          updateWorkoutBoard={updateWorkoutBoard}
         />
       ))}
       {!curWeek ? <NoActiveWorkoutOverlay /> : ""}

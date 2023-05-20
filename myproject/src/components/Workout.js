@@ -1,17 +1,8 @@
 import { useState } from "react";
-import { useDrag } from "react-dnd";
 import MainExercise from "./MainExercise";
 const Workout = (props) => {
-  
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: "workout",
-    item: { id: props.id },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
   return (
-    <div ref={drag} className="bg-white h-screen text-center">
+    <div className="bg-white h-screen text-center">
       <h1 className="text-2xl">{props.workout.name}</h1>
       <p className="text-lg">{props.workout.time}</p>
       <div className="text-left mx-3">
