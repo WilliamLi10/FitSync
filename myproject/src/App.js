@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Route, Routes } from "react-router-dom";
 import SideBar from "./components/SideBar";
 import TopBar from "./components/TopBar";
 import "tailwindcss/tailwind.css";
@@ -11,12 +12,20 @@ function App() {
     age: 25,
   });
   return (
-    <> {" "}
-    <div className="flex flex-col h-screen">
+    <>
       <TopBar UserInfo={user} />
-      <WorkoutDisplay className="flex flex-row h-screen w-screen" />
-    </div></>
-
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="flex flex-col h-screen overflow-hidden">
+              <WorkoutDisplay className="flex flex-row h-screen w-screen" />
+            </div>
+          }
+        />
+        <Route path="/WorkoutCreation" />
+      </Routes>
+    </>
   );
 }
 

@@ -413,7 +413,7 @@ const WorkoutDisplay = (props) => {
           workoutid={day.workoutid === "8" ? "" : day.workoutid}
         />
       ))}
-      {!curWeek ? <NoActiveWorkoutOverlay /> : ""}
+      {<NoActiveWorkoutOverlay />}
     </div>
   );
 };
