@@ -24,7 +24,7 @@ const TopBar = (props) => {
     <>
       <nav
         className="w-screen h-16 flex justify-between gap-4 border-b-2 border-black border-solid text-2xl
-        pl-10 pr-10"
+        pl-10 pr-10 mb-0"
       >
         <div className="h-1/2 mt-3 flex items-center gap-8">
           <TbLetterW className="w-8 h-8" />

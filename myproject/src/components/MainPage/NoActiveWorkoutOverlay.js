@@ -5,7 +5,7 @@ const NoActiveWorkoutOverlay = () => {
     <div className="fixed w-screen h-screen  flex items-center justify-center bg-black bg-opacity-60 backdrop-filter backdrop-blur">
       <div className="bg-white p-8 text-center ">
         <h1 className="text-2xl">No Active Workout Program</h1>
-        <Link className = "text-blue-500 text-xl cursor-pointer hover:text-blue-800">Click here to create a new program.</Link>
+        <Link to = "/WorkoutCreation" className = "text-blue-500 text-xl cursor-pointer hover:text-blue-800">Click here to select a program.</Link>
       </div>
     </div>
   );

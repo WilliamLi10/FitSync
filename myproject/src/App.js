@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import SideBar from "./components/SideBar";
-import TopBar from "./components/TopBar";
+
+import TopBar from "./components/TopBar/TopBar";
 import "tailwindcss/tailwind.css";
-import WorkoutDisplay from "./components/WorkoutDisplay";
+import WorkoutDisplay from "./components/MainPage/WorkoutDisplay";
+import WorkoutCreator from "./components/Programs/PlanDisplay";
 
 function App() {
   const [user, setUser] = useState({
@@ -12,20 +13,20 @@ function App() {
     age: 25,
   });
   return (
-    <>
+    <div className="h-screen w-screen overflow-hidden">
       <TopBar UserInfo={user} />
       <Routes>
         <Route
           path="/"
           element={
-            <div className="flex flex-col h-screen overflow-hidden">
+            <div className="flex flex-col h-screen ">
               <WorkoutDisplay className="flex flex-row h-screen w-screen" />
             </div>
           }
         />
-        <Route path="/WorkoutCreation" />
+        <Route path="/WorkoutCreation"element = {<WorkoutCreator />}/>
       </Routes>
-    </>
+    </div>
   );
 }
 
