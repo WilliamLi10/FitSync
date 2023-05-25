@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ProgressionItem from "./Progression/ProgressionItem";
 
 const CreateWorkout = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +14,8 @@ const CreateWorkout = () => {
   };
 
   return (
-    <form className="flex  justify-center min-h-screen text-2xl">
-      <div className="flex flex-col gap-4 bg-slate-700 rounded-lg  h-1/5 w-3/5 mt-40 p-10">
+    <form className="flex  justify-center min-h-screen text-base">
+      <div className="flex flex-col gap-4 bg-slate-700 rounded-lg  h-1/5 w-3/5 mt-10 p-10">
         <div>
           <label className="block text-white">Title:</label>
           <input
@@ -59,50 +60,48 @@ const CreateWorkout = () => {
           </div>
         </div>
         <div>
-          <label className="block text-white">Weekly Weight Adjustments:</label>
-          <div className="flex flex-row gap-2">
-            <input
-              type="radio"
-              name="progression"
-              value="none"
+          <label className="block text-white mb-4">
+            Weekly Weight Adjustments:
+          </label>
+          <div className="flex flex-row gap-4">
+            <ProgressionItem
+              type={"None"}
+              value={"none"}
               checked={formData.progression === "none"}
-              onChange={handleChange}
+              desc="Weights will be kept constant throughout program"
+              onClick={handleChange}
             />
-            <label className="block text-white">None</label>
-          </div>
-          <div className="flex flex-row gap-2">
-            <input
-              type="radio"
-              name="progression"
-              value="linear"
+            <ProgressionItem
+              type={"Linear"}
+              value={"linear"}
               checked={formData.progression === "linear"}
-              onChange={handleChange}
+              desc="A constant increment will be added to each main exercise weekly"
+              onClick={handleChange}
             />
-            <label className="block text-white">Linear</label>
           </div>
-          <div className="flex flex-row gap-2">
-            <input
-              type="radio"
-              name="progression"
-              value="custom"
+          <div className="flex flex-row gap-4">
+            <ProgressionItem
+              type={"Custom"}
+              value={"custom"}
               checked={formData.progression === "custom"}
-              onChange={handleChange}
+              desc="Weekly weight adjustments will be determined by the user"
+              onClick={handleChange}
             />
-            <label className="block text-white">Custom</label>
-          </div>
-          <div className="flex flex-row gap-2">
-            <input
-              type="radio"
-              name="progression"
-              value="performance based"
+            <ProgressionItem
+              type={"Performance Based"}
+              value={"performance based"}
               checked={formData.progression === "performance based"}
-              onChange={handleChange}
+              desc="Weekly weight adjustments will be made based on last week's performance"
+              onClick={handleChange}
             />
-            <label className="block text-white">Performance Based</label>
           </div>
         </div>
-
-        {/* Add the submit button and form submission logic */}
+        <button
+          type="button"
+          className="text-white bg-gradient-to-r from-slate-400 via-slate-450 to-slate-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-slate-100 dark:focus:slate-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+        >
+          Continue
+        </button>
       </div>
     </form>
   );
