@@ -7,6 +7,7 @@ import {
 import SideBarSelector from "./SideBarSelector";
 import MyWorkouts from "./MyWorkouts";
 import DiscoverWorkouts from "./DiscoverWorkouts";
+import CreateWorkout from "./CreateWorkout";
 
 const PlanDisplay = (props) => {
   const [selectedOption, setSelectedOption] = useState("");
@@ -39,11 +40,8 @@ const PlanDisplay = (props) => {
       </div>
       <div className=" w-5/6 h-screen">
         {selectedOption === "myPrograms" ? <MyWorkouts /> : <div></div>}
-        {selectedOption === "discoverPrograms" ? (
-          <DiscoverWorkouts />
-        ) : (
-          <div></div>
-        )}
+        {selectedOption === "discoverPrograms" ? <DiscoverWorkouts /> : <div></div>}
+        {selectedOption === "createProgram" ? <CreateWorkout /> : <div></div>}
       </div>
     </div>
   );
