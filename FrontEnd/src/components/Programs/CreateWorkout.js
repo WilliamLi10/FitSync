@@ -13,6 +13,7 @@ const CreateWorkout = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
   return (
     <form className="flex  justify-center min-h-screen text-base">
       <div className="flex flex-col gap-4 bg-slate-700 rounded-lg  h-1/5 w-3/5 mt-10 p-10">
@@ -69,7 +70,8 @@ const CreateWorkout = () => {
               value={"none"}
               checked={formData.progression === "none"}
               desc="Weights will be kept constant throughout program"
-              onClick={handleChange}
+              onChange={handleChange}
+              
             />
             <ProgressionItem
               type={"Linear"}
@@ -98,7 +100,7 @@ const CreateWorkout = () => {
         </div>
         <button
           type="button"
-          className="text-white bg-gradient-to-r from-slate-400 via-slate-450 to-slate-500 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-slate-100 dark:focus:slate-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+          className="text-white bg-gradient-to-r from-slate-400 via-slate-450 to-slate-500 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
         >
           Continue
         </button>
