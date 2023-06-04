@@ -6,7 +6,7 @@
   "Frequency": "Workouts/week",
   "Owner": "user id",
   "Authorized_Users": ["user1", "user2", "user3"],
-  "Workout Times": ["workout times"]
+  "Workout Times": ["workout times"],
   "Workout": [
     {
       "id": 4,

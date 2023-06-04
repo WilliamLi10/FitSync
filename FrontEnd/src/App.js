@@ -13,7 +13,7 @@ function App() {
     age: 25,
   });
   return (
-    <div className="h-screen w-screen overflow-hidden">
+    <div className="h-screen w-screen ">
       <TopBar UserInfo={user} />
       <Routes>
         <Route

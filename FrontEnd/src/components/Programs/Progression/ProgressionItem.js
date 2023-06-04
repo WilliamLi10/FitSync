@@ -1,3 +1,4 @@
+
 const ProgressionItem = (props) => {
   return (
     <div
@@ -10,7 +11,7 @@ const ProgressionItem = (props) => {
           name="progression"
           value={props.value}
           checked={props.checked}
-          onChange={props.onChange}
+          onChange={props.onClick}
           className = "cursor-pointer"
         />
       </div>
