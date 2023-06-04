@@ -28,14 +28,17 @@ const TopBar = (props) => {
         pl-10 pr-10 mb-0"
       >
         <div className="h-1/2 mt-3 flex items-center gap-8">
-          <Link to = "/" ><TbLetterW className="cursor-pointer w-8 h-8" /> </Link>
-          <a className=" cursor-pointer ml-2 hover:border-solid hover:border-b-2 hover:border-black">
+          <Link to="/">
+            <TbLetterW className="cursor-pointer w-8 h-8" />{" "}
+          </Link>
+          <Link className=" cursor-pointer ml-2 hover:border-solid hover:border-b-2 hover:border-black">
             Progress
-          </a>
-          <Link to="/WorkoutCreation">
-            <a className="cursor-pointer ml-4 mr-4 hover:border-solid hover:border-b-2 hover:border-black">
-              Programs
-            </a>
+          </Link>
+          <Link
+            to="/WorkoutCreation"
+            className="cursor-pointer ml-4 mr-4 hover:border-solid hover:border-b-2 hover:border-black"
+          >
+            Programs
           </Link>
         </div>
         <div
