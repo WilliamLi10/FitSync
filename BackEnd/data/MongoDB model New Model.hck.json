@@ -1,0 +1,1088 @@
+{
+    "modelName": "New Model",
+    "collections": [
+        {
+            "collectionName": "Accounts",
+            "type": "object",
+            "properties": [
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "e61ab605-f783-4a68-ba1c-8b2a4f748629",
+                    "primaryKey": true,
+                    "childRelationships": [
+                        "3fcabbee-aef1-4484-9abc-de27b5b50826",
+                        "524bcbab-744b-4382-acb3-4b4590087c7c",
+                        "98dcfcce-8082-46a3-85e7-6efb61ae0e0a",
+                        "ba277bed-5b0d-47f1-9157-73f1618af183"
+                    ],
+                    "name": "_id",
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "5beabf66-5137-43b6-9ac6-b55ad124c2ae",
+                    "name": "FirstName",
+                    "error": {}
+                },
+                {
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "d5b2d27a-1453-4e6d-9382-fb3b862845a3",
+                    "name": "LastName",
+                    "error": {}
+                },
+                {
+                    "name": "DOB",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "9ed7afda-a4dc-4db8-bf4a-29737a96f40d",
+                    "error": {}
+                },
+                {
+                    "name": "Email",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "c5f47c3a-9408-4201-8ba9-682c64155dc1",
+                    "error": {}
+                },
+                {
+                    "name": "CognitoUsername",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "57998dd6-b1a0-4d51-be90-2361c927f09a",
+                    "error": {}
+                },
+                {
+                    "name": "ActiveWorkout",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "string",
+                            "GUID": "8124d67e-dfaf-452c-af2f-2bb138fedfa1",
+                            "name": "Name",
+                            "error": {}
+                        },
+                        {
+                            "name": "ID",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "9875a72f-9c4f-421e-af64-9539b54b6ca8",
+                            "foreignCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                            "foreignField": [
+                                "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                                "62a1ee7c-cbcd-4d21-9eba-358b5a877d2f"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "32f48ea1-35aa-4ee4-947b-d9c5f370d95a",
+                            "error": {}
+                        },
+                        {
+                            "name": "Frequency",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "numeric",
+                            "error": {},
+                            "GUID": "afcc6f54-addb-4949-8dd6-63b3db08561e"
+                        },
+                        {
+                            "name": "Workouts",
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "array",
+                            "properties": [
+                                {
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "document",
+                                    "properties": [
+                                        {
+                                            "name": "Name",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "string",
+                                            "GUID": "df97a8d4-4aae-4fea-b0bc-2bbde163c420",
+                                            "error": {}
+                                        },
+                                        {
+                                            "name": "ID",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "numeric",
+                                            "error": {},
+                                            "GUID": "500b107f-daac-4dfa-bcc1-106d9b009344"
+                                        },
+                                        {
+                                            "name": "Exercises",
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "array",
+                                            "properties": [
+                                                {
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "document",
+                                                    "properties": [
+                                                        {
+                                                            "name": "Name",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "string",
+                                                            "GUID": "8c20e984-0219-4d56-85d6-1ddef327582a",
+                                                            "error": {}
+                                                        },
+                                                        {
+                                                            "name": "Description",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "string",
+                                                            "GUID": "744c2d7d-cf16-4133-826c-097b2409ca72",
+                                                            "error": {}
+                                                        },
+                                                        {
+                                                            "name": "Weight",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "numeric",
+                                                            "error": {},
+                                                            "GUID": "c39912dd-666e-4438-bbc4-04a0979a5f0b"
+                                                        },
+                                                        {
+                                                            "name": "Sets",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "numeric",
+                                                            "error": {},
+                                                            "GUID": "f117bba7-fe0d-4eef-82ba-ca3dd9a76f46"
+                                                        },
+                                                        {
+                                                            "name": "Reps",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "numeric",
+                                                            "error": {},
+                                                            "GUID": "1c14199e-983d-4675-991d-67be85e75611"
+                                                        },
+                                                        {
+                                                            "name": "Rest",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "numeric",
+                                                            "error": {},
+                                                            "GUID": "7ee87e55-4d7c-4e75-a3f4-e6853da7c36d"
+                                                        },
+                                                        {
+                                                            "name": "TimeUnit",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "numeric",
+                                                            "error": {},
+                                                            "GUID": "b3c05487-15de-43f5-afcf-32d4a529b8d7"
+                                                        },
+                                                        {
+                                                            "name": "Notes",
+                                                            "hackoladeMeta": {},
+                                                            "isActivated": true,
+                                                            "type": "string",
+                                                            "GUID": "b0d7c279-03b9-4531-86eb-a0d3743688c9",
+                                                            "error": {}
+                                                        }
+                                                    ],
+                                                    "additionalProperties": false,
+                                                    "GUID": "1c98e9ae-5d6c-498e-a26a-94f177f4869d",
+                                                    "arrayItem": true,
+                                                    "displayName": "Exercise",
+                                                    "error": {}
+                                                }
+                                            ],
+                                            "additionalItems": true,
+                                            "error": {},
+                                            "GUID": "047060bc-f9f6-4447-94bd-a4f57cfb1964"
+                                        }
+                                    ],
+                                    "additionalProperties": false,
+                                    "GUID": "628892b2-88f9-45ed-891f-084dc9d2db73",
+                                    "arrayItem": true,
+                                    "displayName": "Workout",
+                                    "error": {}
+                                }
+                            ],
+                            "additionalItems": true,
+                            "error": {},
+                            "GUID": "99fc318c-7a7e-45a8-93c2-bed425f13da4"
+                        }
+                    ],
+                    "additionalProperties": false,
+                    "error": {},
+                    "GUID": "0ffecd8e-daae-4c4c-b0cb-3567b8e92f2f"
+                },
+                {
+                    "name": "AccessibleWorkouts",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "80ec7f83-3211-404f-a52e-2085a2444c21",
+                            "arrayItem": true,
+                            "childRelationships": [
+                                "9d5d9ec9-98c5-48f2-84b8-9989622c9db8"
+                            ],
+                            "displayName": "WorkoutID",
+                            "foreignCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                            "foreignField": [
+                                "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                                "62a1ee7c-cbcd-4d21-9eba-358b5a877d2f"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "371926a3-60d1-4b68-b972-c588d58ff94c",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "b2ef7f7a-3722-4809-83c2-6a7f95dcd298",
+                    "foreignCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                    "error": {}
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "b5be859f-cb34-47f2-9cf3-13bd438cb01e"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8"
+        },
+        {
+            "collectionName": "Workouts",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "62a1ee7c-cbcd-4d21-9eba-358b5a877d2f",
+                    "childRelationships": [
+                        "371926a3-60d1-4b68-b972-c588d58ff94c",
+                        "32f48ea1-35aa-4ee4-947b-d9c5f370d95a"
+                    ],
+                    "error": {}
+                },
+                {
+                    "name": "Name",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "cd011cae-594d-457a-8220-2846f7c2a129",
+                    "error": {}
+                },
+                {
+                    "name": "Owner",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "8e37ae71-16a9-414f-ae15-591c8236d28a",
+                    "foreignCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "foreignField": [
+                        "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                        "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "3fcabbee-aef1-4484-9abc-de27b5b50826",
+                    "error": {}
+                },
+                {
+                    "name": "Editors",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "a5fff363-0494-4905-844a-c20187b44b9a",
+                            "arrayItem": true,
+                            "displayName": "EditorIDs",
+                            "foreignCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                            "foreignField": [
+                                "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                                "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "524bcbab-744b-4382-acb3-4b4590087c7c",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "error": {},
+                    "GUID": "ec2fa833-944a-42e5-a954-09631f6ea9fe"
+                },
+                {
+                    "name": "Viewers",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "objectId",
+                            "GUID": "68e5cc28-eaec-47eb-827a-3eae0fa7f1b2",
+                            "arrayItem": true,
+                            "displayName": "ViewerIDs",
+                            "foreignCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                            "foreignField": [
+                                "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                                "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                            ],
+                            "relationshipType": "Foreign Key",
+                            "parentRelationship": "98dcfcce-8082-46a3-85e7-6efb61ae0e0a",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "error": {},
+                    "GUID": "5fcef772-b318-40c7-89c4-9f57873e15ce"
+                },
+                {
+                    "name": "Workouts",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "array",
+                    "properties": [
+                        {
+                            "hackoladeMeta": {},
+                            "isActivated": true,
+                            "type": "document",
+                            "properties": [
+                                {
+                                    "name": "Name",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "string",
+                                    "GUID": "16ae7ec4-aa8a-4485-8c21-d51dee1d5ff0",
+                                    "error": {}
+                                },
+                                {
+                                    "name": "ID",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "numeric",
+                                    "error": {},
+                                    "GUID": "d84c39e4-09a1-438d-94c8-f40dfd04f412"
+                                },
+                                {
+                                    "name": "Exercises",
+                                    "hackoladeMeta": {},
+                                    "isActivated": true,
+                                    "type": "array",
+                                    "properties": [
+                                        {
+                                            "hackoladeMeta": {},
+                                            "isActivated": true,
+                                            "type": "document",
+                                            "properties": [
+                                                {
+                                                    "name": "Name",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "6377feec-b3c4-4bb9-b5de-d3f09e7e5b38",
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "Description",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "95b26c7c-6c26-4e4a-9d6d-d6c179e2e733",
+                                                    "error": {}
+                                                },
+                                                {
+                                                    "name": "Weight",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "numeric",
+                                                    "error": {},
+                                                    "GUID": "a62ce150-7315-42ef-93d2-cba0100bb4ce"
+                                                },
+                                                {
+                                                    "name": "Sets",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "numeric",
+                                                    "error": {},
+                                                    "GUID": "5483b2e5-da73-4cbd-811d-aa8c2e2a30e1"
+                                                },
+                                                {
+                                                    "name": "Reps",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "numeric",
+                                                    "error": {},
+                                                    "GUID": "40391042-51aa-4e0a-a80f-1f306743c452"
+                                                },
+                                                {
+                                                    "name": "Rest",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "numeric",
+                                                    "error": {},
+                                                    "GUID": "77684f76-9eef-4228-be0f-e534c511151e"
+                                                },
+                                                {
+                                                    "name": "TimeUnit",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "numeric",
+                                                    "error": {},
+                                                    "GUID": "2e501ca8-7eed-4c7e-b3c0-eed3814807e1"
+                                                },
+                                                {
+                                                    "name": "Notes",
+                                                    "hackoladeMeta": {},
+                                                    "isActivated": true,
+                                                    "type": "string",
+                                                    "GUID": "765473b5-1834-4d02-b544-c8ca53c58f8f",
+                                                    "error": {}
+                                                }
+                                            ],
+                                            "additionalProperties": false,
+                                            "GUID": "08bbc6a1-3b33-44b3-8e40-3fdbb20527a2",
+                                            "arrayItem": true,
+                                            "displayName": "Exercise",
+                                            "error": {}
+                                        }
+                                    ],
+                                    "additionalItems": true,
+                                    "error": {},
+                                    "GUID": "f9e87593-323e-4e00-b177-3b4799ea7512"
+                                }
+                            ],
+                            "additionalProperties": false,
+                            "GUID": "4baaea80-cfe7-4d56-91ca-1f5178c72e11",
+                            "arrayItem": true,
+                            "displayName": "Workout",
+                            "error": {}
+                        }
+                    ],
+                    "additionalItems": true,
+                    "GUID": "408e0eb0-a1b2-4846-b380-c919fa201200",
+                    "foreignCollection": "",
+                    "foreignField": [],
+                    "error": {
+                        "name": false,
+                        "code": false
+                    }
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "b2d0e2dd-dce0-4408-af7b-845c7dec9728"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "c93ab47c-49e4-4559-9591-9e7382e46a62"
+        },
+        {
+            "collectionName": "PerformanceLogs",
+            "type": "object",
+            "properties": [
+                {
+                    "name": "_id",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "error": {},
+                    "GUID": "3b1b5ddc-b409-484a-9059-d1be56054d16"
+                },
+                {
+                    "name": "AccountId",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "objectId",
+                    "GUID": "d3b2bfde-51cb-467d-9b36-be90d0927393",
+                    "foreignCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "foreignField": [
+                        "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                        "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                    ],
+                    "relationshipType": "Foreign Key",
+                    "parentRelationship": "ba277bed-5b0d-47f1-9157-73f1618af183",
+                    "error": {}
+                },
+                {
+                    "name": "DateLogged",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "date",
+                    "primaryKey": false,
+                    "error": {},
+                    "GUID": "4355f6b6-745d-4343-bf2b-41001b6e8e7d"
+                },
+                {
+                    "name": "ExerciseName",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "string",
+                    "GUID": "1239ab53-ad98-488e-8e58-1298bd7812ed",
+                    "error": {}
+                },
+                {
+                    "name": "PerformanceData",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "document",
+                    "properties": [],
+                    "additionalProperties": false,
+                    "error": {},
+                    "GUID": "2e2a64ef-b5af-4c8c-9120-469726e4b20c"
+                },
+                {
+                    "name": "PerformanceMetric",
+                    "hackoladeMeta": {},
+                    "isActivated": true,
+                    "type": "numeric",
+                    "error": {},
+                    "GUID": "493da3e9-5f9c-4889-9148-7bcf56b79977"
+                }
+            ],
+            "definitions": {
+                "type": "definitions",
+                "properties": [],
+                "GUID": "26779e48-e296-4b20-b7e4-3ac344dd3f43"
+            },
+            "isActivated": true,
+            "additionalProperties": false,
+            "validationLevel": "Off",
+            "validationAction": "Warn",
+            "storageEngineName": "WiredTiger",
+            "collectionUsers": [],
+            "indexes": [],
+            "collation": {},
+            "sharding": {
+                "unique": true,
+                "collation": "null"
+            },
+            "GUID": "8598e1f5-58e0-4685-8091-2221ee6f7442"
+        }
+    ],
+    "buckets": [],
+    "views": [],
+    "relationships": [
+        {
+            "name": "fk Accounts.AccessibleWorkouts.[0] to Workouts.objectID",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                    "62a1ee7c-cbcd-4d21-9eba-358b5a877d2f"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "b2ef7f7a-3722-4809-83c2-6a7f95dcd298",
+                    "80ec7f83-3211-404f-a52e-2085a2444c21"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "0..n",
+            "GUID": "371926a3-60d1-4b68-b972-c588d58ff94c",
+            "parentCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+            "childCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+            "hackoladeStyles": {
+                "GUID": "b48c5398-9904-4567-be7d-d155a947a0dd",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 5274,
+                        "y": 1176.857142857143
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1176.857142857143
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1195.2000000000005
+                    },
+                    {
+                        "x": 5452.399999999999,
+                        "y": 1195.2000000000005
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk Workouts.Owner to Accounts.objectID",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                    "8e37ae71-16a9-414f-ae15-591c8236d28a"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "3fcabbee-aef1-4484-9abc-de27b5b50826",
+            "parentCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+            "childCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+            "hackoladeStyles": {
+                "GUID": "65af2bde-051c-464a-b649-f2d5d290f17e",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 5452.399999999999,
+                        "y": 1263.7000000000005
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1263.7000000000005
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1225.2857142857142
+                    },
+                    {
+                        "x": 5274,
+                        "y": 1225.2857142857142
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Workouts.Editors.[0] to Accounts.objectID",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                    "ec2fa833-944a-42e5-a954-09631f6ea9fe",
+                    "a5fff363-0494-4905-844a-c20187b44b9a"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "0..n",
+            "GUID": "524bcbab-744b-4382-acb3-4b4590087c7c",
+            "parentCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+            "childCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+            "hackoladeStyles": {
+                "GUID": "b2df0b51-7392-4609-afc1-f99b44f5363c",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 5452.399999999999,
+                        "y": 1332.2000000000005
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1332.2000000000005
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1273.7142857142858
+                    },
+                    {
+                        "x": 5274,
+                        "y": 1273.7142857142858
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Workouts.Viewers.[0] to Accounts.objectID",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                    "5fcef772-b318-40c7-89c4-9f57873e15ce",
+                    "68e5cc28-eaec-47eb-827a-3eae0fa7f1b2"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "0..n",
+            "GUID": "98dcfcce-8082-46a3-85e7-6efb61ae0e0a",
+            "parentCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+            "childCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+            "hackoladeStyles": {
+                "GUID": "c72de9dd-0b42-4a0b-b3dd-1208ad4774e2",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 5452.399999999999,
+                        "y": 1400.7000000000005
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1400.7000000000005
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1322.142857142857
+                    },
+                    {
+                        "x": 5274,
+                        "y": 1322.142857142857
+                    }
+                ],
+                "sides": [
+                    "left",
+                    "right"
+                ]
+            }
+        },
+        {
+            "name": "fk Accounts.ActiveWorkout.ID to Workouts._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                    "62a1ee7c-cbcd-4d21-9eba-358b5a877d2f"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "0ffecd8e-daae-4c4c-b0cb-3567b8e92f2f",
+                    "9875a72f-9c4f-421e-af64-9539b54b6ca8"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "32f48ea1-35aa-4ee4-947b-d9c5f370d95a",
+            "parentCollection": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+            "childCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+            "hackoladeStyles": {
+                "GUID": "3b83df3b-4bf7-480e-8de9-1a5830e0b9c1",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 5274,
+                        "y": 1128.4285714285713
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1128.4285714285713
+                    },
+                    {
+                        "x": 5363.199999999999,
+                        "y": 1126.7000000000005
+                    },
+                    {
+                        "x": 5452.399999999999,
+                        "y": 1126.7000000000005
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "left"
+                ]
+            }
+        },
+        {
+            "name": "fk PerformanceLogs.AccountId to Accounts._id",
+            "relationshipType": "Foreign Key",
+            "parentField": [
+                [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                    "e61ab605-f783-4a68-ba1c-8b2a4f748629"
+                ]
+            ],
+            "parentCardinality": "1",
+            "childField": [
+                [
+                    "8598e1f5-58e0-4685-8091-2221ee6f7442",
+                    "d3b2bfde-51cb-467d-9b36-be90d0927393"
+                ]
+            ],
+            "isActivated": true,
+            "childCardinality": "1",
+            "GUID": "ba277bed-5b0d-47f1-9157-73f1618af183",
+            "parentCollection": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+            "childCollection": "8598e1f5-58e0-4685-8091-2221ee6f7442",
+            "hackoladeStyles": {
+                "GUID": "d960898a-0a9a-4273-ba76-028ebbf65e1b",
+                "autoPositioning": true,
+                "type": "Orthogonal",
+                "thickness": 2,
+                "color": "#79c4ff",
+                "dataType": "",
+                "shape": [
+                    {
+                        "x": 5307,
+                        "y": 1525.5
+                    },
+                    {
+                        "x": 5332,
+                        "y": 1525.5
+                    },
+                    {
+                        "x": 5332,
+                        "y": 1370.5714285714284
+                    },
+                    {
+                        "x": 5274,
+                        "y": 1370.5714285714284
+                    }
+                ],
+                "sides": [
+                    "right",
+                    "right"
+                ]
+            }
+        }
+    ],
+    "users": [],
+    "diagramViews": [],
+    "idToNameHashTable": {
+        "d4f0a45d-107e-42cf-94b2-272e8a35f9b8": "Accounts",
+        "e61ab605-f783-4a68-ba1c-8b2a4f748629": "_id",
+        "5beabf66-5137-43b6-9ac6-b55ad124c2ae": "FirstName",
+        "d5b2d27a-1453-4e6d-9382-fb3b862845a3": "LastName",
+        "9ed7afda-a4dc-4db8-bf4a-29737a96f40d": "DOB",
+        "c5f47c3a-9408-4201-8ba9-682c64155dc1": "Email",
+        "57998dd6-b1a0-4d51-be90-2361c927f09a": "CognitoUsername",
+        "0ffecd8e-daae-4c4c-b0cb-3567b8e92f2f": "ActiveWorkout",
+        "8124d67e-dfaf-452c-af2f-2bb138fedfa1": "Name",
+        "9875a72f-9c4f-421e-af64-9539b54b6ca8": "ID",
+        "afcc6f54-addb-4949-8dd6-63b3db08561e": "Frequency",
+        "99fc318c-7a7e-45a8-93c2-bed425f13da4": "Workouts",
+        "b2ef7f7a-3722-4809-83c2-6a7f95dcd298": "AccessibleWorkouts",
+        "df97a8d4-4aae-4fea-b0bc-2bbde163c420": "Name",
+        "500b107f-daac-4dfa-bcc1-106d9b009344": "ID",
+        "047060bc-f9f6-4447-94bd-a4f57cfb1964": "Exercises",
+        "8c20e984-0219-4d56-85d6-1ddef327582a": "Name",
+        "744c2d7d-cf16-4133-826c-097b2409ca72": "Description",
+        "c39912dd-666e-4438-bbc4-04a0979a5f0b": "Weight",
+        "f117bba7-fe0d-4eef-82ba-ca3dd9a76f46": "Sets",
+        "1c14199e-983d-4675-991d-67be85e75611": "Reps",
+        "7ee87e55-4d7c-4e75-a3f4-e6853da7c36d": "Rest",
+        "b3c05487-15de-43f5-afcf-32d4a529b8d7": "TimeUnit",
+        "b0d7c279-03b9-4531-86eb-a0d3743688c9": "Notes",
+        "c93ab47c-49e4-4559-9591-9e7382e46a62": "Workouts",
+        "62a1ee7c-cbcd-4d21-9eba-358b5a877d2f": "_id",
+        "8e37ae71-16a9-414f-ae15-591c8236d28a": "Owner",
+        "ec2fa833-944a-42e5-a954-09631f6ea9fe": "Editors",
+        "5fcef772-b318-40c7-89c4-9f57873e15ce": "Viewers",
+        "371926a3-60d1-4b68-b972-c588d58ff94c": "fk Accounts.AccessibleWorkouts.[0] to Workouts.objectID",
+        "3fcabbee-aef1-4484-9abc-de27b5b50826": "fk Workouts.Owner to Accounts.objectID",
+        "524bcbab-744b-4382-acb3-4b4590087c7c": "fk Workouts.Editors.[0] to Accounts.objectID",
+        "98dcfcce-8082-46a3-85e7-6efb61ae0e0a": "fk Workouts.Viewers.[0] to Accounts.objectID",
+        "408e0eb0-a1b2-4846-b380-c919fa201200": "Workouts",
+        "16ae7ec4-aa8a-4485-8c21-d51dee1d5ff0": "Name",
+        "d84c39e4-09a1-438d-94c8-f40dfd04f412": "ID",
+        "f9e87593-323e-4e00-b177-3b4799ea7512": "Exercises",
+        "6377feec-b3c4-4bb9-b5de-d3f09e7e5b38": "Name",
+        "95b26c7c-6c26-4e4a-9d6d-d6c179e2e733": "Description",
+        "a62ce150-7315-42ef-93d2-cba0100bb4ce": "Weight",
+        "5483b2e5-da73-4cbd-811d-aa8c2e2a30e1": "Sets",
+        "40391042-51aa-4e0a-a80f-1f306743c452": "Reps",
+        "77684f76-9eef-4228-be0f-e534c511151e": "Rest",
+        "2e501ca8-7eed-4c7e-b3c0-eed3814807e1": "TimeUnit",
+        "765473b5-1834-4d02-b544-c8ca53c58f8f": "Notes",
+        "cd011cae-594d-457a-8220-2846f7c2a129": "Name",
+        "32f48ea1-35aa-4ee4-947b-d9c5f370d95a": "fk Accounts.ActiveWorkout.ID to Workouts._id",
+        "8598e1f5-58e0-4685-8091-2221ee6f7442": "PerformanceLogs",
+        "3b1b5ddc-b409-484a-9059-d1be56054d16": "_id",
+        "d3b2bfde-51cb-467d-9b36-be90d0927393": "AccountId",
+        "4355f6b6-745d-4343-bf2b-41001b6e8e7d": "DateLogged",
+        "1239ab53-ad98-488e-8e58-1298bd7812ed": "ExerciseName",
+        "2e2a64ef-b5af-4c8c-9120-469726e4b20c": "PerformanceData",
+        "493da3e9-5f9c-4889-9148-7bcf56b79977": "PerformanceMetric",
+        "ba277bed-5b0d-47f1-9157-73f1618af183": "fk PerformanceLogs.AccountId to Accounts._id"
+    },
+    "definitions": {
+        "type": "definitions",
+        "properties": [],
+        "GUID": "89572e02-811f-4fb1-b045-0c0bb11aaa4a"
+    },
+    "polyglotDefinitions": {
+        "type": "polyglotDefinitions",
+        "properties": [],
+        "GUID": "3a3f8bc9-2c43-4fd5-8723-81e9544af785"
+    },
+    "externalDefinitions": {
+        "type": "externalDefinitions",
+        "properties": [],
+        "GUID": "969bcc2a-50fd-4b8a-ab0e-5a35a07d18b1"
+    },
+    "sources": [],
+    "decorativeSymbols": [],
+    "dbVersion": "v5.0",
+    "dbVendor": "MongoDB",
+    "appTarget": "MONGODB",
+    "creationTS": "2023-06-07T16:36:04.318Z",
+    "GUID": "5f074603-95a6-4b06-bc67-042daa238fe9",
+    "isLineageEnabled": false,
+    "lastModifTS": "2023-06-08T17:56:36.659Z",
+    "persistenceSchemaVersion": "6",
+    "isCreatedByPlugin": true,
+    "pluginInformation": {
+        "pluginEngineVersion": "1.0.0"
+    },
+    "applicationInformation": {
+        "version": "6.10.5"
+    },
+    "hackoladeMeta": {},
+    "settings": {
+        "centralPane": {
+            "dbLevel": {
+                "erd": [
+                    {
+                        "GUID": "d4f0a45d-107e-42cf-94b2-272e8a35f9b8",
+                        "x": 5040,
+                        "y": 1080,
+                        "width": 234,
+                        "height": 339,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "c93ab47c-49e4-4559-9591-9e7382e46a62",
+                        "x": 5452.399999999999,
+                        "y": 1058.2000000000005,
+                        "width": 266,
+                        "height": 411,
+                        "color": {}
+                    },
+                    {
+                        "GUID": "8598e1f5-58e0-4685-8091-2221ee6f7442",
+                        "x": 5070,
+                        "y": 1455,
+                        "width": 237,
+                        "height": 141,
+                        "color": {}
+                    }
+                ],
+                "erdDefinitions": {
+                    "erd": [],
+                    "rootPath": [],
+                    "entities": [],
+                    "decorativeSymbols": []
+                },
+                "buckets": [],
+                "collapsedNodes": [
+                    "d4f0a45d-107e-42cf-94b2-272e8a35f9b80ffecd8e-daae-4c4c-b0cb-3567b8e92f2f99fc318c-7a7e-45a8-93c2-bed425f13da4628892b2-88f9-45ed-891f-084dc9d2db73047060bc-f9f6-4447-94bd-a4f57cfb1964"
+                ],
+                "activeRelationship": "",
+                "activeRelationshipFields": {
+                    "childField": [],
+                    "parentField": []
+                },
+                "selectedCollections": [],
+                "displayColorPicker": false,
+                "graphView": {
+                    "erd": [],
+                    "buckets": [],
+                    "decorativeSymbols": [],
+                    "forceLayout": true,
+                    "defaultLinkLength": 300
+                },
+                "diagramViews": [],
+                "decorativeSymbols": [],
+                "nestedCollectionsLayout": "horizontal",
+                "options": [],
+                "relationshipUpdateDisabled": false
+            },
+            "collectionLevel": {},
+            "changed": false
+        },
+        "dtDiagram": {
+            "collapsedNodes": [],
+            "shouldDistributeCollections": false
+        }
+    }
+}
