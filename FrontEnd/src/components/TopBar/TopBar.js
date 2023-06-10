@@ -24,8 +24,8 @@ const TopBar = (props) => {
   return (
     <>
       <nav
-        className="w-screen h-16 flex justify-between gap-4 border-b-2 border-black border-solid text-2xl
-        pl-10 pr-10 mb-0"
+        className="w-screen h-16 flex justify-between gap-4 border-b border-gray border-solid text-2xl
+        pl-10 pr-10 mb-5 "
       >
         <div className="h-1/2 mt-3 flex items-center gap-8">
           <Link to="/">
