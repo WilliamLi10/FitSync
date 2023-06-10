@@ -1,60 +1,49 @@
 import { useState, useEffect } from "react";
+import moment from "moment";
 import WorkoutContainer from "./WorkoutContainer";
+import WorkoutMiniCalendar from "./WorkoutMiniCalendar";
 import Workout from "./Workout";
 import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
+
 const WorkoutDisplay = (props) => {
-  const [curWeek, setCurWeek] = useState();
-  const [workoutOrder, setWorkoutOrder] = useState([
-    { dayOfWeek: "Sun", date: "4/20/2023"},
-    { dayOfWeek: "Mon", date: "4/21/2023"},
-    { dayOfWeek: "Tue", date: "4/22/2023"},
-    { dayOfWeek: "Wed", date: "4/23/2023" },
-    { dayOfWeek: "Thu", date: "4/24/2023" },
-    { dayOfWeek: "Fri", date: "4/25/2023" },
-    { dayOfWeek: "Sat", date: "4/26/2023" },
-  ]);
-  
+  const getWeekRange = (day) => {
+    const end = day.clone().endOf("isoWeek");
 
-  const workouts = {};
-  curWeek.forEach(function(curWorkout) {
-    workouts[curWorkout.id] = <Workout id = {curWorkout.id} workout = {curWorkout} />;
+    console.log(day);
 
-  });
-  
-  useEffect(() => {
-    console.log("Use Effect")
-    const newOrder = [];
-    let i = 0;
-    workoutOrder.forEach(function(day) {
+    const dates = [];
+    let currDate = day.clone().startOf("isoWeek");
+    while (currDate.isSameOrBefore(end, "day")) {
+      dates.push({
+        dayOfWeek: currDate.format("dddd"),
+        day: currDate.format("DD"),
+        month: currDate.format("MM"),
+        year: currDate.format("YYYY"),
+      });
+      currDate.add(1, "day");
+    }
 
-      if(i < curWeek.length && day.date === curWeek[i].date){
-        newOrder.push({...day, workoutid: curWeek[i].id});
-        i += 1;
+    return dates;
+  };
 
-      }
-      else{
-        newOrder.push({...day});
+  const [week, setWeek] = useState(getWeekRange(moment()));
 
-      }
-    });
-
-    setWorkoutOrder(newOrder);
-    
-  }, []);
-
-  
+  const weekHandler = (date) => {
+    setWeek(getWeekRange(moment(date)));
+  };
 
   return (
     <div className={props.className}>
-      {workoutOrder.map((day) => (
-        <WorkoutContainer
-          dayOfWeek={day.dayOfWeek}
-          date={day.date}
-          workout={day.workoutid === "8" ? "" : workouts[day.workoutid]}
-          workoutid={day.workoutid === "8" ? "" : day.workoutid}
-        />
-      ))}
-      {!curWeek ? <NoActiveWorkoutOverlay /> : ""}
+      <WorkoutMiniCalendar weekHandler={weekHandler} />
+      {week.map((day) => {
+        return (
+          <WorkoutContainer
+            key={`${day.month}/${day.day}/${day.year}`}
+            dayOfWeek={day.dayOfWeek}
+            date={`${day.month}/${day.day}/${day.year}`}
+          />
+        );
+      })}
     </div>
   );
 };
