@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WorkoutContainer from "./WorkoutContainer";
+import WorkoutMiniCalendar from "./WorkoutMiniCalendar";
 import Workout from "./Workout";
 import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
 
 const WorkoutDisplay = (props) => {
   const getWeekRange = (day) => {
     const end = day.clone().endOf("isoWeek");
+
+    console.log(day);
 
     const dates = [];
     let currDate = day.clone().startOf("isoWeek");
@@ -25,17 +28,19 @@ const WorkoutDisplay = (props) => {
 
   const [week, setWeek] = useState(getWeekRange(moment()));
 
-  console.log(week);
+  const weekHandler = (date) => {
+    setWeek(getWeekRange(moment(date)));
+  };
 
   return (
     <div className={props.className}>
+      <WorkoutMiniCalendar weekHandler={weekHandler} />
       {week.map((day) => {
-        console.log(day);
         return (
           <WorkoutContainer
-            key={`${day.day}/${day.month}/${day.year}`}
+            key={`${day.month}/${day.day}/${day.year}`}
             dayOfWeek={day.dayOfWeek}
-            date={`${day.day}/${day.month}/${day.year}`}
+            date={`${day.month}/${day.day}/${day.year}`}
           />
         );
       })}
