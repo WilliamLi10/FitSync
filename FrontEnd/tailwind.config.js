@@ -8,7 +8,11 @@ module.exports = {
   ],
 
   theme: {
-    extend: {},
+    extend: {
+      screens: {
+        md: "700px",
+      },
+    },
   },
   plugins: [require("flowbite/plugin")],
 };

@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WorkoutContainer from "./WorkoutContainer";
-import MiniCalendar from "./MiniCalendar";
+import MiniCalendar from "./MiniCalendar/MiniCalendar";
 import Workout from "./Workout";
 import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
 
 const WorkoutDisplay = (props) => {
   const getWeekRange = (day) => {
-    const end = day.clone().endOf("isoWeek");
-
+    const end = day.clone().endOf("week");
     const dates = [];
-    let currDate = day.clone().startOf("isoWeek");
+
+    let currDate = day.clone().startOf("week");
     while (currDate.isSameOrBefore(end, "day")) {
       dates.push({
         dayOfWeek: currDate.format("dddd"),
@@ -33,11 +33,11 @@ const WorkoutDisplay = (props) => {
   return (
     <div className={props.className}>
       <MiniCalendar weekHandler={weekHandler} />
-      <div className="w-[100%]">
+      <div className="w-[100%] mt-5">
         <div className="text-2xl text-center mb-5">
           <p>{`${week[3].month} ${week[3].year}`}</p>
         </div>
-        <div className="flex">
+        <div className="flex mr-7">
           {week.map((day) => {
             return (
               <WorkoutContainer
