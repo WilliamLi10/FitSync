@@ -1,0 +1,50 @@
+.react-datepicker {
+  border: none;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  margin-top: 10px;
+}
+
+.react-datepicker__header {
+  background-color: white;
+  border: none;
+}
+
+.react-datepicker__current-month {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 20px;
+  font-weight: 100;
+}
+
+.react-datepicker__day,
+.react-datepicker__day-name {
+  font-size: 12px;
+  width: 30px;
+  height: 30px;
+  line-height: 28px;
+}
+
+.react-datepicker__day-names {
+  padding-top: 15px;
+}
+
+.react-datepicker__navigation-icon {
+  height: 5px;
+}
+
+.react-datepicker__day--selected {
+  background-color: rgb(51 65 85);
+  border-radius: 25px;
+}
+
+.react-datepicker__day--selected:hover {
+  background-color: rgb(107 114 128);
+  border-radius: 25px;
+}
+
+.react-datepicker__day:hover {
+  border-radius: 25px;
+}

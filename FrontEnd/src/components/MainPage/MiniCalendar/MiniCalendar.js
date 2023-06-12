@@ -1,8 +1,9 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./MiniCalendar.css";
 
-const WorkoutMiniCalendar = (props) => {
+const MiniCalendar = (props) => {
   const [date, setDate] = useState(null);
 
   const dateHandler = (newDate) => {
@@ -11,7 +12,7 @@ const WorkoutMiniCalendar = (props) => {
   };
 
   return (
-    <div>
+    <div className="m-10">
       <DatePicker
         selected={date}
         onChange={dateHandler}
@@ -23,4 +24,4 @@ const WorkoutMiniCalendar = (props) => {
   );
 };
 
-export default WorkoutMiniCalendar;
+export default MiniCalendar;

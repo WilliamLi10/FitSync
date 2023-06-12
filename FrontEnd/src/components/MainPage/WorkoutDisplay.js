@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react";
 import moment from "moment";
 import WorkoutContainer from "./WorkoutContainer";
-import WorkoutMiniCalendar from "./WorkoutMiniCalendar";
+import MiniCalendar from "./MiniCalendar/MiniCalendar";
 import Workout from "./Workout";
 import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
 
 const WorkoutDisplay = (props) => {
   const getWeekRange = (day) => {
-    const end = day.clone().endOf("isoWeek");
-
-    console.log(day);
-
+    const end = day.clone().endOf("week");
     const dates = [];
-    let currDate = day.clone().startOf("isoWeek");
+
+    let currDate = day.clone().startOf("week");
     while (currDate.isSameOrBefore(end, "day")) {
       dates.push({
         dayOfWeek: currDate.format("dddd"),
         day: currDate.format("DD"),
-        month: currDate.format("MM"),
+        month: currDate.format("MMMM"),
         year: currDate.format("YYYY"),
       });
       currDate.add(1, "day");
@@ -34,16 +32,24 @@ const WorkoutDisplay = (props) => {
 
   return (
     <div className={props.className}>
-      <WorkoutMiniCalendar weekHandler={weekHandler} />
-      {week.map((day) => {
-        return (
-          <WorkoutContainer
-            key={`${day.month}/${day.day}/${day.year}`}
-            dayOfWeek={day.dayOfWeek}
-            date={`${day.month}/${day.day}/${day.year}`}
-          />
-        );
-      })}
+      <MiniCalendar weekHandler={weekHandler} />
+      <div className="w-[100%] mt-5">
+        <div className="text-2xl text-center mb-5">
+          <p>{`${week[3].month} ${week[3].year}`}</p>
+        </div>
+        <div className="flex mr-7">
+          {week.map((day) => {
+            return (
+              <WorkoutContainer
+                key={`${day.month}/${day.day}/${day.year}`}
+                dayOfWeek={day.dayOfWeek}
+                date={`${day.day}/${day.month}/${day.year}`}
+                day={day.day}
+              />
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };
