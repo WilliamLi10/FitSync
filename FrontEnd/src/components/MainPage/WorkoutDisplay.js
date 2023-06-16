@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import moment from "moment";
 import WorkoutContainer from "./WorkoutContainer";
 import MiniCalendar from "./MiniCalendar/MiniCalendar";
-import Workout from "./Workout";
 import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
 
 const WorkoutDisplay = (props) => {
