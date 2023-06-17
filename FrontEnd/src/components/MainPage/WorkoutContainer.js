@@ -3,7 +3,7 @@ import moment from "moment";
 import SelectedWorkout from "./SelectedWorkout";
 
 const WorkoutContainer = (props) => {
-  const isToday = moment().isSame(moment(props.date), "day");
+  const isToday = moment(moment().toISOString()).isSame(props.date, "day");
 
   const [modal, setModal] = useState(false);
 
@@ -16,90 +16,28 @@ const WorkoutContainer = (props) => {
   };
 
   const workout = {
-    id: 4,
-    name: "Upper 1",
-    warmup: [
+    Name: "Workout 1",
+    ID: { $numberInt: "1" },
+    Exercises: [
       {
-        Exercise: "Light Cardio",
-        Duration: "5-10",
-        Unit: "min",
-        Desc: "",
-      },
-      {
-        Exercise: "Foam-Rolling",
-        Duration: "2-3",
-        Unit: "min",
-        Desc: "",
-      },
-      {
-        Exercise: "Squat Pyramid Sets",
-        Duration: "3 Sets",
-        Unit: "",
-        Desc: "",
-      },
-    ],
-    mainExercises: [
-      {
-        Exercise: "Competition Squat",
+        Name: "Exercise 1",
+        Description: "Description for Exercise 1",
+        Weight: 50,
         Sets: 3,
-        Reps: 3,
-        Intensity: "80%",
-        Weight: 315,
-        Tempo: "1.0.1",
-        Rest: 180,
-        Unit: "sec",
-        Type: "Constant",
-      },
-      {
-        Exercise: "Competition Squat",
-        Sets: 2,
-        Reps: 5,
-        Intensity: "68%",
-        Weight: 270,
-        Tempo: "1.0.1",
-        Rest: 180,
-        Unit: "sec",
-      },
-      {
-        Exercise: "Competition Pause Bench",
-        Sets: 4,
-        Reps: 3,
-        Intensity: "80%",
-        Weight: 245,
-        Tempo: "1.1.1",
-        Rest: 180,
-
-        Unit: "sec",
-      },
-      {
-        Exercise: "Competition Pause Bench",
-        Sets: 2,
-        Reps: 5,
-        Intensity: "68%",
-        Weight: 205,
-        Tempo: "1.1.1",
-        Rest: 180,
-        Unit: "sec",
-      },
-    ],
-    accessories: [
-      {
-        Exercise: "SLDL",
-        Sets: 4,
-        Reps: 9,
-        Weight: 225,
-        Notes: "Perform at 8RPE with 1.0.1 tempo",
-        Rest: 90,
-        Unit: "sec",
-      },
-      {
-        Exercise: "Pull-ups",
-        Sets: 2,
-        Weight: null,
-        Reps: null,
-        Notes: "Perform AMRAP sets",
+        Reps: 10,
         Rest: 60,
-        Unit: "sec",
+        TimeUnit: 2,
+        Notes: "Notes for Exercise 1",
+      },
+      {
+        Name: "Exercise 2",
+        Description: "Description for Exercise 2",
+        Weight: 70,
+        Sets: 4,
+        Reps: 12,
+        Rest: 90,
+        TimeUnit: 2,
+        Notes: "Notes for Exercise 2",
       },
     ],
   };
@@ -107,7 +45,7 @@ const WorkoutContainer = (props) => {
   return (
     <div
       className={`h-screen w-[14.28%] my-2 border-gray border-solid min-w-[100px] ${
-        props.dayOfWeek != "Saturday" ? "border-r-[1px]" : ""
+        props.dayOfWeek !== "Saturday" ? "border-r-[1px]" : ""
       }`}
     >
       <div className="h-[70px] text-center border-b-[1px] border-gray border-solid">
@@ -126,12 +64,16 @@ const WorkoutContainer = (props) => {
           {parseInt(props.day)}
         </div>
       </div>
-      <div className="h-[90%]" onClick={openModal}>
-        {modal && <SelectedWorkout close={closeModal} />}
+      <div className="h-[90%]">
+        {modal && <SelectedWorkout close={closeModal} workout={workout} />}
         {modal && (
           <div className="fixed top-[0] left-[0] w-[100%] h-[100%] bg-black opacity-[0.5] z-[1]" />
         )}
-        {workout && workout.name}
+        {workout && (
+          <div onClick={openModal} className="cursor-pointer">
+            {workout.Name}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import moment from "moment";
 import WorkoutContainer from "./WorkoutContainer";
 import MiniCalendar from "./MiniCalendar/MiniCalendar";
-import NoActiveWorkoutOverlay from "./NoActiveWorkoutOverlay";
 
 const WorkoutDisplay = (props) => {
   const getWeekRange = (day) => {
@@ -16,6 +15,7 @@ const WorkoutDisplay = (props) => {
         day: currDate.format("DD"),
         month: currDate.format("MMMM"),
         year: currDate.format("YYYY"),
+        date: currDate.toISOString(),
       });
       currDate.add(1, "day");
     }
@@ -42,7 +42,7 @@ const WorkoutDisplay = (props) => {
               <WorkoutContainer
                 key={`${day.month}/${day.day}/${day.year}`}
                 dayOfWeek={day.dayOfWeek}
-                date={`${day.day}/${day.month}/${day.year}`}
+                date={day.date}
                 day={day.day}
               />
             );
