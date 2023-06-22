@@ -19,8 +19,8 @@ const formReducer = (state, action) => {
         ...state,
         dur: { value: action.val, valid: action.val !== "" },
         next:
-          Number.isInteger(parseInt(action.val)) &&
-          parseInt(action.val) > 0 &&
+          Number.isInteger(parseFloat(action.val)) &&
+          parseFloat(action.val) > 0 &&
           state.title.valid &&
           state.freq.valid,
       };
@@ -29,9 +29,9 @@ const formReducer = (state, action) => {
         ...state,
         freq: { value: action.val, valid: action.val !== "" },
         next:
-          Number.isInteger(parseInt(action.val)) &&
-          parseInt(action.val) > 0 &&
-          parseInt(action.val) < 8 &&
+          Number.isInteger(parseFloat(action.val)) &&
+          parseFloat(action.val) > 0 &&
+          parseFloat(action.val) < 8 &&
           state.dur.valid &&
           state.title.valid,
       };
