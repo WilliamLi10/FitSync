@@ -6,7 +6,7 @@ const TopLink = (props) => {
       to={props.link}
       className={({ isActive }) =>
         `self-center py-4 px-4 transition ${
-          isActive ? "bg-slate-100" : " hover:bg-slate-50"
+          isActive ? "border-solid border-b-2 border-slate-700" : " hover:bg-slate-50"
         }`
       }
     >

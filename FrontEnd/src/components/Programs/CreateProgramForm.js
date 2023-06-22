@@ -1,7 +1,6 @@
 import { useReducer } from "react";
 
 const formReducer = (state, action) => {
-  console.log(state);
   switch (action.type) {
     case "title":
       return {
@@ -40,13 +39,9 @@ const formReducer = (state, action) => {
   }
 };
 
-const CreateProgramForm = () => {
+const CreateProgramForm = (props) => {
   const [form, setForm] = useReducer(formReducer, {
-    title: { value: "", valid: false },
-    desc: { value: "" },
-    dur: { value: "", valid: false },
-    freq: { value: "", valid: false },
-    next: false,
+    ...props.data,
   });
 
   const titleHandler = (event) => {
@@ -65,6 +60,11 @@ const CreateProgramForm = () => {
     setForm({ type: "freq", val: event.target.value });
   };
 
+  const nextHandler = (event) => {
+    event.preventDefault();
+    props.pageHandler(form);
+  };
+
   const inputCSS =
     "border-solid border-black border-opacity-50 mt-16 px-[8px] transition focus:outline-none focus:border-slate-700";
 
@@ -72,7 +72,7 @@ const CreateProgramForm = () => {
 
   return (
     <form className="flex flex-col w-[50%] min-w-[500px] px-4">
-      <h1 className="text-2xl font-thin mt-10 text-center">Create a Program</h1>
+      <h1 className="text-2xl font-md mt-10 text-center">Create a Program</h1>
       <div className="flex items-center">
         <input
           placeholder="Title"
@@ -114,10 +114,11 @@ const CreateProgramForm = () => {
       <button
         className={`border-solid border-[1px] border-opacity-50 px-5 py-2 mt-16 ml-auto mr-10 ${
           form.next
-            ? "border-slate-700 bg-slate-700 text-white hover:bg-slate-500"
+            ? "border-none bg-slate-700 text-white hover:bg-slate-500"
             : "border-black"
         }`}
-        disabled={form.next}
+        disabled={!form.next}
+        onClick={nextHandler}
       >
         Next
       </button>

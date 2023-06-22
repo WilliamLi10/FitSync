@@ -10,7 +10,7 @@ import MyWorkouts from "../Programs/MyWorkouts";
 import DiscoverWorkouts from "../Programs/DiscoverWorkouts";
 import CreateProgram from "../../pages/CreateProgram";
 
-const SideBar = (props) => {
+const SideBar = () => {
   const [selectedOption, setSelectedOption] = useState("myPrograms");
 
   const handleOptionClick = (option) => {
@@ -26,32 +26,35 @@ const SideBar = (props) => {
   return (
     <div className="flex flex-row h-screen">
       <div
-        className={`h-screen bg-gray-800 transition-all duration-300 transform ${
-          barOpen ? "w-1/6 " : "w-[78px]"
+        className={`h-screen transition-all duration-300 transform border-solid border-r-[1px] border-slate-700 ${
+          barOpen ? "w-1/6 " : "w-[60px]"
         }`}
-        style={{ minWidth: barOpen ? "250px" : "0" }}
+        style={{ minWidth: barOpen ? "250px" : "60px" }}
       >
         <SideBarSelector
           onClick={barHandler}
-          image={<FaBars className="h-8 w-8" />}
+          desc={barOpen && "Programs"}
+          image={<FaBars />}
         />
         <SideBarSelector
           onClick={() => handleOptionClick("myPrograms")}
           desc={barOpen && "My Programs"}
-          image={<RiFileList2Line className="h-8 w-8" />}
-          className={selectedOption === "myPrograms" ? "bg-gray-500" : ""}
+          image={<RiFileList2Line />}
+          className={selectedOption === "myPrograms" ? "bg-slate-100" : ""}
         />
         <SideBarSelector
           onClick={() => handleOptionClick("discoverPrograms")}
           desc={barOpen && "Discover New Programs"}
-          image={<RiAddLine className="h-8 w-8" />}
-          className={selectedOption === "discoverPrograms" ? "bg-gray-500" : ""}
+          image={<RiAddLine />}
+          className={
+            selectedOption === "discoverPrograms" ? "bg-slate-100" : ""
+          }
         />
         <SideBarSelector
           onClick={() => handleOptionClick("createProgram")}
           desc={barOpen && "Create New Program"}
-          image={<RiCompassDiscoverLine className="h-8 w-8" />}
-          className={selectedOption === "createProgram" ? "bg-gray-500" : ""}
+          image={<RiCompassDiscoverLine />}
+          className={selectedOption === "createProgram" ? "bg-slate-100" : ""}
         />
       </div>
       <div
