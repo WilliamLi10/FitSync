@@ -6,6 +6,7 @@ import "tailwindcss/tailwind.css";
 import Home from "./pages/Home";
 import WorkoutCreator from "./components/SideBar/SideBar";
 
+
 function App() {
   const [user, setUser] = useState({
     name: "John Doe",
@@ -25,6 +26,7 @@ function App() {
           }
         />
         <Route path="/WorkoutCreation" element={<WorkoutCreator />} />
+
       </Routes>
     </div>
   );
