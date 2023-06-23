@@ -4,8 +4,8 @@ import { Route, Routes } from "react-router-dom";
 import TopBar from "./components/TopBar/TopBar";
 import "tailwindcss/tailwind.css";
 import Home from "./pages/Home";
-import WorkoutCreator from "./components/SideBar/SideBar";
-
+import SideBar from "./components/Programs/SideBar/SideBar";
+import Progress from "./pages/Progress";
 
 function App() {
   const [user, setUser] = useState({
@@ -25,8 +25,8 @@ function App() {
             </div>
           }
         />
-        <Route path="/WorkoutCreation" element={<WorkoutCreator />} />
-
+        <Route path="/Programs" element={<SideBar />} />
+        <Route path="/Progress" element={<Progress />} />
       </Routes>
     </div>
   );

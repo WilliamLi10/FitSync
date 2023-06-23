@@ -5,5 +5,5 @@ const connection = require("./util/db");
 const app = express();
 
 connection(() => {
-  app.listen(3000);
+  app.listen(5000);
 });

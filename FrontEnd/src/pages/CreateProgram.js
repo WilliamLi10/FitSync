@@ -1,6 +1,6 @@
 import { useState, useReducer } from "react";
-import CreateProgramForm from "../components/Programs/CreateProgramForm";
-import CreateProgramWorkout from "../components/Programs/CreateProgramWorkout";
+import CreateProgramForm from "../components/Programs/CreateProgram/CreateProgramForm";
+import CreateProgramWorkout from "../components/Programs/CreateProgram/CreateProgramWorkout";
 
 const dataReducer = (state, action) => {
   switch (action.type) {
@@ -34,7 +34,7 @@ const CreateProgram = () => {
 
   const formNext = (formData) => {
     setCurr("workout");
-    console.log(formData)
+    console.log(formData);
     setData({ type: "form", data: formData });
   };
 

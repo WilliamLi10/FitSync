@@ -6,9 +6,9 @@ import {
 } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
 import SideBarSelector from "./SideBarSelector";
-import MyWorkouts from "../Programs/MyWorkouts";
-import DiscoverWorkouts from "../Programs/DiscoverWorkouts";
-import CreateProgram from "../../pages/CreateProgram";
+import MyPrograms from "../../../pages/MyPrograms";
+import DiscoverProgram from "../../../pages/DiscoverProgram";
+import CreateProgram from "../../../pages/CreateProgram";
 
 const SideBar = () => {
   const [selectedOption, setSelectedOption] = useState("myPrograms");
@@ -26,7 +26,7 @@ const SideBar = () => {
   return (
     <div className="flex flex-row h-screen">
       <div
-        className={`h-screen transition-all duration-300 transform border-solid border-r-[1px] border-slate-700 ${
+        className={`h-screen transition-all duration-300 transform ${
           barOpen ? "w-1/6 " : "w-[60px]"
         }`}
         style={{ minWidth: barOpen ? "250px" : "60px" }}
@@ -40,21 +40,28 @@ const SideBar = () => {
           onClick={() => handleOptionClick("myPrograms")}
           desc={barOpen && "My Programs"}
           image={<RiFileList2Line />}
-          className={selectedOption === "myPrograms" ? "bg-slate-100" : ""}
+          className={
+            selectedOption === "myPrograms" &&
+            "bg-slate-100 border-solid border-r-[1px] border-slate-700"
+          }
         />
         <SideBarSelector
           onClick={() => handleOptionClick("discoverPrograms")}
           desc={barOpen && "Discover New Programs"}
           image={<RiAddLine />}
           className={
-            selectedOption === "discoverPrograms" ? "bg-slate-100" : ""
+            selectedOption === "discoverPrograms" &&
+            "bg-slate-100 border-solid border-r-[1px] border-slate-700"
           }
         />
         <SideBarSelector
           onClick={() => handleOptionClick("createProgram")}
           desc={barOpen && "Create New Program"}
           image={<RiCompassDiscoverLine />}
-          className={selectedOption === "createProgram" ? "bg-slate-100" : ""}
+          className={
+            selectedOption === "createProgram" &&
+            "bg-slate-100 border-solid border-r-[1px] border-slate-700"
+          }
         />
       </div>
       <div
@@ -62,8 +69,8 @@ const SideBar = () => {
           selectedOption === "createProgram" && "justify-center"
         }`}
       >
-        {selectedOption === "myPrograms" && <MyWorkouts />}
-        {selectedOption === "discoverPrograms" && <DiscoverWorkouts />}
+        {selectedOption === "myPrograms" && <MyPrograms />}
+        {selectedOption === "discoverPrograms" && <DiscoverProgram />}
         {selectedOption === "createProgram" && <CreateProgram />}
       </div>
     </div>

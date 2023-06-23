@@ -32,8 +32,8 @@ const TopBar = (props) => {
           <Link to="/" className="self-center pr-4 ">
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
-          <TopLink link="/" name="Progress" />
-          <TopLink link="/WorkoutCreation" name="Programs" />
+          <TopLink link="/Progress" name="Progress" />
+          <TopLink link="/Programs" name="Programs" />
         </div>
         <div
           className="flex items-center mt-1 h-1/2 cursor-pointer py-6"
