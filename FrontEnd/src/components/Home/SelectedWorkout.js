@@ -18,10 +18,10 @@ const SelectedWorkout = (props) => {
 
   return (
     <div
-      className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[2] bg-white w-[50%] pb-[20px] max-w-[500px] p-[40px]"
+      className="fixed rounded-xl top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-[2] bg-white w-[80%] pb-[20px] p-[40px] border-solid border-l-8 border-slate-700"
       ref={modalRef}
     >
-      <p className="text-3xl">{props.workout.Name}</p>
+      <p className="text-3xl font-semibold">{props.workout.Name}</p>
       {props.workout.Exercises.map((exercise) => {
         return <Exercise exercise={exercise} />;
       })}

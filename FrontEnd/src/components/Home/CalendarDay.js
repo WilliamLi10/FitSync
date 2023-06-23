@@ -1,6 +1,7 @@
 import { useState } from "react";
 import moment from "moment";
 import SelectedWorkout from "./SelectedWorkout";
+import CalendarWorkout from "./CalendarWorkout";
 
 const CalendarDay = (props) => {
   const isToday = moment(moment().toISOString()).isSame(props.date, "day");
@@ -15,7 +16,32 @@ const CalendarDay = (props) => {
     setModal(false);
   };
 
-  const workout = {};
+  const workout = {
+    Name: "Workout 1",
+    ID: { $numberInt: "1" },
+    Exercises: [
+      {
+        Name: "Exercise 1",
+        Description: "Description for Exercise 1",
+        Weight: 50,
+        Sets: 3,
+        Reps: 10,
+        Rest: 60,
+        TimeUnit: 2,
+        Notes: "Notes for Exercise 1",
+      },
+      {
+        Name: "Exercise 2",
+        Description: "Description for Exercise 2",
+        Weight: 70,
+        Sets: 4,
+        Reps: 12,
+        Rest: 90,
+        TimeUnit: 2,
+        Notes: "Notes for Exercise 2",
+      },
+    ],
+  };
 
   return (
     <div
@@ -42,13 +68,9 @@ const CalendarDay = (props) => {
       <div className="h-[90%]">
         {modal && <SelectedWorkout close={closeModal} workout={workout} />}
         {modal && (
-          <div className="fixed top-[0] left-[0] w-[100%] h-[100%] bg-black opacity-[0.5] z-[1]" />
+          <div className="fixed top-[0] left-[0] w-[100%] h-[100%] bg-black opacity-[0.2] z-[1] transition duration-500" />
         )}
-        {workout && (
-          <div onClick={openModal} className="cursor-pointer">
-            {workout.Name}
-          </div>
-        )}
+        {workout && <CalendarWorkout open={openModal} workout={workout} />}
       </div>
     </div>
   );

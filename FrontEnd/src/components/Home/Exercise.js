@@ -10,7 +10,11 @@ const Exercise = (props) => {
   return (
     <div className="my-10 text-lg">
       <p onClick={dropHandler}>
-        <i className="border-solid border-black border-t-[2px] border-r-[2px] border-l-[0px] border-b-[0px] p-[3px] mb-[3px] rotate-[135deg] inline-block"/>
+        <i
+          className={`border-solid border-black border-t-[2px] border-r-[2px] border-l-[0px] border-b-[0px] p-[3px] mb-[3px] inline-block ${
+            drop ? "rotate-[135deg]" : "rotate-[45deg]"
+          } `}
+        />
         {` ${props.exercise.Name}`}
       </p>
       {drop && (

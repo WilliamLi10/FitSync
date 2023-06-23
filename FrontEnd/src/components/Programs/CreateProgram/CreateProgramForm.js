@@ -66,7 +66,7 @@ const CreateProgramForm = (props) => {
   };
 
   const inputCSS =
-    "border-solid border-black border-opacity-50 mt-16 px-[8px] transition focus:outline-none focus:border-slate-700";
+    "border-solid border-black border-opacity-50 mt-16 px-[8px] transition bg-slate-100 focus:outline-none focus:border-slate-700";
 
   const asteriskCSS = "text-red-500 ml-1 h-0";
 
