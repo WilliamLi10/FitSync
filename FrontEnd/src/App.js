@@ -3,8 +3,9 @@ import { Route, Routes } from "react-router-dom";
 
 import TopBar from "./components/TopBar/TopBar";
 import "tailwindcss/tailwind.css";
-import WorkoutDisplay from "./components/MainPage/WorkoutDisplay";
-import WorkoutCreator from "./components/Programs/PlanDisplay";
+import Home from "./pages/Home";
+import SideBar from "./components/Programs/SideBar/SideBar";
+import Progress from "./pages/Progress";
 
 function App() {
   const [user, setUser] = useState({
@@ -20,11 +21,12 @@ function App() {
           path="/"
           element={
             <div className="flex flex-col h-screen ">
-              <WorkoutDisplay className="flex flex-row h-screen w-screen" />
+              <Home />
             </div>
           }
         />
-        <Route path="/WorkoutCreation"element = {<WorkoutCreator />}/>
+        <Route path="/Programs" element={<SideBar />} />
+        <Route path="/Progress" element={<Progress />} />
       </Routes>
     </div>
   );
