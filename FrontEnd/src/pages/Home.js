@@ -1,9 +1,11 @@
 import { useState } from "react";
 import moment from "moment";
-import Calendar from "../components/Home/Calendar";
+import Calendar from "../components/Home/Calendar/Calendar";
 import MiniCalendar from "../components/Home/MiniCalendar/MiniCalendar";
+import Dashboard from "../components/Home/Dashboard";
+import Task from "../components/Home/Task";
 
-const Home = (props) => {
+const Home = () => {
   const getWeekRange = (day) => {
     const end = day.clone().endOf("week");
     const dates = [];
@@ -23,16 +25,34 @@ const Home = (props) => {
     return dates;
   };
 
+  const getDate = (date) => {
+    return `${date.format("dddd")}, ${date.format("MMMM")} ${date.format(
+      "DD"
+    )}, ${date.format("YYYY")}`;
+  };
+
   const [week, setWeek] = useState(getWeekRange(moment()));
+  const [day, setDay] = useState(getDate(moment()));
 
   const weekHandler = (date) => {
     setWeek(getWeekRange(moment(date)));
+    setDay(getDate(moment(date)));
   };
 
   return (
-    <div className="flex flex-row h-screen w-screen">
-      <MiniCalendar weekHandler={weekHandler} />
-      <Calendar week={week} />
+    <div className="flex flex-col h-screen w-screen bg-gray-50 px-10 py-5 min-w-[1200px]">
+      <div>
+        <Dashboard />
+      </div>
+      <div className="flex flex-row flex-grow">
+        <div className="flex flex-col">
+          <MiniCalendar weekHandler={weekHandler} />
+          <Task
+            day={day}
+          />
+        </div>
+        <Calendar week={week} />
+      </div>
     </div>
   );
 };

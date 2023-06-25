@@ -1,6 +1,6 @@
 import { useState } from "react";
 import moment from "moment";
-import SelectedWorkout from "./SelectedWorkout";
+import SelectedWorkout from "../DailyView/SelectedWorkout";
 import CalendarWorkout from "./CalendarWorkout";
 
 const CalendarDay = (props) => {
@@ -16,36 +16,11 @@ const CalendarDay = (props) => {
     setModal(false);
   };
 
-  const workout = {
-    Name: "Workout 1",
-    ID: { $numberInt: "1" },
-    Exercises: [
-      {
-        Name: "Exercise 1",
-        Description: "Description for Exercise 1",
-        Weight: 50,
-        Sets: 3,
-        Reps: 10,
-        Rest: 60,
-        TimeUnit: 2,
-        Notes: "Notes for Exercise 1",
-      },
-      {
-        Name: "Exercise 2",
-        Description: "Description for Exercise 2",
-        Weight: 70,
-        Sets: 4,
-        Reps: 12,
-        Rest: 90,
-        TimeUnit: 2,
-        Notes: "Notes for Exercise 2",
-      },
-    ],
-  };
+  const workout = {};
 
   return (
     <div
-      className={`h-screen w-[14.28%] my-2 border-gray border-solid min-w-[100px] ${
+      className={`w-[14.28%] h-full my-2 border-gray border-solid ${
         props.dayOfWeek !== "Saturday" ? "border-r-[1px]" : ""
       }`}
     >
@@ -70,7 +45,7 @@ const CalendarDay = (props) => {
         {modal && (
           <div className="fixed top-[0] left-[0] w-[100%] h-[100%] bg-black opacity-[0.2] z-[1] transition duration-500" />
         )}
-        {workout && <CalendarWorkout open={openModal} workout={workout} />}
+        {Object.keys(workout).length !== 0 && <CalendarWorkout open={openModal} workout={workout} />}
       </div>
     </div>
   );
