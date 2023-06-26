@@ -34,7 +34,6 @@ const CreateProgram = () => {
 
   const formNext = (formData) => {
     setCurr("workout");
-    console.log(formData);
     setData({ type: "form", data: formData });
   };
 

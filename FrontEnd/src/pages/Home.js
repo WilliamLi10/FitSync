@@ -3,7 +3,7 @@ import moment from "moment";
 import Calendar from "../components/Home/Calendar/Calendar";
 import MiniCalendar from "../components/Home/MiniCalendar/MiniCalendar";
 import Dashboard from "../components/Home/Dashboard";
-import Task from "../components/Home/Task";
+import Task from "../components/Home/Task/Task";
 
 const Home = () => {
   const getWeekRange = (day) => {
@@ -26,9 +26,7 @@ const Home = () => {
   };
 
   const getDate = (date) => {
-    return `${date.format("dddd")}, ${date.format("MMMM")} ${date.format(
-      "DD"
-    )}, ${date.format("YYYY")}`;
+    return date.toISOString();
   };
 
   const [week, setWeek] = useState(getWeekRange(moment()));
@@ -47,9 +45,7 @@ const Home = () => {
       <div className="flex flex-row flex-grow">
         <div className="flex flex-col">
           <MiniCalendar weekHandler={weekHandler} />
-          <Task
-            day={day}
-          />
+          <Task day={day} />
         </div>
         <Calendar week={week} />
       </div>
