@@ -6,6 +6,7 @@ import "tailwindcss/tailwind.css";
 import Home from "./pages/Home";
 import SideBar from "./components/Programs/SideBar/SideBar";
 import Progress from "./pages/Progress";
+import LogWorkout from "./pages/LogWorkout";
 
 function App() {
   const [user, setUser] = useState({
@@ -27,6 +28,7 @@ function App() {
         />
         <Route path="/Programs" element={<SideBar />} />
         <Route path="/Progress" element={<Progress />} />
+        <Route path="/LogWorkout" element={<LogWorkout />} />
       </Routes>
     </div>
   );

@@ -33,6 +33,7 @@ const TopBar = (props) => {
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
           <TopLink link="/" name="Dashboard" />
+          <TopLink link="/LogWorkout" name="Log Workout"/>
           <TopLink link="/Progress" name="Progress" />
           <TopLink link="/Programs" name="Programs" />
         </div>

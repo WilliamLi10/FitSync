@@ -1,10 +1,11 @@
+import { useState } from "react";
 import moment from "moment";
-import CalendarWorkout from "./CalendarWorkout";
+import Exercise from "../components/LogWorkout/Exercise";
 
-const CalendarDay = (props) => {
-  const isToday = moment(moment().toISOString()).isSame(props.date, "day");
+const LogWorkout = () => {
+  const [day, setDay] = useState(moment());
 
-  const workout = {
+  const [workout, setWorkout] = useState({
     Name: "Workout 1",
     ID: 1,
     Date: "Monday, June 26, 2023",
@@ -50,37 +51,21 @@ const CalendarDay = (props) => {
         Notes: "Notes for Exercise 4",
       },
     ],
-  };
+  });
 
   return (
-    <div
-      className={`w-[14.28%] h-full my-2 border-gray border-solid ${
-        props.dayOfWeek !== "Saturday" ? "border-r-[1px]" : ""
-      }`}
-    >
-      <div className="h-[70px] text-center border-b-[1px] border-gray border-solid">
-        <div
-          className={`text-1xl font-light  ${
-            isToday ? "text-slate-700" : "text-gray-500"
-          }`}
-        >
-          {props.dayOfWeek.slice(0, 3).toUpperCase()}
-        </div>
-        <div
-          className={`text-2xl ${
-            isToday ? "text-white bg-slate-700 rounded-full" : "text-gray-500"
-          }`}
-        >
-          {parseInt(props.day)}
-        </div>
+    <div className="bg-gray-50 h-screen w-screen px-10 py-5 min-w-[500px]">
+      <div className="bg-white mb-5 px-4 py-3 shadow-sm rounded-md w-full">
+        <div className="font-thin">{`${day.format("dddd")}, ${day.format(
+          "MMMM"
+        )} ${day.format("DD")}, ${day.format("YYYY")}`}</div>
+        <div className="text-2xl font-semibold">{workout.Name}</div>
       </div>
-      <div className="h-[90%]">
-        {Object.keys(workout).length !== 0 && (
-          <CalendarWorkout workout={workout} />
-        )}
-      </div>
+      {workout.Exercises.map((exercise) => {
+        return <Exercise exercise={exercise} />;
+      })}
     </div>
   );
 };
 
-export default CalendarDay;
+export default LogWorkout;

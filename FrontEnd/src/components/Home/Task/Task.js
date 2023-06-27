@@ -34,6 +34,26 @@ const Task = (props) => {
         TimeUnit: 2,
         Notes: "Notes for Exercise 2",
       },
+      {
+        Name: "Exercise 3",
+        Description: "Description for Exercise 1",
+        Weight: 50,
+        Sets: 3,
+        Reps: 10,
+        Rest: 60,
+        TimeUnit: 2,
+        Notes: "Notes for Exercise 3",
+      },
+      {
+        Name: "Exercise 4",
+        Description: "Description for Exercise 2",
+        Weight: 70,
+        Sets: 4,
+        Reps: 12,
+        Rest: 90,
+        TimeUnit: 2,
+        Notes: "Notes for Exercise 4",
+      },
     ],
   });
 
@@ -75,7 +95,7 @@ const Task = (props) => {
   return (
     <div className="bg-white mt-5 flex-grow rounded-md p-4">
       <div className="flex flex-row justify-between border-solid border-b-[1px] pb-2">
-        <div>{day.dayStr}</div>
+        <div className="font-thin">{day.dayStr}</div>
         <div className="flex flex-row pt-1">
           <div
             className="w-3 h-3 border-solid border-l-4 border-t-4 border-black opacity-[17%] -rotate-45 cursor-pointer hover:opacity-[30%]"
@@ -87,7 +107,7 @@ const Task = (props) => {
           />
         </div>
       </div>
-      <div>
+      <div className="overflow-y-auto max-h-[420px]">
         {Object.keys(tasks).length === 0 ? (
           <div>No workouts</div>
         ) : (
