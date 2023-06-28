@@ -55,16 +55,20 @@ const LogWorkout = () => {
 
   return (
     <div className="bg-gray-50 h-screen w-screen px-10 py-5 min-w-[500px]">
-      <div className="bg-white mb-5 px-4 py-3 shadow-sm rounded-md w-full">
-        <div className="font-thin">{`${day.format("dddd")}, ${day.format(
-          "MMMM"
-        )} ${day.format("DD")}, ${day.format("YYYY")}`}</div>
-        <div className="text-2xl font-semibold">{workout.Name}</div>
+      <div className="bg-white mb-5 px-4 py-3 shadow-sm rounded-md w-full flex flex-row">
+        <div>
+          <div className="font-thin">{`${day.format("dddd")}, ${day.format(
+            "MMMM"
+          )} ${day.format("DD")}, ${day.format("YYYY")}`}</div>
+          <div className="text-2xl font-semibold">{workout.Name}</div>
+        </div>
+        <button className="border-solid border-[1px] border-black border-opacity-[35%] px-5 py-2 text-black hover:bg-slate-200 my-auto ml-auto mr-5">
+          Save
+        </button>
       </div>
       {workout.Exercises.map((exercise) => {
         return <Exercise exercise={exercise} />;
       })}
-      <button className="border-solid border-[1px] border-opacity-50 px-5 py-2 bg-slate-700 text-white hover:bg-slate-500 mb-5 ml-auto">Save</button>
     </div>
   );
 };
