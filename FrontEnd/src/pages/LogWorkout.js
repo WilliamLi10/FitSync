@@ -64,6 +64,7 @@ const LogWorkout = () => {
       {workout.Exercises.map((exercise) => {
         return <Exercise exercise={exercise} />;
       })}
+      <button className="border-solid border-[1px] border-opacity-50 px-5 py-2 bg-slate-700 text-white hover:bg-slate-500 mb-5 ml-auto">Save</button>
     </div>
   );
 };
