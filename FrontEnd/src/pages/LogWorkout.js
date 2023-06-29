@@ -1,9 +1,18 @@
-import { useState } from "react";
+import { useState, useReducer } from "react";
 import moment from "moment";
 import Exercise from "../components/LogWorkout/Exercise";
 
+const dataReducer = (state, action) => {
+  switch (action.type) {
+    default:
+      return state;
+  }
+};
+
 const LogWorkout = () => {
   const [day, setDay] = useState(moment());
+
+  const [data, setData] = useReducer(dataReducer, {});
 
   const [workout, setWorkout] = useState({
     Name: "Workout 1",
@@ -54,22 +63,22 @@ const LogWorkout = () => {
   });
 
   return (
-    <div className="bg-gray-50 h-screen w-screen px-10 py-5 min-w-[500px]">
-      <div className="bg-white mb-5 px-4 py-3 shadow-sm rounded-md w-full flex flex-row">
-        <div>
-          <div className="font-thin">{`${day.format("dddd")}, ${day.format(
-            "MMMM"
-          )} ${day.format("DD")}, ${day.format("YYYY")}`}</div>
-          <div className="text-2xl font-semibold">{workout.Name}</div>
-        </div>
-        <button className="border-solid border-[1px] border-black border-opacity-[35%] px-5 py-2 text-black hover:bg-slate-200 my-auto ml-auto mr-5">
-          Save
-        </button>
+    <form className="bg-gray-50 min-h-screen w-screen px-10 py-5 min-w-[700px] mt-16">
+      <div className="bg-white mb-5 px-4 py-3 shadow-sm rounded-md w-full flex flex-col">
+        <div className="font-thin">{`${day.format("dddd")}, ${day.format(
+          "MMMM"
+        )} ${day.format("DD")}, ${day.format("YYYY")}`}</div>
+        <div className="text-2xl font-semibold">{workout.Name}</div>
       </div>
       {workout.Exercises.map((exercise) => {
         return <Exercise exercise={exercise} />;
       })}
-    </div>
+      <div className="flex flex-row justify-end">
+        <button className="px-5 py-2 text-white bg-slate-700 text-2xl font-thin hover:bg-slate-500 mb-10 mt-5">
+          Save
+        </button>
+      </div>
+    </form>
   );
 };
 

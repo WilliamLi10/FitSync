@@ -24,9 +24,9 @@ const SideBar = () => {
   };
 
   return (
-    <div className="flex flex-row h-screen">
+    <div className="fixed top-0 left-0 flex flex-row h-screen mt-16 w-screen">
       <div
-        className={`h-screen transition-all duration-300 transform ${
+        className={`h-screen transition-all duration-300 transform shadow-sm ${
           barOpen ? "w-1/6 " : "w-[60px]"
         }`}
         style={{ minWidth: barOpen ? "250px" : "60px" }}
@@ -64,11 +64,7 @@ const SideBar = () => {
           }
         />
       </div>
-      <div
-        className={`h-screen w-screen flex ${
-          selectedOption === "createProgram" && "justify-center"
-        }`}
-      >
+      <div className={`h-screen flex-grow`}>
         {selectedOption === "myPrograms" && <MyPrograms />}
         {selectedOption === "discoverPrograms" && <DiscoverProgram />}
         {selectedOption === "createProgram" && <CreateProgram />}

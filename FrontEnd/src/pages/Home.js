@@ -38,7 +38,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-gray-50 px-10 py-5 min-w-[1200px]">
+    <div className="flex flex-col h-screen w-screen bg-gray-50 px-10 py-5 min-w-[1200px] mt-16">
       <div>
         <Dashboard />
       </div>

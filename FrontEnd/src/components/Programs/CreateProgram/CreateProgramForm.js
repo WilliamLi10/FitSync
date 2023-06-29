@@ -6,7 +6,7 @@ const formReducer = (state, action) => {
       return {
         ...state,
         title: { value: action.val, valid: action.val !== "" },
-        next: action.val !== "" && state.dur.valid && state.freq.valid,
+        next: action.val !== "" && state.dur.valid,
       };
     case "desc":
       return {
@@ -20,19 +20,12 @@ const formReducer = (state, action) => {
         next:
           Number.isInteger(parseFloat(action.val)) &&
           parseFloat(action.val) > 0 &&
-          state.title.valid &&
-          state.freq.valid,
+          state.title.valid,
       };
     case "freq":
       return {
         ...state,
-        freq: { value: action.val, valid: action.val !== "" },
-        next:
-          Number.isInteger(parseFloat(action.val)) &&
-          parseFloat(action.val) > 0 &&
-          parseFloat(action.val) < 8 &&
-          state.dur.valid &&
-          state.title.valid,
+        freq: { value: action.val },
       };
     default:
       return state;
@@ -65,63 +58,70 @@ const CreateProgramForm = (props) => {
     props.pageHandler(form);
   };
 
-  const inputCSS =
-    "border-solid border-black border-opacity-50 mt-16 px-[8px] transition bg-slate-100 focus:outline-none focus:border-slate-700";
-
-  const asteriskCSS = "text-red-500 ml-1 h-0";
-
   return (
-    <form className="flex flex-col w-[50%] min-w-[500px] px-4">
-      <h1 className="text-2xl font-md mt-10 text-center">Create a Program</h1>
-      <div className="flex items-center">
-        <input
-          placeholder="Title"
-          value={form.title.value}
-          onChange={titleHandler}
-          className={`${inputCSS} w-full border-b-[1px] focus:border-b-2`}
-        />
-        <span className={asteriskCSS}>*</span>
+    <form className="bg-white m-auto mt-24 shadow-sm rounded-md flex flex-col px-16 py-16 w-[50%] min-w-[500px]">
+      <h1 className="text-2xl mb-8">Create a Program</h1>
+      <div className="flex flex-row mb-5 w-full">
+        <div className="flex flex-col mr-5 w-1/3">
+          <label className="font-thin">Title</label>
+          <input
+            value={form.title.value}
+            onChange={titleHandler}
+            className="h-8 p-1 bg-slate-50"
+            type="text"
+          />
+        </div>
+        <div className="flex flex-col mr-5 w-1/3">
+          <label className="font-thin">Frequency</label>
+          <select
+            className="h-8 p-1 bg-slate-50"
+            value={form.freq.value}
+            onChange={freqHandler}
+          >
+            <option value="1" className="">
+              Once a week
+            </option>
+            <option value="2">Twice a week</option>
+            <option value="3">Three times a week</option>
+            <option value="4">Four times a week</option>
+            <option value="5">Five times a week</option>
+            <option value="6">Six times a week</option>
+            <option value="7">Every day</option>
+          </select>
+        </div>
+        <div className="flex flex-col w-1/6">
+          <label className="font-thin">Weeks</label>
+          <input
+            value={form.dur.value}
+            onChange={durHandler}
+            type="number"
+            min="1"
+            step="1"
+            className="h-8 p-1 bg-slate-50"
+          />
+        </div>
       </div>
-      <textarea
-        placeholder="Description"
-        value={form.desc.value}
-        onChange={descHandler}
-        className={`${inputCSS} border-solid border-black mt-16 w-full border-[1px] h-16 focus:ring-transparent focus:border-2`}
-      />
-      <div className="flex w-full items-center">
-        <input
-          placeholder="Duration (in Weeks)"
-          value={form.dur.value}
-          onChange={durHandler}
-          type="number"
-          min="1"
-          step="1"
-          className={`${inputCSS} w-[50%] border-0 border-b-[1px] focus:border-b-2 focus:ring-transparent`}
+      <div className="flex flex-col mb-10">
+        <label className="font-thin">Description</label>
+        <textarea
+          value={form.desc.value}
+          onChange={descHandler}
+          className="p-1 h-36 bg-slate-50"
         />
-        <span className={asteriskCSS}>*</span>
-        <input
-          placeholder="Frequency (Days per Week)"
-          value={form.freq.value}
-          onChange={freqHandler}
-          type="number"
-          min="1"
-          max="7"
-          step="1"
-          className={`${inputCSS} w-[50%] border-0 border-b-[1px] focus:border-b-2 focus:ring-transparent `}
-        />
-        <span className={asteriskCSS}>*</span>
       </div>
-      <button
-        className={`border-solid border-[1px] border-opacity-50 px-5 py-2 mt-16 ml-auto mr-10 ${
-          form.next
-            ? "border-none bg-slate-700 text-white hover:bg-slate-500"
-            : "border-black"
-        }`}
-        disabled={!form.next}
-        onClick={nextHandler}
-      >
-        Next
-      </button>
+      <div className="flex flex-row justify-end">
+        <button
+          disabled={!form.next}
+          onClick={nextHandler}
+          className={`transition-all duration-300 px-4 py-2 ${
+            form.next
+              ? "bg-slate-700 text-white hover:bg-slate-600"
+              : "bg-white text-black border-solid border-[1px] border-[#6B7280]"
+          }`}
+        >
+          Next
+        </button>
+      </div>
     </form>
   );
 };

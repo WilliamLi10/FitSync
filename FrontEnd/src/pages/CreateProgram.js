@@ -26,7 +26,7 @@ const CreateProgram = () => {
       title: { value: "", valid: false },
       desc: { value: "" },
       dur: { value: "", valid: false },
-      freq: { value: "", valid: false },
+      freq: { value: "" },
       next: false,
     },
     workout: {},
@@ -43,14 +43,14 @@ const CreateProgram = () => {
   };
 
   return (
-    <>
+    <div className="bg-gray-50 w-full h-full flex justify-center">
       {curr === "form" && (
         <CreateProgramForm pageHandler={formNext} data={data.form} />
       )}
       {curr === "workout" && (
         <CreateProgramWorkout pageHandler={workoutPrev} data={data.workout} />
       )}
-    </>
+    </div>
   );
 };
 
