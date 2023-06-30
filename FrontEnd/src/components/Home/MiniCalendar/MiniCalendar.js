@@ -12,7 +12,7 @@ const MiniCalendar = (props) => {
   };
 
   return (
-    <div className="m-8">
+    <div className="bg-white rounded-md p-2 shadow-sm">
       <DatePicker
         selected={date}
         onChange={dateHandler}

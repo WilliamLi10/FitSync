@@ -27,11 +27,13 @@ const TopBar = (props) => {
 
   return (
     <>
-      <nav className="w-screen h-16 flex justify-between gap-4 text-md pl-[1.2rem] pr-10">
+      <nav className="fixed top-0 left-0 bg-white w-screen h-16 flex justify-between gap-4 text-md pl-[1.2rem] pr-10 shadow-sm z-10">
         <div className="h-full flex">
           <Link to="/" className="self-center pr-4 ">
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
+          <TopLink link="/" name="Dashboard" />
+          <TopLink link="/LogWorkout" name="Log Workout"/>
           <TopLink link="/Progress" name="Progress" />
           <TopLink link="/Programs" name="Programs" />
         </div>
