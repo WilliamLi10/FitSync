@@ -67,18 +67,18 @@ const CreateProgramForm = (props) => {
           <input
             value={form.title.value}
             onChange={titleHandler}
-            className="h-8 p-1 bg-slate-50"
+            className="h-8 p-1 bg-slate-50 border-slate-300 focus:border-none"
             type="text"
           />
         </div>
         <div className="flex flex-col mr-5 w-1/3">
           <label className="font-thin">Frequency</label>
           <select
-            className="h-8 p-1 bg-slate-50"
+            className="h-8 p-1 bg-slate-50 border-slate-300 focus:border-none"
             value={form.freq.value}
             onChange={freqHandler}
           >
-            <option value="1" className="">
+            <option value="1">
               Once a week
             </option>
             <option value="2">Twice a week</option>
@@ -97,7 +97,7 @@ const CreateProgramForm = (props) => {
             type="number"
             min="1"
             step="1"
-            className="h-8 p-1 bg-slate-50"
+            className="h-8 p-1 bg-slate-50 border-slate-300 focus:border-none"
           />
         </div>
       </div>
@@ -106,7 +106,7 @@ const CreateProgramForm = (props) => {
         <textarea
           value={form.desc.value}
           onChange={descHandler}
-          className="p-1 h-36 bg-slate-50"
+          className="p-1 h-36 bg-slate-50 border-slate-300 focus:border-none"
         />
       </div>
       <div className="flex flex-row justify-end">

@@ -43,7 +43,7 @@ const CreateProgram = () => {
   };
 
   return (
-    <div className="bg-gray-50 w-full h-full flex justify-center">
+    <div className="bg-gray-50 h-full flex justify-center">
       {curr === "form" && (
         <CreateProgramForm pageHandler={formNext} data={data.form} />
       )}
