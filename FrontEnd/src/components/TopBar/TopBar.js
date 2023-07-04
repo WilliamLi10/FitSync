@@ -36,6 +36,7 @@ const TopBar = (props) => {
           <TopLink link="/LogWorkout" name="Log Workout"/>
           <TopLink link="/Progress" name="Progress" />
           <TopLink link="/Programs" name="Programs" />
+          <TopLink link="/ProgramView" name="Program View Test"/>
         </div>
         <div
           className="flex items-center mt-1 h-1/2 cursor-pointer py-6"
