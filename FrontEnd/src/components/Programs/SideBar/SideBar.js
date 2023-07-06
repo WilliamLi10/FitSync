@@ -48,7 +48,7 @@ const SideBar = () => {
         <SideBarSelector
           onClick={() => handleOptionClick("discoverPrograms")}
           desc={barOpen && "Discover New Programs"}
-          image={<RiAddLine />}
+          image={<RiCompassDiscoverLine />}
           className={
             selectedOption === "discoverPrograms" &&
             "bg-slate-100 border-solid border-r-[1px] border-slate-700"
@@ -57,7 +57,7 @@ const SideBar = () => {
         <SideBarSelector
           onClick={() => handleOptionClick("createProgram")}
           desc={barOpen && "Create New Program"}
-          image={<RiCompassDiscoverLine />}
+          image={<RiAddLine />}
           className={
             selectedOption === "createProgram" &&
             "bg-slate-100 border-solid border-r-[1px] border-slate-700"

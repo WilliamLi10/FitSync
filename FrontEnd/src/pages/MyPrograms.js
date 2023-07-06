@@ -1,6 +1,15 @@
+import { useState } from "react";
+import { RiAddLine } from "react-icons/ri";
 import ProgramList from "../components/Programs/MyPrograms/ProgramList";
+import ProgramView from "../components/Programs/MyPrograms/ProgramView";
 
 const MyPrograms = () => {
+  const [view, setView] = useState(false);
+
+  const viewHandler = () => {
+    setView((prevView) => !prevView);
+  };
+
   const programs = [
     {
       _id: "648652e80bdb9320b08881cc",
@@ -119,8 +128,20 @@ const MyPrograms = () => {
 
   return (
     <div className="bg-gray-50 w-full h-full px-5 py-5">
-      <ProgramList programs={programs} type="Favorite" />
-      <ProgramList programs={programs} type="Recent" />
+      {view ? (
+        <ProgramView close={viewHandler} />
+      ) : (
+        <div>
+          <button
+            className="flex flex-row items-center text-sm font-thin bg-white rounded-md shadow-sm px-4 py-2 mb-5 border-solid border-[1px] transition-all duration-300 hover:bg-gray-50"
+            onClick={viewHandler}
+          >
+            <RiAddLine /> &#160;Create New Program
+          </button>
+          <ProgramList programs={programs} type="Favorite" />
+          <ProgramList programs={programs} type="Recent" />
+        </div>
+      )}
     </div>
   );
 };
