@@ -1,49 +1,51 @@
+import { useState, useRef, useEffect } from "react";
+import { IoMdArrowDropdown } from "react-icons/io";
+import WorkoutDrop from "./WorkoutDrop";
+
 const Workout = (props) => {
-  const tableCSS = "flex-grow flex-col flex font-thin";
-  const titleCSS = "bg-slate-200 text-center";
-  const itemCSS =
-    "text-center border-solid border-r-[1px] border-slate-200 py-1 border-b-[1px] flex-grow";
-  const inputCSS = "border-solid border-[1px] text-center w-9";
+  const dropRef = useRef(null);
+
+  const [drop, setDrop] = useState(false);
+  const dropHandler = () => {
+    setDrop((prevDrop) => !prevDrop);
+  };
+
+  const [exercises, setExercises] = ([])
+  const [currExercises, setCurrExercises]
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropRef.current && !dropRef.current.contains(event.target)) {
+        setDrop(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dropRef]);
+
+  const itemCSS = "flex-grow text-center border-solid border-white";
 
   return (
-    <div className="min-w-[500px] mb-5">
-      <div className="font-thin cursor-pointer ">Untitled</div>
-      <div className="flex flex-row justify-between bg-white">
-        <div className={tableCSS}>
-          <div className={`${titleCSS} border-r-[1px] border-white`}>Sets</div>
-          {Array.from({ length: 5 }, (_, index) => (
-            <div className={`${itemCSS} border-l-[1px]`} key={index}>
-              {index + 1}
-            </div>
-          ))}
+    <div className="min-w-[500px] mt-5">
+      <div className="flex flex-row items-center">
+        <input
+          className="font-thin rounded-md pl-2 h-6 mb-1 bg-gray-50 border-slate-300 hover:border-solid hover:border-[1px] hover:border-slate-700 focus:border-none"
+          value="Untitled"
+          type="text"
+        />
+        <div onClick={dropHandler} className="cursor-pointer" ref={dropRef}>
+          <IoMdArrowDropdown className="ml-1 rounded-full hover:border-solid hover:border-[1px] hover:border-slate-500" />
+          {drop && <WorkoutDrop />}
         </div>
-        <div className={tableCSS}>
-          <div className={`${titleCSS} border-r-[1px] border-white`}>Reps</div>
-          {Array.from({ length: 5 }, (_, index) => (
-            <div key={index} className={itemCSS}>
-              <input className={inputCSS} />
-            </div>
-          ))}
-        </div>
-        <div className={tableCSS}>
-          <div className={`${titleCSS} border-r-[1px] border-white`}>
-            Weights
-          </div>
-          {Array.from({ length: 5 }, (_, index) => (
-            <div key={index} className={itemCSS}>
-              <input className={inputCSS} />
-            </div>
-          ))}
-        </div>
-        <div className={tableCSS}>
-          <div className={`${titleCSS} border-r-[1px] border-white`}>
-            Description
-          </div>
-          <textarea
-            className="w-full flex-grow border-b-[1px] border-t-0 border-l-0 border-r-[1px] border-slate-200 focus:ring-slate-300 focus:border-slate-200"
-            placeholder="optional"
-          />
-        </div>
+      </div>
+      <div className="flex flex-row font-thin bg-slate-200">
+        <div className={`${itemCSS} border-r-[1px]`}>Exercise</div>
+        <div className={`${itemCSS} border-r-[1px]`}>Sets</div>
+        <div className={`${itemCSS} border-r-[1px]`}>Reps</div>
+        <div className={`${itemCSS} border-r-[1px]`}>Weights</div>
+        <div className={itemCSS}>Description</div>
       </div>
     </div>
   );
