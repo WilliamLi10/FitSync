@@ -20,9 +20,7 @@ const SideBar = () => {
         setBarOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
-
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
