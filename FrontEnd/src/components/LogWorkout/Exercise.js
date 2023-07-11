@@ -1,7 +1,8 @@
 import { useState, useReducer } from "react";
+import Error from "../Error";
+import Success from "../Success";
 
 const dataReducer = (state, action) => {
-  console.log(state);
   switch (action.type) {
     case "reps":
       return {
@@ -54,13 +55,18 @@ const Exercise = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
+    for (let i = 0; i < data.reps.length; i++){
+      const rep = Number(data.rep[i])
+      const weight = Number(data.weight[i])
+    }
   };
 
-  const tableCSS = "flex-grow flex-col flex font-thin";
+  const tableCSS = "flex-col flex font-thin";
   const titleCSS = "bg-slate-200 text-center";
   const itemCSS =
     "text-center border-solid border-r-[1px] border-slate-200 py-1 border-b-[1px] flex-grow";
-  const inputCSS = "border-solid border-[1px] text-center w-9";
+  const inputCSS =
+    "border-solid border-[1px] text-center w-9 transition-all duration-150 hover:border-slate-400";
 
   return (
     <form className="min-w-[500px] mb-5" onSubmit={submitHandler}>
@@ -74,7 +80,7 @@ const Exercise = (props) => {
       </div>
       {open && (
         <div className="flex flex-row justify-between bg-white">
-          <div className={tableCSS}>
+          <div className={`${tableCSS} w-[10%]`}>
             <div className={`${titleCSS} border-r-[1px] border-white`}>
               Sets
             </div>
@@ -84,7 +90,7 @@ const Exercise = (props) => {
               </div>
             ))}
           </div>
-          <div className={tableCSS}>
+          <div className={`${tableCSS} w-[10%]`}>
             <div className={`${titleCSS} border-r-[1px] border-white`}>
               Reps
             </div>
@@ -99,9 +105,9 @@ const Exercise = (props) => {
               </div>
             ))}
           </div>
-          <div className={tableCSS}>
+          <div className={`${tableCSS} w-[10%]`}>
             <div className={`${titleCSS} border-r-[1px] border-white`}>
-              Weights
+              Weights ({props.unit.Weight})
             </div>
             {Array.from({ length: props.exercise.Sets }, (_, index) => (
               <div key={index} className={itemCSS}>
@@ -114,7 +120,17 @@ const Exercise = (props) => {
               </div>
             ))}
           </div>
-          <div className={tableCSS}>
+          <div className={`${tableCSS} w-[10%]`}>
+            <div className={`${titleCSS} border-r-[1px] border-white`}>
+              Rest ({props.unit.Rest})
+            </div>
+            {Array.from({ length: props.exercise.Sets }, (_, index) => (
+              <div className={`${itemCSS} border-r-[1px]`} key={index}>
+                {props.exercise.Rest}
+              </div>
+            ))}
+          </div>
+          <div className={`${tableCSS} w-[30%]`}>
             <div className={`${titleCSS} border-r-[1px] border-white`}>
               Notes
             </div>
@@ -124,7 +140,7 @@ const Exercise = (props) => {
               onChange={notesHandler}
             />
           </div>
-          <div className={tableCSS}>
+          <div className={`${tableCSS} w-[30%]`}>
             <div className={titleCSS}>Description</div>
             <div className="px-2 border-solid border-b-[1px] border-r-[1px] flex-grow text-gray-500">
               {props.exercise.Description}

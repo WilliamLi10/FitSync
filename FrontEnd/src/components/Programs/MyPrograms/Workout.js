@@ -8,7 +8,7 @@ const Workout = (props) => {
   const dropRef = useRef(null);
   const [drop, setDrop] = useState(false);
   const [weight, setWeight] = useState(true);
-  const [rest, setRest] = useState("min");
+  const [rest, setRest] = useState("sec");
 
   const restSwitcher = () => {
     setRest((prevRest) => {
@@ -185,7 +185,9 @@ const Workout = (props) => {
                 value={props.workout.Exercises[index].Name}
                 onChange={(event) => exerciseNameHandler(event, index)}
                 type="text"
-                className={`${inputCSS} text-center`}
+                className={`${inputCSS} text-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                }`}
               />
             </div>
           ))}
@@ -200,7 +202,9 @@ const Workout = (props) => {
                 onChange={(event) => setsHandler(event, index)}
                 type="number"
                 min="0"
-                className={`${inputCSS} text-center`}
+                className={`${inputCSS} text-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                }`}
               />
             </div>
           ))}
@@ -215,7 +219,9 @@ const Workout = (props) => {
                 onChange={(event) => repsHandler(event, index)}
                 type="number"
                 min="0"
-                className={`${inputCSS} text-center`}
+                className={`${inputCSS} text-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                }`}
               />
             </div>
           ))}
@@ -236,7 +242,9 @@ const Workout = (props) => {
                 onChange={(event) => weightsHandler(event, index)}
                 type="number"
                 min="0"
-                className={`${inputCSS} text-center`}
+                className={`${inputCSS} text-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                }`}
               />
             </div>
           ))}
@@ -254,7 +262,9 @@ const Workout = (props) => {
                 onChange={(event) => restHandler(event, index)}
                 type="number"
                 min="0"
-                className={`${inputCSS} text-center`}
+                className={`${inputCSS} text-center ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                }`}
               />
             </div>
           ))}
@@ -269,7 +279,9 @@ const Workout = (props) => {
                 onChange={(event) => descriptionHandler(event, index)}
                 placeholder="optional"
                 type="text"
-                className={`${inputCSS}`}
+                className={`${inputCSS} ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                }`}
               />
             </div>
           ))}

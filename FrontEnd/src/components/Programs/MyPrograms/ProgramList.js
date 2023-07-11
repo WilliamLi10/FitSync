@@ -16,12 +16,13 @@ const ProgramList = (props) => {
             Last Opened
           </div>
         </div>
-        {props.programs.map((program) => {
+        {props.programs.map((program, index) => {
           return (
             <ProgramItem
               program={program}
               key={program._id}
               view={props.view}
+              index={index}
             />
           );
         })}
