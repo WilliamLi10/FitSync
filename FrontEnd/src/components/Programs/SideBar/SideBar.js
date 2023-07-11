@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { RiCompassDiscoverLine, RiFileList2Line } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
 import SideBarSelector from "./SideBarSelector";
@@ -6,7 +6,7 @@ import MyPrograms from "../../../pages/MyPrograms";
 import DiscoverProgram from "../../../pages/DiscoverProgram";
 
 const SideBar = () => {
-  const sideBarRef = useRef(null);
+  const barRef = useRef(null);
 
   const [selectedOption, setSelectedOption] = useState("myPrograms");
 
@@ -14,28 +14,28 @@ const SideBar = () => {
     setSelectedOption(option); // Update the selected option
   };
 
+  const [barOpen, setBarOpen] = useState(false);
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (sideBarRef.current && !sideBarRef.current.contains(event.target)) {
+    const handleOutsideClick = (event) => {
+      if (barRef.current && !barRef.current.contains(event.target)) {
         setBarOpen(false);
       }
     };
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("click", handleOutsideClick);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
-
-  const [barOpen, setBarOpen] = useState(false);
 
   const barHandler = () => {
     setBarOpen((prevBarOpen) => !prevBarOpen);
   };
 
   return (
-    <div className="flex flex-row h-screen mt-16bar w-screen">
+    <div className="flex flex-row h-screen mt-16 w-screen">
       <div
-        ref={sideBarRef}
+        ref={barRef}
         className={`fixed top-0 left-0 mt-16 bg-white h-screen transition-all duration-300 transform shadow-sm ${
           barOpen ? "w-1/6 " : "w-[60px]"
         }`}
@@ -43,6 +43,7 @@ const SideBar = () => {
       >
         <SideBarSelector
           onClick={barHandler}
+          desc={barOpen && "Programs"}
           image={<FaBars />}
         />
         <SideBarSelector
