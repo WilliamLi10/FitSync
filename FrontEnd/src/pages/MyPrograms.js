@@ -7,66 +7,52 @@ const MyPrograms = () => {
   const [view, setView] = useState(false);
 
   const viewHandler = () => {
+    console.log("view")
     setView((prevView) => !prevView);
   };
 
   const programs = [
     {
-      _id: "648652e80bdb9320b08881cc",
-      Name: "Workout Plan 1",
-      Owner: "648652e80bdb9320b08881cd",
-      Editors: [{ $oid: "648652e80bdb9320b08881c9" }],
+      _id: "648652e80bdb9320b08881ca",
+      Name: "Morning Routine",
+      Owner: "648652e80bdb9320b08881c9",
+      Editors: [{ $oid: "648652e80bdb9320b08881cd" }],
       Viewers: [],
+      Frequency: "2",
       Workouts: [
         {
           Name: "Workout 1",
-          ID: { $numberInt: "1" },
+          ID: "1",
           Exercises: [
             {
               Name: "Exercise 1",
-              Description: "Description for Exercise 1",
-              Weight: { $numberInt: "50" },
-              Sets: { $numberInt: "3" },
-              Reps: { $numberInt: "10" },
-              Rest: { $numberInt: "60" },
-              TimeUnit: { $numberInt: "2" },
-              Notes: "Notes for Exercise 1",
+              Description: "First exercise",
+              Weight: "20",
+              Sets: "3",
+              Reps: "10",
+              Rest: "60",
             },
             {
               Name: "Exercise 2",
-              Description: "Description for Exercise 2",
-              Weight: { $numberInt: "70" },
-              Sets: { $numberInt: "4" },
-              Reps: { $numberInt: "12" },
-              Rest: { $numberInt: "90" },
-              TimeUnit: { $numberInt: "2" },
-              Notes: "Notes for Exercise 2",
+              Description: "Second exercise",
+              Weight: "30",
+              Sets: "3",
+              Reps: "10",
+              Rest: "60",
             },
           ],
         },
         {
           Name: "Workout 2",
-          ID: { $numberInt: "2" },
+          ID: "2",
           Exercises: [
             {
               Name: "Exercise 3",
-              Description: "Description for Exercise 3",
-              Weight: { $numberInt: "60" },
-              Sets: { $numberInt: "3" },
-              Reps: { $numberInt: "10" },
-              Rest: { $numberInt: "60" },
-              TimeUnit: { $numberInt: "2" },
-              Notes: "Notes for Exercise 3",
-            },
-            {
-              Name: "Exercise 4",
-              Description: "Description for Exercise 4",
-              Weight: { $numberInt: "80" },
-              Sets: { $numberInt: "5" },
-              Reps: { $numberInt: "15" },
-              Rest: { $numberInt: "120" },
-              TimeUnit: { $numberInt: "2" },
-              Notes: "Notes for Exercise 4",
+              Description: "Third exercise",
+              Weight: "50",
+              Sets: "3",
+              Reps: "10",
+              Rest: "60",
             },
           ],
         },
@@ -78,47 +64,41 @@ const MyPrograms = () => {
       Owner: "648652e80bdb9320b08881c9",
       Editors: [{ $oid: "648652e80bdb9320b08881cd" }],
       Viewers: [],
-      Frequency: { $numberInt: "2" },
+      Frequency: "2",
       Workouts: [
         {
           Name: "Workout 1",
-          ID: { $numberInt: "1" },
+          ID: "1",
           Exercises: [
             {
               Name: "Exercise 1",
               Description: "First exercise",
-              Weight: { $numberInt: "20" },
-              Sets: { $numberInt: "3" },
-              Reps: { $numberInt: "10" },
-              Rest: { $numberInt: "60" },
-              TimeUnit: "sec",
-              Notes: "Warmup",
+              Weight: "20",
+              Sets: "3",
+              Reps: "10",
+              Rest: "60",
             },
             {
               Name: "Exercise 2",
               Description: "Second exercise",
-              Weight: { $numberInt: "30" },
-              Sets: { $numberInt: "3" },
-              Reps: { $numberInt: "10" },
-              Rest: { $numberInt: "60" },
-              TimeUnit: "sec",
-              Notes: "Main",
+              Weight: "30",
+              Sets: "3",
+              Reps: "10",
+              Rest: "60",
             },
           ],
         },
         {
           Name: "Workout 2",
-          ID: { $numberInt: "2" },
+          ID: "2",
           Exercises: [
             {
               Name: "Exercise 3",
               Description: "Third exercise",
-              Weight: { $numberInt: "50" },
-              Sets: { $numberInt: "3" },
-              Reps: { $numberInt: "10" },
-              Rest: { $numberInt: "60" },
-              TimeUnit: "sec",
-              Notes: "Cool down",
+              Weight: "50",
+              Sets: "3",
+              Reps: "10",
+              Rest: "60",
             },
           ],
         },
@@ -138,8 +118,8 @@ const MyPrograms = () => {
           >
             <RiAddLine /> &#160;Create New Program
           </button>
-          <ProgramList programs={programs} type="Favorite" />
-          <ProgramList programs={programs} type="Recent" />
+          <ProgramList programs={programs} type="Favorite" view={viewHandler} />
+          <ProgramList programs={programs} type="Recent" view={viewHandler} />
         </div>
       )}
     </div>

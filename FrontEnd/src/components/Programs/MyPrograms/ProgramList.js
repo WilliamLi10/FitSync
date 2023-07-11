@@ -17,7 +17,13 @@ const ProgramList = (props) => {
           </div>
         </div>
         {props.programs.map((program) => {
-          return <ProgramItem program={program} key={program._id} />;
+          return (
+            <ProgramItem
+              program={program}
+              key={program._id}
+              view={props.view}
+            />
+          );
         })}
       </div>
     </div>

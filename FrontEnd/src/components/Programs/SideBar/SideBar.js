@@ -2,13 +2,11 @@ import { useState } from "react";
 import {
   RiCompassDiscoverLine,
   RiFileList2Line,
-  RiAddLine,
 } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
 import SideBarSelector from "./SideBarSelector";
 import MyPrograms from "../../../pages/MyPrograms";
 import DiscoverProgram from "../../../pages/DiscoverProgram";
-import CreateProgram from "../../../pages/CreateProgram";
 
 const SideBar = () => {
   const [selectedOption, setSelectedOption] = useState("myPrograms");
@@ -54,20 +52,10 @@ const SideBar = () => {
             "bg-slate-100 border-solid border-r-[1px] border-slate-700"
           }
         />
-        <SideBarSelector
-          onClick={() => handleOptionClick("createProgram")}
-          desc={barOpen && "Create New Program"}
-          image={<RiAddLine />}
-          className={
-            selectedOption === "createProgram" &&
-            "bg-slate-100 border-solid border-r-[1px] border-slate-700"
-          }
-        />
       </div>
       <div className={`h-screen flex-grow pl-[60px]`}>
         {selectedOption === "myPrograms" && <MyPrograms />}
         {selectedOption === "discoverPrograms" && <DiscoverProgram />}
-        {selectedOption === "createProgram" && <CreateProgram />}
       </div>
     </div>
   );

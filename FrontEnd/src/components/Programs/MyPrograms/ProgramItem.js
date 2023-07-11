@@ -1,6 +1,9 @@
 const ProgramItem = (props) => {
   return (
-    <div className="flex flex-row text-sm font-thin border-solid border-b-[1px] py-2 cursor-pointer transition-all duration-300 hover:bg-gray-50">
+    <div
+      className="flex flex-row text-sm font-thin border-solid border-b-[1px] py-2 cursor-pointer transition-all duration-300 hover:bg-gray-50"
+      onClick={props.view}
+    >
       <div className="w-[60%] overflow-hidden overflow-ellipsis whitespace-nowrap pr-3">
         {props.program.Name}
       </div>

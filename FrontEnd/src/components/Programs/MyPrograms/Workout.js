@@ -1,11 +1,70 @@
 import { useState, useRef, useEffect } from "react";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { TfiReload } from "react-icons/tfi";
 import { RiAddLine } from "react-icons/ri";
 import WorkoutDrop from "./WorkoutDrop";
 
 const Workout = (props) => {
   const dropRef = useRef(null);
   const [drop, setDrop] = useState(false);
+  const [weight, setWeight] = useState(true);
+  const [rest, setRest] = useState("min");
+
+  const restSwitcher = () => {
+    setRest((prevRest) => {
+      switch (prevRest) {
+        case "min":
+          props.update(
+            {
+              ...props.workout,
+              Unit: { rest: "hour", weight: weight ? "lb" : "kg" },
+            },
+            props.index
+          );
+          return "hour";
+        case "hour":
+          props.update(
+            {
+              ...props.workout,
+              Unit: { rest: "sec", weight: weight ? "lb" : "kg" },
+            },
+            props.index
+          );
+          return "sec";
+        case "sec":
+          props.update(
+            {
+              ...props.workout,
+              Unit: { rest: "min", weight: weight ? "lb" : "kg" },
+            },
+            props.index
+          );
+          return "min";
+        default:
+          props.update(
+            {
+              ...props.workout,
+              Unit: { rest: "min", weight: weight ? "lb" : "kg" },
+            },
+            props.index
+          );
+          return "min";
+      }
+    });
+  };
+
+  const weightSwitcher = () => {
+    setWeight((prevWeight) => {
+      props.update(
+        {
+          ...props.workout,
+          Unit: { weight: !prevWeight ? "lb" : "kg", rest: rest },
+        },
+        props.index
+      );
+      return !prevWeight;
+    });
+  };
 
   const dropHandler = () => {
     setDrop((prevDrop) => !prevDrop);
@@ -57,13 +116,20 @@ const Workout = (props) => {
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
+  const restHandler = (event, index) => {
+    const newExercises = [...props.workout.Exercises];
+    newExercises[index].Rest = event.target.value;
+    props.update({ ...props.workout, Exercises: newExercises }, props.index);
+  };
+
   const addExercise = () => {
     const newExercises = [...props.workout.Exercises];
     newExercises.push({
       Name: "Untitled",
-      Sets: 0,
-      Reps: 0,
-      Weight: 0,
+      Sets: "",
+      Reps: "",
+      Weight: "",
+      Rest: "",
       Description: "",
     });
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
@@ -89,12 +155,13 @@ const Workout = (props) => {
   const inputCSS = "w-full px-2 h-full border-none text-sm";
 
   return (
-    <div className="min-w-[500px] mt-5">
+    <div className="min-w-[700px] mt-5">
       <div className="flex flex-row items-center">
         <input
           className="font-thin rounded-md pl-2 h-6 mb-1 bg-gray-50 border-slate-300 hover:border-solid hover:border-[1px] hover:border-slate-700 focus:border-none"
           value={props.workout.Name}
           onChange={workoutNameHandler}
+          placeholder="Untitled"
           type="text"
         />
         <div onClick={dropHandler} className="cursor-pointer" ref={dropRef}>
@@ -132,6 +199,7 @@ const Workout = (props) => {
                 value={props.workout.Exercises[index].Sets}
                 onChange={(event) => setsHandler(event, index)}
                 type="number"
+                min="0"
                 className={`${inputCSS} text-center`}
               />
             </div>
@@ -146,13 +214,20 @@ const Workout = (props) => {
                 value={props.workout.Exercises[index].Reps}
                 onChange={(event) => repsHandler(event, index)}
                 type="number"
+                min="0"
                 className={`${inputCSS} text-center`}
               />
             </div>
           ))}
         </div>
         <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
-          <div>Weights</div>
+          <div className="flex flex-row items-center justify-center">
+            Weights ({weight ? "lb" : "kg"})&#160;
+            <TfiReload
+              className="h-3 cursor-pointer"
+              onClick={weightSwitcher}
+            />
+          </div>
           {props.workout.Exercises.map((_, index) => (
             <div key={index} className={`${itemCSS}`}>
               <input
@@ -160,12 +235,31 @@ const Workout = (props) => {
                 value={props.workout.Exercises[index].Weight}
                 onChange={(event) => weightsHandler(event, index)}
                 type="number"
+                min="0"
                 className={`${inputCSS} text-center`}
               />
             </div>
           ))}
         </div>
-        <div className={`${titleCSS} w-[40%]`}>
+        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
+          <div className="flex flex-row items-center justify-center">
+            Rest ({rest})&#160;
+            <TfiReload className="h-3 cursor-pointer" onClick={restSwitcher} />
+          </div>
+          {props.workout.Exercises.map((_, index) => (
+            <div key={index} className={`${itemCSS}`}>
+              <input
+                key={index}
+                value={props.workout.Exercises[index].Rest}
+                onChange={(event) => restHandler(event, index)}
+                type="number"
+                min="0"
+                className={`${inputCSS} text-center`}
+              />
+            </div>
+          ))}
+        </div>
+        <div className={`${titleCSS} w-[25%]`}>
           <div>Description</div>
           {props.workout.Exercises.map((_, index) => (
             <div key={index} className={`${itemCSS}`}>
