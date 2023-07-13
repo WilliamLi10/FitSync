@@ -3,8 +3,8 @@ import { BiArrowBack } from "react-icons/bi";
 import { RiAddLine } from "react-icons/ri";
 import { CiSaveDown2 } from "react-icons/ci";
 import Workout from "./Workout";
-import Error from "./Error";
-import Success from "./Success";
+import Error from "../../Error";
+import Success from "../../Success";
 
 const ProgramView = (props) => {
   const isEditor = true;

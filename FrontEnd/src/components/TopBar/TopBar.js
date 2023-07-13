@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { TbLetterW } from "react-icons/tb";
 import DropDownMenu from "./DropDownMenu";
 import TopLink from "./NavLink";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const TopBar = (props) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
+  const location = useLocation();
 
   const handleMenu = () => {
     let oldState = showMenu;
@@ -25,6 +26,10 @@ const TopBar = (props) => {
     };
   }, [menuRef]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <>
       <nav className="fixed top-0 left-0 bg-white w-screen h-16 flex justify-between gap-4 text-md pl-[1.2rem] pr-10 shadow-sm z-10">
@@ -33,7 +38,7 @@ const TopBar = (props) => {
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
           <TopLink link="/" name="Dashboard" />
-          <TopLink link="/LogWorkout" name="Log Workout"/>
+          <TopLink link="/LogWorkout" name="Log Workout" />
           <TopLink link="/Progress" name="Progress" />
           <TopLink link="/Programs" name="Programs" />
         </div>

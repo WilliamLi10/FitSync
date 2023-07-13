@@ -1,21 +1,32 @@
-import { useState } from "react";
-import {
-  RiCompassDiscoverLine,
-  RiFileList2Line,
-} from "react-icons/ri";
+import { useState, useRef, useEffect } from "react";
+import { RiCompassDiscoverLine, RiFileList2Line } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
 import SideBarSelector from "./SideBarSelector";
 import MyPrograms from "../../../pages/MyPrograms";
 import DiscoverProgram from "../../../pages/DiscoverProgram";
 
 const SideBar = () => {
+  const barRef = useRef(null);
+
   const [selectedOption, setSelectedOption] = useState("myPrograms");
 
   const handleOptionClick = (option) => {
     setSelectedOption(option); // Update the selected option
   };
 
-  const [barOpen, setBarOpen] = useState(true);
+  const [barOpen, setBarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (barRef.current && !barRef.current.contains(event.target)) {
+        setBarOpen(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
 
   const barHandler = () => {
     setBarOpen((prevBarOpen) => !prevBarOpen);
@@ -24,6 +35,7 @@ const SideBar = () => {
   return (
     <div className="flex flex-row h-screen mt-16 w-screen">
       <div
+        ref={barRef}
         className={`fixed top-0 left-0 mt-16 bg-white h-screen transition-all duration-300 transform shadow-sm ${
           barOpen ? "w-1/6 " : "w-[60px]"
         }`}
