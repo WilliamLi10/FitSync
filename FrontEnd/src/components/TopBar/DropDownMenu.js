@@ -10,7 +10,6 @@ const DropDownMenu = (props) => {
       <CgProfile />
       <li>Profile</li>
       </div>
-        
         <div className="flex items-center gap-4 hover:bg-gray-100 hover:rounded-md px-4 py-2">
           <IoSettingsOutline />
           <li>Settings</li>

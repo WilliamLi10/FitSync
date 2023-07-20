@@ -1,6 +1,6 @@
 import { useState } from "react";
 import moment from "moment";
-import Exercise from "../components/LogWorkout/Exercise";
+import Exercise from "../../components/LogWorkout/Exercise";
 
 const LogWorkout = () => {
   const [day, setDay] = useState(moment());

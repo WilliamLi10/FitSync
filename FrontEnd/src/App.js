@@ -4,8 +4,10 @@ import Error from "./pages/Error";
 import "tailwindcss/tailwind.css";
 import Home from "./pages/Home";
 import SideBar from "./components/Programs/SideBar/SideBar";
-import Progress from "./pages/Progress";
-import LogWorkout from "./pages/LogWorkout";
+import Progress from "./pages/LoggedIn/Progress";
+import LogWorkout from "./pages/LoggedIn/LogWorkout";
+import Product from "./pages/LoggedOut/Product";
+import Contact from "./pages/LoggedOut/Contact";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,8 @@ const router = createBrowserRouter([
       { path: "/Progress", element: <Progress /> },
       { path: "/LogWorkout", element: <LogWorkout /> },
       { path: "/Programs", element: <SideBar /> },
+      { path: "/Product", element: <Product /> },
+      { path: "/Contact", element: <Contact /> },
     ],
   },
 ]);

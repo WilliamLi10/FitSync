@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { RiAddLine } from "react-icons/ri";
-import ProgramList from "../components/Programs/MyPrograms/ProgramList";
-import ProgramView from "../components/Programs/MyPrograms/ProgramView";
+import ProgramList from "../../components/Programs/MyPrograms/ProgramList";
+import ProgramView from "../../components/Programs/MyPrograms/ProgramView";
 
 const MyPrograms = () => {
   const [view, setView] = useState(false);

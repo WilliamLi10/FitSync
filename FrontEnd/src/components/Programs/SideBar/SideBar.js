@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { RiCompassDiscoverLine, RiFileList2Line } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
 import SideBarSelector from "./SideBarSelector";
-import MyPrograms from "../../../pages/MyPrograms";
-import DiscoverProgram from "../../../pages/DiscoverProgram";
+import MyPrograms from "../../../pages/LoggedIn/MyPrograms";
+import DiscoverProgram from "../../../pages/LoggedIn/DiscoverProgram";
 
 const SideBar = () => {
   const barRef = useRef(null);

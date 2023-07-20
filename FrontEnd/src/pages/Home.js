@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import moment from "moment";
 import Calendar from "../components/Home/Calendar/Calendar";
 import MiniCalendar from "../components/Home/MiniCalendar/MiniCalendar";
 import Dashboard from "../components/Home/Dashboard";
 import Task from "../components/Home/Task/Task";
+import About from "./LoggedOut/About";
+import AuthContext from "../context/auth-context";
 
 const Home = () => {
+  const ctx = useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(ctx.isLoggedIn);
+
+  useEffect(() => {
+    setIsLoggedIn(ctx.isLoggedIn);
+  }, [ctx.isLoggedIn]);
+
   const getWeekRange = (day) => {
     const end = day.clone().endOf("week");
     const dates = [];
@@ -37,7 +46,7 @@ const Home = () => {
     setDay(getDate(moment(date)));
   };
 
-  return (
+  return isLoggedIn ? (
     <div className="flex flex-col h-screen w-screen bg-gray-50 px-10 py-5 min-w-[1200px] mt-16">
       <div>
         <Dashboard />
@@ -50,6 +59,8 @@ const Home = () => {
         <Calendar week={week} />
       </div>
     </div>
+  ) : (
+    <About />
   );
 };
 
