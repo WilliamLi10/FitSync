@@ -7,8 +7,9 @@ router.post("/register", (req, res) => {
   const user = req.body;
   console.log(user);
   const checkEmail = new Accounts().checkEmail(user.email);
+  console.log("Username Checked")
   const checkUserName = new Accounts().checkUserName(user.user);
-
+  console.log("Email Checked")
   Promise.all([checkEmail, checkUserName]).then(([emailExists, userExists]) => {
     if (userExists) {
       return res.json({ status: "username exists" });

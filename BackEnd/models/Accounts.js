@@ -73,6 +73,6 @@ AccountSchema.methods.addUser = (user) => {
     });
 };
 
-const Accounts = mongoose.model("Accounts", AccountSchema);
+const Accounts = mongoose.model("Accounts", AccountSchema, "Accounts");
 
 module.exports = Accounts;
