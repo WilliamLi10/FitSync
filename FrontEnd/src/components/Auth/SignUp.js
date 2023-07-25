@@ -14,6 +14,29 @@ const SignUp = (props) => {
   const submitHandler = (event) => {
     event.preventDefault();
     setSubmit(true);
+    if (user.valid && dob.valid && email.valid && pass.valid) {
+      fetch("http://localhost:5000/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user: user.value,
+          dob: dob.value,
+          email: email.value,
+          pass: pass.value,
+        }),
+      })
+        .then((response) => {
+          if (response) {
+            console.log("it works");
+            return;
+          } else {
+            throw new Error("error registering");
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
   };
 
   return (
