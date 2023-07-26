@@ -10,6 +10,8 @@ const SignUp = (props) => {
   const [email, setEmail] = useState({ value: "", valid: false });
   const [pass, setPass] = useState({ value: "", valid: false });
   const [submit, setSubmit] = useState(false);
+  const [userError, setUserError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -27,10 +29,19 @@ const SignUp = (props) => {
       })
         .then((response) => {
           if (response) {
-            console.log("it works");
-            return;
-          } else {
-            throw new Error("error registering");
+            if (!response.ok) {
+              throw new Error("Error registering");
+            }
+            return response.json();
+          }
+        })
+        .then((data) => {
+          console.log(data);
+          if (!data.success) {
+            setEmailError(data.email);
+            setEmail({ ...email, valid: !data.email });
+            setUserError(data.user);
+            setUser({ ...user, valid: !data.user });
           }
         })
         .catch((error) => {
@@ -90,6 +101,9 @@ const SignUp = (props) => {
           />
         </div>
       </div>
+      {userError && (
+        <div className="text-red-600 mt-2 w-full">Username already exists</div>
+      )}
       <div
         className={`flex flex-row items-center bg-slate-100 w-full px-4 py-2 mt-4 ${
           submit && !email.valid && "border-solid border-[1px] border-red-600"
@@ -109,6 +123,9 @@ const SignUp = (props) => {
           type="email"
         />
       </div>
+      {emailError && (
+        <div className="text-red-600 w-full mt-2">Email already exists.</div>
+      )}
       <div
         className={`flex flex-row items-center bg-slate-100 w-full px-4 py-2 mt-4 mb-4 ${
           submit && !pass.valid && "border-solid border-[1px] border-red-600"

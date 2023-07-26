@@ -7,24 +7,21 @@ router.post("/register", (req, res) => {
   const user = req.body;
   console.log(user);
   const checkEmail = new Accounts().checkEmail(user.email);
-  console.log("Username Checked")
   const checkUserName = new Accounts().checkUserName(user.user);
-  console.log("Email Checked")
+
   Promise.all([checkEmail, checkUserName]).then(([emailExists, userExists]) => {
-    if (userExists) {
-      return res.json({ status: "username exists" });
+    if (userExists || emailExists) {
+      res.json({ success: false, user: userExists, email: emailExists });
+    } else {
+      new Accounts()
+        .addUser(user)
+        .then((savedUser) => {
+          res.json({ success: true });
+        })
+        .catch((error) => {
+          throw error;
+        });
     }
-    if (emailExists) {
-      return res.json({ status: "email exists" });
-    }
-    new Accounts()
-      .addUser(user)
-      .then((savedUser) => {
-        res.json({ status: "ok" });
-      })
-      .catch((error) => {
-        throw error;
-      });
   });
 });
 
