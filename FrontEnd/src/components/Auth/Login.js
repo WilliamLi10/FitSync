@@ -1,33 +1,54 @@
-import { useReducer } from "react";
+import { useState } from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
-
-const loginReducer = (state, action) => {
-  switch (action.type) {
-    case "email":
-      return {
-        ...state,
-        email: {
-          value: action.value,
-          valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(action.value),
-        },
-      };
-    case "pass":
-      return {
-        ...state,
-        pass: { value: action.value, valid: action.value !== "" },
-      };
-    default:
-      return state;
-  }
-};
+import { getCSRF } from "../../util/auth";
+import Cookies from "js-cookie";
 
 const Login = (props) => {
-  const [login, setLogin] = useReducer(loginReducer, {
-    email: { value: "", valid: false },
-    pass: { value: "", valid: false },
-  });
+  const [email, setEmail] = useState({ value: "", valid: false });
+  const [pass, setPass] = useState({ value: "", valid: false });
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    if (email.valid && pass.valid) {
+      getCSRF()
+        .then((token) => {
+          return fetch("http://localhost:5000/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-Token": token,
+            },
+            body: JSON.stringify({
+              email: email.value,
+              pass: pass.value,
+            }),
+          });
+        })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error logging in");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          if (data.success) {
+            Cookies.set("jwt", data.token, {
+              expires: 1,
+              secure: true,
+              sameSite: "strict",
+              domain: "localhost",
+              path: "/",
+            });
+          }
+        })
+        .catch((error) => {
+          console.error("Error during login:", error);
+        });
+    }
+  };
 
   return (
     <form className="flex flex-col px-8 py-4 w-full items-center">
@@ -47,9 +68,12 @@ const Login = (props) => {
         <input
           className="pl-2 bg-slate-100 w-full border-none focus:outline-none focus:ring-0"
           placeholder="Email"
-          value={login.email.value}
+          value={email.value}
           onChange={(event) => {
-            setLogin({ type: "email", value: event.target.value });
+            setEmail({
+              value: event.target.value,
+              valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(event.target.value),
+            });
           }}
           type="email"
         />
@@ -59,9 +83,12 @@ const Login = (props) => {
         <input
           className="pl-2 bg-slate-100 w-full border-none focus:outline-none focus:ring-0"
           placeholder="Password"
-          value={login.pass.value}
+          value={pass.value}
           onChange={(event) => {
-            setLogin({ type: "pass", value: event.target.value });
+            setPass({
+              value: event.target.value,
+              valid: event.target.value !== "" && event.target.value !== null,
+            });
           }}
           type="password"
         />
@@ -77,7 +104,11 @@ const Login = (props) => {
           Create account
         </div>
       </div>
-      <button className="border-solid border-[1px] w-[60%] rounded-full border-slate-700 text-sm mt-4 px-4 py-2 transition-all duration-150 mb-4 hover:border-slate-700 hover:bg-slate-700 hover:text-white">
+      <button
+        className="border-solid border-[1px] w-[60%] rounded-full border-slate-700 text-sm mt-4 px-4 py-2 transition-all duration-150 mb-4 hover:border-slate-700 hover:bg-slate-700 hover:text-white"
+        onClick={submitHandler}
+        type="submit"
+      >
         LOG IN
       </button>
     </form>

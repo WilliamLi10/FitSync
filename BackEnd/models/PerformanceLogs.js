@@ -20,4 +20,4 @@ const performanceLogsSchema = new mongoose.Schema({
 
 const performanceLogs = mongoose.model('PerformanceLogs',performanceLogsSchema);
 
-modules.exports = performanceLogs
+module.exports = performanceLogs

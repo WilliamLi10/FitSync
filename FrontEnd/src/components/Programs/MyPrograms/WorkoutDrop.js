@@ -8,7 +8,7 @@ const WorkoutDrop = (props) => {
   };
   const moveSelect = (index) => {
     setMove(false);
-    props.move(index);
+    props.move(index); 
   };
 
   const optionCSS = "transition-all duration-150 hover:bg-slate-200 px-2 py-1";

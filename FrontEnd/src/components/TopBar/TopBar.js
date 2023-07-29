@@ -1,25 +1,22 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { TbLetterW } from "react-icons/tb";
-import DropDownMenu from "./DropDownMenu";
 import TopLink from "./TopLink";
+import AccountOptions from "./AccountOptions";
 import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
+import { checkJWT, getJWT } from "../../util/auth";
 
 const TopBar = (props) => {
   const ctx = useContext(AuthContext);
   const [showMenu, setShowMenu] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(ctx.isLoggedIn);
   const menuRef = useRef(null);
   const location = useLocation();
 
   const handleMenu = () => {
-    let oldState = showMenu;
-    setShowMenu(!oldState);
+    setShowMenu((prevShowMenu) => {
+      return !prevShowMenu;
+    });
   };
-
-  useEffect(() => {
-    setIsLoggedIn(ctx.isLoggedIn);
-  }, [ctx.isLoggedIn]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -44,7 +41,7 @@ const TopBar = (props) => {
           <Link to="/" className="self-center pr-4 ">
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
-          {isLoggedIn ? (
+          {checkJWT() ? (
             <>
               <TopLink link="/" name="Dashboard" />
               <TopLink link="/LogWorkout" name="Log Workout" />
@@ -59,20 +56,22 @@ const TopBar = (props) => {
             </>
           )}
         </div>
-        {isLoggedIn ? (
-          <div
-            className="flex items-center h-full self-center py-4 px-4 cursor-pointer hover:bg-slate-50"
-            onClick={handleMenu}
-            ref={menuRef}
-          >
-            <p>{props.UserInfo.name}</p>
-            <DropDownMenu
-              className={` bg-white z-50 absolute top-14 right-[2.9rem] w-30 h-30 px-0 py-4
-     border-black border-solid border-2 rounded-lg transform transition-transform duration-[250ms] ease-in-out ${
-       showMenu ? "scale-100" : "scale-0"
-     }`}
-              style={{ transformOrigin: "top" }}
-            />
+        {checkJWT() ? (
+          <div className="w-52">
+            <div
+              className={`flex items-center justify-end h-full self-center ${
+                  showMenu && "border-solid border-b-2 border-slate-700"}`}
+              onClick={handleMenu}
+              ref={menuRef}
+            >
+              <p
+                className={`py-4 px-4 cursor-pointer hover:bg-slate-50 
+                `}
+              >
+                {getJWT().username}
+              </p>
+            </div>
+            {showMenu && <AccountOptions />}
           </div>
         ) : (
           <div
