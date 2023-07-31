@@ -4,9 +4,29 @@ const Accounts = require("../models/Accounts");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const csrf = require("csurf");
+const redisClient = require("./util/redis");
 require("dotenv");
 
 const csrfProtection = csrf({ cookie: true });
+
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({ error: "No token provided." });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({ error: "Invalid token." });
+    }
+
+    req.userId = decoded.id;
+    req.tokenExp = decoded.exp;
+    req.token = token;
+    next();
+  });
+};
 
 router.post("/register", (req, res) => {
   const user = req.body;
@@ -64,8 +84,36 @@ router.post("/login", (req, res) => {
   })(req, res);
 });
 
-router.post("/logout", (req, res) => {
-  
+router.post("/logout", verifyToken, (req, res) => {
+  console.log("logout");
+  const { userId, token } = req;
+
+  redisClient.get(userId, (err, data) => {
+    if (err) {
+      res.send({ err });
+    }
+
+    if (data !== null) {
+      const parsedData = JSON.parse(data);
+      parsedData[userId].push(token);
+      redisClient.setex(userId, 3600, JSON.stringify(parsedData));
+      return res.json({ status: "success", message: "Logout successful." });
+    }
+
+    redisClient.setex(
+      userId,
+      3600,
+      JSON,
+      stringify({
+        [userId]: [token],
+      })
+    );
+
+    return res.json({
+      status: "success",
+      message: "Logout successful.",
+    });
+  });
 });
 
 router.get("/get-csrf", csrfProtection, (req, res) => {

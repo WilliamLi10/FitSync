@@ -3,7 +3,6 @@ const cors = require("cors");
 const passport = require("./util/passport");
 const connectDB = require("./util/db");
 const cookieParser = require("cookie-parser");
-const csrf = require("csurf");
 const authRouter = require("./routes/auth");
 
 const app = express();
