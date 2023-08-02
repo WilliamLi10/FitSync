@@ -1,16 +1,22 @@
 const express = require("express");
 const cors = require("cors");
 const passport = require("./util/passport");
-const connectDB = require("./util/db");
+const connectDB = require("./util/mongodb");
 const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/auth");
+const redisClient = require("./util/redis");
+const port = 5000;
 
 const app = express();
 
 connectDB()
   .then(() => {
-    const port = 5000;
-
+    redisClient.connect();
+  })
+  .then(() => {
+    console.log("Connected to Redis");
+  })
+  .then(() => {
     app.use(cors());
     app.use(express.json());
     app.use(cookieParser());

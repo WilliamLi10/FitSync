@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import { BsPerson } from "react-icons/bs";
 import { getCSRF } from "../../util/auth";
+import AuthContext from "../../context/auth-context";
 
 const SignUp = (props) => {
+  const ctx = useContext(AuthContext);
   const [user, setUser] = useState({ value: "", valid: false });
   const [dob, setDob] = useState({ value: "", valid: false });
   const [email, setEmail] = useState({ value: "", valid: false });
@@ -38,7 +40,7 @@ const SignUp = (props) => {
         .then((response) => {
           if (response) {
             if (!response.ok) {
-              throw new Error("Error registering");
+              throw new Error("Error in response route.");
             }
             return response.json();
           }
@@ -51,9 +53,15 @@ const SignUp = (props) => {
             setUserError(data.user);
             setUser({ ...user, valid: !data.user });
           }
+          if (data.success) {
+            console.log("check login");
+            ctx.setLoginModal(false);
+            console.log("check redirect");
+            ctx.setRedirectModal(true);
+          }
         })
         .catch((error) => {
-          throw error;
+          console.log("Error registering:", error);
         });
     }
   };
