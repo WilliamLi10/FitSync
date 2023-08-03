@@ -4,6 +4,8 @@ import Calendar from "../components/Home/Calendar/Calendar";
 import MiniCalendar from "../components/Home/MiniCalendar/MiniCalendar";
 import Dashboard from "../components/Home/Dashboard";
 import Task from "../components/Home/Task/Task";
+import About from "./LoggedOut/About";
+import { checkJWT } from "../util/auth";
 
 const Home = () => {
   const getWeekRange = (day) => {
@@ -37,7 +39,7 @@ const Home = () => {
     setDay(getDate(moment(date)));
   };
 
-  return (
+  return checkJWT() ? (
     <div className="flex flex-col h-screen w-screen bg-gray-50 px-10 py-5 min-w-[1200px] mt-16">
       <div>
         <Dashboard />
@@ -50,6 +52,8 @@ const Home = () => {
         <Calendar week={week} />
       </div>
     </div>
+  ) : (
+    <About />
   );
 };
 
