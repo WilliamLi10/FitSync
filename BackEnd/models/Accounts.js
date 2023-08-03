@@ -37,10 +37,13 @@ AccountSchema.methods.checkUserName = (userName) => {
     .model("Accounts")
     .findOne({ UserName: userName })
     .then((existingUser) => {
-      throw new Error("")
+      if (existingUser) {
+        console.log("User exists");
+      }
       return !!existingUser;
     })
     .catch((error) => {
+      console.log("Error checking username");
       throw error;
     });
 };
@@ -48,11 +51,15 @@ AccountSchema.methods.checkUserName = (userName) => {
 AccountSchema.methods.checkEmail = (email) => {
   return mongoose
     .model("Accounts")
-    .findOne({ Email: email })
+    .findOne({ Email: { $regex: new RegExp(email, "i") } })
     .then((existingEmail) => {
+      if (existingEmail) {
+        console.log("Email exists");
+      }
       return !!existingEmail;
     })
     .catch((error) => {
+      console.log("Error checking email");
       throw error;
     });
 };
@@ -82,6 +89,7 @@ AccountSchema.methods.addUser = (user) => {
       });
     })
     .catch((error) => {
+      console.log("Error adding user");
       throw error;
     });
 };

@@ -2,8 +2,11 @@ import { BiUser } from "react-icons/bi";
 import { BsGear } from "react-icons/bs";
 import { MdOutlineLogout } from "react-icons/md";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const AccountOptions = () => {
+  const navigate = useNavigate();
+
   const optionCSS =
     "transition-all duration-150 hover:bg-slate-200 px-2 py-1 cursor-pointer flex flex-row items-center";
 
@@ -18,18 +21,22 @@ const AccountOptions = () => {
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
-            throw new Error(data.error);
+            navigate("/error", {
+              state: { error: data.error, status: response.status },
+            });
+            throw "";
           });
         }
         return response.json();
       })
       .then((data) => {
-        console.log(data.message);
         Cookies.remove("jwt");
         window.location.reload();
       })
       .catch((error) => {
-        console.log("Error logging out:", error);
+        if (`${error}` !== "") {
+          navigate("/error", { state: { error: `${error}`, status: 500 } });
+        }
       });
   };
 

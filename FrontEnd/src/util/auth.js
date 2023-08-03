@@ -20,15 +20,16 @@ export const getCSRF = () => {
   })
     .then((response) => {
       if (!response.ok) {
-        throw new Error("CSRF token no response.");
+        return response.json().then((data) => {
+          throw data.error;
+        });
       }
       return response.json();
     })
     .then((data) => {
-      console.log(data.token);
       return data.token;
     })
     .catch((error) => {
-      console.error("Error retrieving CSRF token:", error);
+      throw `${error}`;
     });
 };

@@ -1,16 +1,21 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BiErrorAlt } from "react-icons/bi";
 
-const Error = ({ error, status }) => {
+const Error = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="flex flex-col px-5 pt-16 items-center">
       <div className="flex flex-row items-center">
         <BiErrorAlt className="h-16 w-16 text-red-600 mr-2" />
         <div className="flex flex-col">
-          <p className="text-2xl font-bold">{status ? status : "404"} Error</p>
-          <p>{error ? error : "Page not found"}</p>
+          <p className="text-2xl font-bold">
+            {location.state ? location.state.status : "404"} Error
+          </p>
+          <p>
+            {location.state ? location.state.error : "Page not found"}
+          </p>
         </div>
       </div>
       <button

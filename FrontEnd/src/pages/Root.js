@@ -11,12 +11,10 @@ const Root = () => {
   const [redirectModal, setRedirectModal] = useState(ctx.redirectModal);
 
   useEffect(() => {
-    console.log(ctx.loginModal);
     setLoginModal(ctx.loginModal);
   }, [ctx.loginModal]);
 
   useEffect(() => {
-    console.log(ctx.redirectModal);
     setRedirectModal(ctx.redirectModal);
   }, [ctx.redirectModal]);
 

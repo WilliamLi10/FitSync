@@ -10,74 +10,76 @@ require("dotenv");
 const csrfProtection = csrf({ cookie: true });
 
 const verifyToken = (req, res, next) => {
+  console.log("+++");
   console.log("Verifying JWT...");
 
   const token = req.headers.authorization.split(" ")[1];
 
   if (!token) {
     console.log("No token provided");
-    return res.status(401).json({ error: "No token provided" });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
   jwt.verify(token, `${process.env.SECRET_KEY}`, (error, decoded) => {
     if (error) {
       console.log("Invalid token");
-      return res.status(403).json({ error: "Invalid token" });
+      return res.status(403).json({ error: "Forbidden" });
     }
-
-    console.log("JWT verified");
 
     req.userID = decoded.userID;
     req.tokenExp = decoded.exp;
     req.token = token;
+
+    console.log("JWT verified");
+
     next();
   });
 };
 
 router.post("/register", (req, res) => {
+  console.log("+++");
   console.log("Registering account...");
 
   const user = req.body;
   const checkEmail = new Accounts().checkEmail(user.email);
   const checkUserName = new Accounts().checkUserName(user.user);
 
-  Promise.all([checkEmail, checkUserName]).then(([emailExists, userExists]) => {
-    if (userExists || emailExists) {
-      res.status(409).json({
-        error: "User or email already exists",
-        user: userExists,
-        email: emailExists,
-      });
-      console.log("User or email already exists");
-    } else {
-      new Accounts()
-        .addUser(user)
-        .then((savedUser) => {
-          res.status(201).json({ message: "Registration successful" });
-          console.log("Registration successful");
-        })
-        .catch((error) => {
-          console.log(error);
-          console.log("Error checking email or username");
-          res.status(500).json({ error: "Internal server error" });
+  Promise.all([checkEmail, checkUserName])
+    .then(([emailExists, userExists]) => {
+      if (userExists || emailExists) {
+        res.status(409).json({
+          user: userExists,
+          email: emailExists,
         });
-    }
-  });
+      } else {
+        new Accounts().addUser(user).then((savedUser) => {
+          res.status(201).json({});
+          console.log("Registration successful");
+        });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
 });
 
 router.post("/login", (req, res) => {
+  console.log("+++");
   console.log("Logging in...");
 
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       return res.status(500).json({
-        error: "An error occurred during login",
+        error: "Internal server error",
       });
     }
 
     if (!user) {
+      console.log(info.message);
       return res.status(400).json({
-        error: info.message,
+        email: info.email,
+        pass: info.pass,
       });
     }
 
@@ -89,18 +91,19 @@ router.post("/login", (req, res) => {
 
     const options = {
       expiresIn: "1h",
-      subject: `${user._id}`, 
+      subject: `${user._id}`,
     };
 
     const token = jwt.sign(payload, `${process.env.SECRET_KEY}`, options);
 
-    res.status(200).json({ token: token, message: "Log in successful" });
+    res.status(200).json({ token: token });
 
-    console.log("Log in successful");
+    console.log("Login successful");
   })(req, res);
 });
 
 router.post("/logout", verifyToken, (req, res) => {
+  console.log("+++");
   console.log("Logging out...");
 
   const { userID, token } = req;
@@ -121,20 +124,20 @@ router.post("/logout", verifyToken, (req, res) => {
       redisClient.set(userID, JSON.stringify(parsedData), {
         EX: 3600,
       });
-      console.log("Logout succesful");
-      res.status(200).json({ message: "Logout successful" });
+      res.status(200).json({});
+      console.log("Logout successful");
     })
     .catch((error) => {
       console.log(error);
-      res.status(500).json({
-        error: "An unexpected error occurred. Please try again later",
-      });
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 
 router.get("/get-csrf", csrfProtection, (req, res) => {
-  console.log(req.csrfToken());
-  res.json({ token: req.csrfToken() });
+  console.log("+++");
+  console.log("Getting CSRF token...");
+  res.status(200).json({ token: req.csrfToken() });
+  console.log("CSRF token sent");
 });
 
 module.exports = router;

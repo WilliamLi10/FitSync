@@ -16,7 +16,7 @@ const TopBar = (props) => {
     setShowMenu((prevShowMenu) => {
       return !prevShowMenu;
     });
-  };
+  }; 
 
   useEffect(() => {
     const handleClickOutside = (event) => {

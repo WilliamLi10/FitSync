@@ -29,12 +29,21 @@ passport.use(
     async (email, pass, done) => {
       try {
         const user = await Accounts.findOne({ Email: email });
-        if (!user) return done(null, false, { message: "Incorrect email." });
+        if (!user)
+          return done(null, false, {
+            message: "Incorrect email.",
+            email: true,
+            pass: false,
+          });
 
         bcrypt.compare(pass, user.PassWord, (err, result) => {
           if (err) return done(err);
           if (!result) {
-            return done(null, false, { message: "Incorrect password." });
+            return done(null, false, {
+              message: "Incorrect password.",
+              email: false,
+              pass: true,
+            });
           }
           return done(null, user);
         });
