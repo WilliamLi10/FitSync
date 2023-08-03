@@ -37,6 +37,7 @@ AccountSchema.methods.checkUserName = (userName) => {
     .model("Accounts")
     .findOne({ UserName: userName })
     .then((existingUser) => {
+      throw new Error("")
       return !!existingUser;
     })
     .catch((error) => {

@@ -8,6 +8,9 @@ import Cookies from "js-cookie";
 const Login = (props) => {
   const [email, setEmail] = useState({ value: "", valid: false });
   const [pass, setPass] = useState({ value: "", valid: false });
+  const [passError, setPassError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [submit, setSubmit] = useState(false);
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -28,7 +31,9 @@ const Login = (props) => {
         })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Error logging in");
+            if (response.status === 400) {
+              
+            }
           }
           return response.json();
         })
@@ -42,6 +47,7 @@ const Login = (props) => {
               domain: "localhost",
               path: "/",
             });
+            window.location.reload();
           }
         })
         .catch((error) => {
@@ -63,7 +69,11 @@ const Login = (props) => {
         <div className="text-sm text-gray-400 mx-2">or</div>
         <div className="border-solid border-t-[1px] flex-grow text-gray-400" />
       </div>
-      <div className="flex flex-row items-center bg-slate-100 w-full px-4 py-2 mt-4">
+      <div
+        className={`flex flex-row items-center bg-slate-100 w-full px-4 py-2 mt-4 ${
+          submit && !email.valid && "border-solid border-[1px] border-red-600"
+        }`}
+      >
         <HiOutlineMail className="text-[#808080]" />
         <input
           className="pl-2 bg-slate-100 w-full border-none focus:outline-none focus:ring-0"
@@ -78,7 +88,14 @@ const Login = (props) => {
           type="email"
         />
       </div>
-      <div className="flex flex-row items-center bg-slate-100 w-full px-4 py-2 mt-4 mb-4">
+      {emailError && (
+        <div className="text-red-600 mt-2 w-full">Incorrect username</div>
+      )}
+      <div
+        className={`flex flex-row items-center bg-slate-100 w-full px-4 py-2 mt-4 mb-4 ${
+          submit && !pass.valid && "border-solid border-[1px] border-red-600"
+        }`}
+      >
         <BiLockAlt className="text-[#808080]" />
         <input
           className="pl-2 bg-slate-100 w-full border-none focus:outline-none focus:ring-0"
@@ -93,6 +110,9 @@ const Login = (props) => {
           type="password"
         />
       </div>
+      {passError && (
+        <div className="text-red-600 mt-2 w-full">Incorrect password</div>
+      )}
       <div className="flex flex-row text-sm w-full justify-between">
         <div className="cursor-pointer text-slate-700 underline">
           Forgot password?

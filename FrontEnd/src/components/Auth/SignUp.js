@@ -4,10 +4,12 @@ import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import { BsPerson } from "react-icons/bs";
 import { getCSRF } from "../../util/auth";
+import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
 
 const SignUp = (props) => {
   const ctx = useContext(AuthContext);
+  const navigate = useNavigate();
   const [user, setUser] = useState({ value: "", valid: false });
   const [dob, setDob] = useState({ value: "", valid: false });
   const [email, setEmail] = useState({ value: "", valid: false });
@@ -38,27 +40,34 @@ const SignUp = (props) => {
           });
         })
         .then((response) => {
-          if (response) {
-            if (!response.ok) {
-              throw new Error("Error in response route.");
+          if (!response.ok) {
+            if (response.status === 409) {
+              return response.json().then((data) => {
+                setEmailError(data.email);
+                setEmail({ ...email, valid: !data.email });
+                setUserError(data.user);
+                setUser({ ...user, valid: !data.user });
+                throw new Error(data.error);
+              });
+            } else if (response.status === 500) {
+              return response.json().then((data) => {
+                navigate("/error", {
+                  error: data.error,
+                  status: response.status,
+                });
+                throw new Error(data.error);
+              });
             }
-            return response.json();
+            return response.json().then((data) => {
+              throw new Error(data.error);
+            });
           }
+          return response.json();
         })
         .then((data) => {
-          console.log(data);
-          if (!data.success) {
-            setEmailError(data.email);
-            setEmail({ ...email, valid: !data.email });
-            setUserError(data.user);
-            setUser({ ...user, valid: !data.user });
-          }
-          if (data.success) {
-            console.log("check login");
-            ctx.setLoginModal(false);
-            console.log("check redirect");
-            ctx.setRedirectModal(true);
-          }
+          console.log(data.message);
+          ctx.setLoginModal(false);
+          ctx.setRedirectModal(true);
         })
         .catch((error) => {
           console.log("Error registering:", error);

@@ -17,18 +17,20 @@ const AccountOptions = () => {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Error expiring jwt.");
+          return response.json().then((data) => {
+            throw new Error(data.error);
+          });
         }
         return response.json();
       })
       .then((data) => {
-        console.log(data);
+        console.log(data.message);
         Cookies.remove("jwt");
+        window.location.reload();
       })
       .catch((error) => {
         console.log("Error logging out:", error);
       });
-    //Cookies.remove("jwt");
   };
 
   return (
