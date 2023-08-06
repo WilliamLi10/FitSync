@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Accounts = require("../models/Accounts");
+const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const csrf = require("csurf");
@@ -36,13 +36,59 @@ const verifyToken = (req, res, next) => {
   });
 };
 
+router.post("/refresh-token", (req, res) => {
+  console.log("+++");
+  console.log("Refreshing JWT...");
+
+  const refreshToken = req.body.refreshToken;
+
+  if (!refreshToken) {
+    console.log("No refresh token provided");
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  jwt.verify(refreshToken, `${process.env.SECRET_KEY}`, (error, decoded) => {
+    if (error) {
+      console.log("Invalid refresh token");
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    new Users()
+      .getUser(decoded.userID)
+      .then((user) => {
+        if (user) {
+          newAccess = jwt.sign(
+            {
+              email: user.email,
+              username: user.username,
+              userID: user._id,
+              type: "access",
+            },
+            `${process.env.SECRET_KEY}`,
+            { expiresIn: "1h", subject: `${user._id}` }
+          );
+
+          console.log("JWT refreshed");
+
+          return res.status(200).json({ accessToken: newAccess });
+        }
+        console.log("User not found");
+        return res.status(401).json({ error: "Unauthorized" });
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  });
+});
+
 router.post("/register", (req, res) => {
   console.log("+++");
   console.log("Registering account...");
 
   const user = req.body;
-  const checkEmail = new Accounts().checkEmail(user.email);
-  const checkUserName = new Accounts().checkUserName(user.user);
+  const checkEmail = new Users().checkEmail(user.email);
+  const checkUserName = new Users().checkUserName(user.user);
 
   Promise.all([checkEmail, checkUserName])
     .then(([emailExists, userExists]) => {
@@ -52,7 +98,7 @@ router.post("/register", (req, res) => {
           email: emailExists,
         });
       } else {
-        new Accounts().addUser(user).then((savedUser) => {
+        new Users().addUser(user).then((savedUser) => {
           res.status(201).json({});
           console.log("Registration successful");
         });
@@ -82,21 +128,26 @@ router.post("/login", (req, res) => {
         pass: info.pass,
       });
     }
+    const accessToken = jwt.sign(
+      {
+        email: user.email,
+        username: user.username,
+        userID: user._id,
+        type: "access",
+      },
+      `${process.env.SECRET_KEY}`,
+      { expiresIn: "1h", subject: `${user._id}` }
+    );
 
-    const payload = {
-      email: user.Email,
-      username: user.UserName,
-      userID: user._id,
-    };
+    const refreshToken = jwt.sign(
+      { userID: user._id, type: "refresh" },
+      `${process.env.SECRET_KEY}`,
+      { expiresIn: "7d", subject: `${user._id}` }
+    );
 
-    const options = {
-      expiresIn: "1h",
-      subject: `${user._id}`,
-    };
-
-    const token = jwt.sign(payload, `${process.env.SECRET_KEY}`, options);
-
-    res.status(200).json({ token: token });
+    res
+      .status(200)
+      .json({ accessToken: accessToken, refreshToken: refreshToken });
 
     console.log("Login successful");
   })(req, res);

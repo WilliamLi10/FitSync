@@ -4,7 +4,7 @@ import TopLink from "./TopLink";
 import AccountOptions from "./AccountOptions";
 import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
-import { checkJWT, getJWT } from "../../util/auth";
+import { checkAccess, getAccess } from "../../util/auth";
 
 const TopBar = (props) => {
   const ctx = useContext(AuthContext);
@@ -41,7 +41,7 @@ const TopBar = (props) => {
           <Link to="/" className="self-center pr-4 ">
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
-          {checkJWT() ? (
+          {checkAccess() ? (
             <>
               <TopLink link="/" name="Dashboard" />
               <TopLink link="/LogWorkout" name="Log Workout" />
@@ -56,7 +56,7 @@ const TopBar = (props) => {
             </>
           )}
         </div>
-        {checkJWT() ? (
+        {checkAccess() ? (
           <div className="w-52">
             <div
               className={`flex items-center justify-end h-full self-center ${
@@ -68,7 +68,7 @@ const TopBar = (props) => {
                 className={`py-4 px-4 cursor-pointer hover:bg-slate-50 
                 `}
               >
-                {getJWT().username}
+                {getAccess().username}
               </p>
             </div>
             {showMenu && <AccountOptions />}

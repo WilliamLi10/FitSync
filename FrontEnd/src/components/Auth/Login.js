@@ -55,8 +55,18 @@ const Login = (props) => {
           return response.json();
         })
         .then((data) => {
-          Cookies.set("jwt", data.token, {
-            expires: 1,
+          const expirationDate = new Date();
+          expirationDate.setHours(expirationDate.getHours() + 1);
+
+          Cookies.set("accessJWT", data.accessToken, {
+            expires: expirationDate,
+            secure: true,
+            sameSite: "strict",
+            domain: "localhost",
+            path: "/",
+          });
+          Cookies.set("refreshJWT", data.refreshToken, {
+            expires: 7,
             secure: true,
             sameSite: "strict",
             domain: "localhost",

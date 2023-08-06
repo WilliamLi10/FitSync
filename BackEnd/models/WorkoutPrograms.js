@@ -10,6 +10,6 @@ const workoutProgramSchema = new mongoose.Schema({
     workouts: [WorkoutSchema]
 });
 
-const workoutPrograms = mongoose.model('WorkoutPrograms', workoutProgramSchema);
+const workoutPrograms = mongoose.model('workoutPrograms', workoutProgramSchema);
 
 module.exports = workoutPrograms

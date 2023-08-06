@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const { Strategy: JwtStrategy, ExtractJwt } = require("passport-jwt");
 const { Strategy: LocalStrategy } = require("passport-local");
-const Accounts = require("../models/Accounts");
+const Users = require("../models/Users");
 require("dotenv").config();
 
 const jwtOptions = {
@@ -12,7 +12,7 @@ const jwtOptions = {
 
 passport.use(
   new JwtStrategy(jwtOptions, (jwtPayload, done) => {
-    Accounts.findById(jwtPayload.sub, (err, user) => {
+    Users.findById(jwtPayload.sub, (err, user) => {
       if (err) return done(err, false);
       if (user) return done(null, user);
       return done(null, false);
@@ -28,7 +28,7 @@ passport.use(
     },
     async (email, pass, done) => {
       try {
-        const user = await Accounts.findOne({ Email: email });
+        const user = await Users.findOne({ email: email });
         if (!user)
           return done(null, false, {
             message: "Incorrect email.",
@@ -36,7 +36,7 @@ passport.use(
             pass: false,
           });
 
-        bcrypt.compare(pass, user.PassWord, (err, result) => {
+        bcrypt.compare(pass, user.password, (err, result) => {
           if (err) return done(err);
           if (!result) {
             return done(null, false, {
