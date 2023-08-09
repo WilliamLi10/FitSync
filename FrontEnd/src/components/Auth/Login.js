@@ -2,7 +2,6 @@ import { useState } from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
-import { getCSRF } from "../../util/auth";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 
@@ -19,67 +18,64 @@ const Login = (props) => {
     setSubmit(true);
 
     if (email.valid && pass.valid) {
-      getCSRF()
-        .then((token) => {
-          return fetch("http://localhost:5000/auth/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": token,
-            },
-            body: JSON.stringify({
-              email: email.value,
-              pass: pass.value,
-            }),
-          });
-        })
+      fetch("http://localhost:5000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email.value,
+          pass: pass.value,
+        }),
+      })
         .then((response) => {
           if (!response.ok) {
-            if (response.status === 400) {
-              return response.json().then((data) => {
-                setEmailError(data.email);
-                setEmail({ ...email, valid: !data.email });
-                setPassError(data.pass);
-                setPass({ ...pass, valid: !data.pass });
-                throw "";
+            return response.json().then((data) => {
+              navigate("/error", {
+                state: { error: data.error, status: response.status },
               });
-            } else {
-              return response.json().then((data) => {
-                navigate("/error", {
-                  state: { error: data.error, status: response.status },
-                });
-                throw "";
-              });
-            }
+              throw "";
+            });
           }
           return response.json();
         })
         .then((data) => {
-          const expirationDate = new Date();
-          expirationDate.setHours(expirationDate.getHours() + 1);
+          if (data.success) {
+            const expirationDate15Min = new Date();
+            expirationDate15Min.setMinutes(
+              expirationDate15Min.getMinutes() + 15
+            );
 
-          Cookies.set("accessJWT", data.accessToken, {
-            expires: expirationDate,
-            secure: true,
-            sameSite: "strict",
-            domain: "localhost",
-            path: "/",
-          });
-          Cookies.set("refreshJWT", data.refreshToken, {
-            expires: 7,
-            secure: true,
-            sameSite: "strict",
-            domain: "localhost",
-            path: "/",
-          });
-          window.location.reload();
+            Cookies.set("accessToken", data.accessToken, {
+              expires: expirationDate15Min,
+              secure: true,
+              sameSite: "strict",
+              domain: "localhost",
+              path: "/",
+            });
+
+            const expirationDate1Hour = new Date();
+            expirationDate1Hour.setHours(expirationDate1Hour.getHours() + 1);
+
+            Cookies.set("refreshToken", data.refreshToken, {
+              expires: expirationDate1Hour,
+              secure: true,
+              sameSite: "strict",
+              domain: "localhost",
+              path: "/",
+            });
+
+            navigate("/");
+            window.location.reload();
+          } else {
+            setEmailError(data.email);
+            setEmail({ ...email, valid: !data.email });
+            setPassError(data.pass);
+            setPass({ ...pass, valid: !data.pass });
+          }
         })
         .catch((error) => {
-          if (`${error}` !== "") {
-            navigate("/error", {
-              state: { error: `${error}`, status: 500 },
-            });
-          }
+          console.log(error);
         });
     }
   };

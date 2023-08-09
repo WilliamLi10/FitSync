@@ -3,83 +3,116 @@ const router = express.Router();
 const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-const csrf = require("csurf");
 const redisClient = require("../util/redis");
 require("dotenv");
 
-const csrfProtection = csrf({ cookie: true });
-
-const verifyToken = (req, res, next) => {
+const verifyAccessToken = (req, res, next) => {
   console.log("+++");
-  console.log("Verifying JWT...");
+  console.log("Verifying access token...");
 
   const token = req.headers.authorization.split(" ")[1];
 
   if (!token) {
-    console.log("No token provided");
+    console.log("No access token provided");
     return res.status(401).json({ error: "Unauthorized" });
   }
 
   jwt.verify(token, `${process.env.SECRET_KEY}`, (error, decoded) => {
     if (error) {
-      console.log("Invalid token");
-      return res.status(403).json({ error: "Forbidden" });
+      console.log("Invalid access token");
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     req.userID = decoded.userID;
-    req.tokenExp = decoded.exp;
-    req.token = token;
+    req.accessToken = token;
 
-    console.log("JWT verified");
+    console.log("Access token verified");
 
     next();
   });
 };
 
-router.post("/refresh-token", (req, res) => {
+const verifyRefreshToken = (req, res, next) => {
   console.log("+++");
-  console.log("Refreshing JWT...");
+  console.log("Verifying refresh token...");
 
-  const refreshToken = req.body.refreshToken;
+  const token = req.headers["x-refresh-token"];
 
-  if (!refreshToken) {
+  if (!token) {
     console.log("No refresh token provided");
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  jwt.verify(refreshToken, `${process.env.SECRET_KEY}`, (error, decoded) => {
-    if (error) {
-      console.log("Invalid refresh token");
+  redisClient
+    .get(`bl_${token}`)
+    .then((invalid) => {
+      if (invalid) {
+        console.log("Refresh token found in Redis");
+        return response.status(401).send({ error: "Unauthorized" });
+      } else {
+        jwt.verify(token, `${process.env.SECRET_KEY}`, (error, decoded) => {
+          if (error) {
+            console.log("Invalid refresh token");
+            return res.status(401).json({ error: "Unauthorized" });
+          }
+          req.userID = decoded.userID;
+          req.refreshToken = token;
+
+          console.log("Refresh token verified");
+
+          next();
+        });
+      }
+    })
+    .catch((error) => {
+      console.log("Redis error");
+      console.log(error);
+      return res.status(500).json({ error: "Internal server hour" });
+    });
+};
+
+router.post("/refresh-token", verifyRefreshToken, (req, res) => {
+  console.log("+++");
+  console.log("Refreshing JWT...");
+
+  const [userID] = req.userID;
+
+  new Users()
+    .getUser(userID)
+    .then((user) => {
+      if (user) {
+        newAccess = jwt.sign(
+          {
+            email: user.email,
+            username: user.username,
+            userID: user._id,
+            type: "access",
+          },
+          `${process.env.SECRET_KEY}`,
+          { expiresIn: "900000", subject: `${user._id}` }
+        );
+
+        newRefresh = jwt.sign(
+          { userID: user._id, type: "refresh" },
+          `${process.env.SECRET_KEY}`,
+          { expiresIn: "1h", subject: `${user._id}` }
+        );
+
+        console.log("JWT refreshed");
+
+        return res.json({
+          success: true,
+          accessToken: newAccess,
+          refreshToken: newRefresh,
+        });
+      }
+      console.log("User not found");
       return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    new Users()
-      .getUser(decoded.userID)
-      .then((user) => {
-        if (user) {
-          newAccess = jwt.sign(
-            {
-              email: user.email,
-              username: user.username,
-              userID: user._id,
-              type: "access",
-            },
-            `${process.env.SECRET_KEY}`,
-            { expiresIn: "1h", subject: `${user._id}` }
-          );
-
-          console.log("JWT refreshed");
-
-          return res.status(200).json({ accessToken: newAccess });
-        }
-        console.log("User not found");
-        return res.status(401).json({ error: "Unauthorized" });
-      })
-      .catch((error) => {
-        console.log(error);
-        res.status(500).json({ error: "Internal server error" });
-      });
-  });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
 });
 
 router.post("/register", (req, res) => {
@@ -93,13 +126,14 @@ router.post("/register", (req, res) => {
   Promise.all([checkEmail, checkUserName])
     .then(([emailExists, userExists]) => {
       if (userExists || emailExists) {
-        res.status(409).json({
+        res.json({
+          success: false,
           user: userExists,
           email: emailExists,
         });
       } else {
         new Users().addUser(user).then((savedUser) => {
-          res.status(201).json({});
+          res.json({ success: true });
           console.log("Registration successful");
         });
       }
@@ -123,11 +157,13 @@ router.post("/login", (req, res) => {
 
     if (!user) {
       console.log(info.message);
-      return res.status(400).json({
+      return res.json({
+        success: false,
         email: info.email,
         pass: info.pass,
       });
     }
+
     const accessToken = jwt.sign(
       {
         email: user.email,
@@ -136,59 +172,40 @@ router.post("/login", (req, res) => {
         type: "access",
       },
       `${process.env.SECRET_KEY}`,
-      { expiresIn: "1h", subject: `${user._id}` }
+      { expiresIn: "900000", subject: `${user._id}` }
     );
 
     const refreshToken = jwt.sign(
       { userID: user._id, type: "refresh" },
       `${process.env.SECRET_KEY}`,
-      { expiresIn: "7d", subject: `${user._id}` }
+      { expiresIn: "1h", subject: `${user._id}` }
     );
 
-    res
-      .status(200)
-      .json({ accessToken: accessToken, refreshToken: refreshToken });
+    res.json({
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      success: true,
+    });
 
     console.log("Login successful");
   })(req, res);
 });
 
-router.post("/logout", verifyToken, (req, res) => {
+router.post("/logout", verifyRefreshToken, (req, res) => {
   console.log("+++");
   console.log("Logging out...");
 
-  const { userID, token } = req;
+  const { refreshToken } = req;
 
   redisClient
-    .get(userID)
-    .then((data) => {
-      if (data !== null) {
-        const parsedData = JSON.parse(data);
-        parsedData[userID].push(token);
-        return parsedData;
-      } else {
-        const parsedData = { [userID]: [token] };
-        return parsedData;
-      }
-    })
-    .then((parsedData) => {
-      redisClient.set(userID, JSON.stringify(parsedData), {
-        EX: 3600,
-      });
-      res.status(200).json({});
-      console.log("Logout successful");
-    })
+    .set(`bl_${refreshToken}`, refreshToken, { EX: 3600 })
     .catch((error) => {
       console.log(error);
       res.status(500).json({ error: "Internal server error" });
     });
-});
 
-router.get("/get-csrf", csrfProtection, (req, res) => {
-  console.log("+++");
-  console.log("Getting CSRF token...");
-  res.status(200).json({ token: req.csrfToken() });
-  console.log("CSRF token sent");
+  console.log("Logout successful");
+  return res.json({});
 });
 
 module.exports = router;

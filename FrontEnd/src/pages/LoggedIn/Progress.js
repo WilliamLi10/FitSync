@@ -1,5 +1,5 @@
 const Progress = () => {
-  return <div className="mt-16">progress</div>;
+  return <div>progress</div>;
 };
 
 export default Progress;

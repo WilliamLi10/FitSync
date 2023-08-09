@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 
 const activeProgramSchema = new mongoose.Schema({
   name: String,
-  id: { type: mongoose.Schema.Types.ObjectId, ref: "WorkoutPrograms" },
+  id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
   frequency: Number,
   workouts: [Workout.schema],
 });
@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   activeWorkout: activeProgramSchema,
   ArrayBufferAccessibleWorkouts: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "WorkoutPrograms" },
+    { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
   ],
 });
 
