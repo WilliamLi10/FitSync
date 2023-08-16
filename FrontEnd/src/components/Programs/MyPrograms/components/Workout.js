@@ -135,8 +135,6 @@ const Workout = (props) => {
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
-  const removeExercise = (index) => {};
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropRef.current && !dropRef.current.contains(event.target)) {

@@ -24,10 +24,14 @@ const Root = () => {
     setStatus(ctx.status);
   }, [ctx.status]);
 
+  const statusCloseHandler = () => {
+    ctx.setStatus("");
+  };
+
   return (
     <div>
       <TopBar />
-      {status && <StatusBanner msg={status} />}
+      {status && <StatusBanner msg={status} closeHandler={statusCloseHandler}/>}
       <div>
         <Outlet />
         {loginModal && <LoginModal />}

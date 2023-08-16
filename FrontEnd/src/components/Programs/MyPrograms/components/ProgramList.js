@@ -21,8 +21,6 @@ const ProgramList = (props) => {
             <ProgramItem
               program={program}
               key={program._id}
-              view={props.view}
-              index={index}
             />
           );
         })}

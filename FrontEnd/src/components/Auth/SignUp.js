@@ -36,13 +36,10 @@ const SignUp = (props) => {
       })
         .then((response) => {
           if (!response.ok) {
-              return response.json().then((data) => {
-                navigate("/error", {
-                  state: { error: data.error, status: response.status },
-                });
-                throw "";
-              });
-            }
+            return response.json().then((data) => {
+              throw { error: data.error, status: response.status };
+            });
+          }
           return response.json();
         })
         .then((data) => {
@@ -57,7 +54,9 @@ const SignUp = (props) => {
           }
         })
         .catch((error) => {
-          console.log(error)
+          navigate("/error", {
+            state: { error: error.error, status: error.status },
+          });
         });
     }
   };

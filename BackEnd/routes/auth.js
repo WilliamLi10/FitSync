@@ -3,79 +3,16 @@ const router = express.Router();
 const Users = require("../models/Users");
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-const redisClient = require("../util/redis");
+const redisClient = require("../config/redis");
+const verifyRefreshToken = require("../middleware/jwt/verifyRefreshToken");
 require("dotenv");
-
-const verifyAccessToken = (req, res, next) => {
-  console.log("+++");
-  console.log("Verifying access token...");
-
-  const token = req.headers.authorization.split(" ")[1];
-
-  if (!token) {
-    console.log("No access token provided");
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
-  jwt.verify(token, `${process.env.SECRET_KEY}`, (error, decoded) => {
-    if (error) {
-      console.log("Invalid access token");
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    req.userID = decoded.userID;
-    req.accessToken = token;
-
-    console.log("Access token verified");
-
-    next();
-  });
-};
-
-const verifyRefreshToken = (req, res, next) => {
-  console.log("+++");
-  console.log("Verifying refresh token...");
-
-  const token = req.headers["x-refresh-token"];
-
-  if (!token) {
-    console.log("No refresh token provided");
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
-  redisClient
-    .get(`bl_${token}`)
-    .then((invalid) => {
-      if (invalid) {
-        console.log("Refresh token found in Redis");
-        return response.status(401).send({ error: "Unauthorized" });
-      } else {
-        jwt.verify(token, `${process.env.SECRET_KEY}`, (error, decoded) => {
-          if (error) {
-            console.log("Invalid refresh token");
-            return res.status(401).json({ error: "Unauthorized" });
-          }
-          req.userID = decoded.userID;
-          req.refreshToken = token;
-
-          console.log("Refresh token verified");
-
-          next();
-        });
-      }
-    })
-    .catch((error) => {
-      console.log("Redis error");
-      console.log(error);
-      return res.status(500).json({ error: "Internal server hour" });
-    });
-};
 
 router.post("/refresh-token", verifyRefreshToken, (req, res) => {
   console.log("+++");
   console.log("Refreshing JWT...");
 
   const [userID] = req.userID;
+  console.log(userID);
 
   new Users()
     .getUser(userID)

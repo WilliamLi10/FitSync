@@ -4,8 +4,11 @@ import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../context/auth-context";
 
 const Login = (props) => {
+  const ctx = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState({ value: "", valid: false });
   const [pass, setPass] = useState({ value: "", valid: false });
@@ -31,10 +34,7 @@ const Login = (props) => {
         .then((response) => {
           if (!response.ok) {
             return response.json().then((data) => {
-              navigate("/error", {
-                state: { error: data.error, status: response.status },
-              });
-              throw "";
+              throw { error: data.error, status: response.status };
             });
           }
           return response.json();
@@ -75,7 +75,9 @@ const Login = (props) => {
           }
         })
         .catch((error) => {
-          console.log(error);
+          navigate("/error", {
+            state: { error: error.error, status: error.status },
+          });
         });
     }
   };

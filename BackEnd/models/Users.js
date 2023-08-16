@@ -1,12 +1,11 @@
 const mongoose = require("mongoose");
-const Workout = require("./Workout");
 const bcrypt = require("bcrypt");
 
 const activeProgramSchema = new mongoose.Schema({
   name: String,
   id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
   frequency: Number,
-  workouts: [Workout.schema],
+  workouts: [{ type: Object, required: true }],
 });
 
 const userSchema = new mongoose.Schema({
@@ -26,9 +25,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  activeWorkout: activeProgramSchema,
-  ArrayBufferAccessibleWorkouts: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
+  activeProgram: activeProgramSchema,
+  programs: [
+    {
+      program: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
+      date: { type: Date, default: Date.now },
+    },
   ],
 });
 
@@ -65,13 +67,11 @@ userSchema.methods.checkEmail = (email) => {
 };
 
 userSchema.methods.addUser = (user) => {
-  const userModel = mongoose.model("users");
-
   return bcrypt
     .genSalt(10)
     .then((salt) => {
       return bcrypt.hash(user.pass, salt).then((hashedPass) => {
-        const newUser = new userModel({
+        const newUser = new mongoose.model("users")({
           username: user.user,
           dob: user.dob,
           email: user.email,
@@ -95,6 +95,7 @@ userSchema.methods.addUser = (user) => {
 };
 
 userSchema.methods.getUser = (userID) => {
+  console.log(userID);
   return mongoose
     .model("users")
     .findOne({ _id: userID }, { username: 1, dob: 1, email: 1 })
@@ -102,6 +103,59 @@ userSchema.methods.getUser = (userID) => {
       console.log("Error getting user information");
       throw error;
     });
+};
+
+userSchema.methods.getProgramList = (userID, index) => {
+  return mongoose
+    .model("users")
+    .findOne({ _id: userID })
+    .populate({
+      path: "programs.program",
+      populate: [{ path: "workouts" }, { path: "owner", select: "username" }],
+    })
+    .then((user) => {
+      if (!user) {
+        throw "User not found";
+      }
+
+      const programs = user.programs
+        .sort((a, b) => b.date - a.date)
+        .slice(index, index + 20)
+        .map((program) => ({
+          ...program.program.toObject(),
+          ownerName: program.program.owner.username,
+          lastOpened: program.date,
+        }));
+
+      return programs;
+    })
+    .catch((error) => {
+      console.log("Error getting user information");
+      throw error;
+    });
+};
+
+userSchema.methods.updateLastOpened = async function (userID, programID) {
+  try {
+    const user = await mongoose.model("users").findById(userID);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const programIndex = user.programs.findIndex(
+      (program) => program.program.toString() === programID
+    );
+
+    if (programIndex === -1) {
+      throw new Error("Program not found in user's programs");
+    }
+
+    user.programs[programIndex].date = new Date();
+    await user.save();
+  } catch (error) {
+    console.log("Error updating last opened date:");
+    throw error;
+  }
 };
 
 const Users = mongoose.model("users", userSchema);

@@ -3,8 +3,8 @@ import { BsGear } from "react-icons/bs";
 import { MdOutlineLogout } from "react-icons/md";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../context/auth-context";
 import { useContext } from "react";
+import AuthContext from "../../context/auth-context";
 
 const AccountOptions = () => {
   const navigate = useNavigate();
@@ -23,18 +23,8 @@ const AccountOptions = () => {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 401) {
-            Cookies.remove("accessToken");
-            Cookies.remove("refreshToken");
-            window.location.reload();
-            ctx.setLoginModal(true);
-            ctx.setStatus("Session timed out: You have been logged out");
-          }
           return response.json().then((data) => {
-            navigate("/error", {
-              state: { error: data.error, status: response.status },
-            });
-            throw "";
+            throw { error: data.error, status: response.status };
           });
         }
         return response.json();
@@ -46,7 +36,17 @@ const AccountOptions = () => {
         window.location.reload();
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response === 401) {
+          Cookies.remove("accessToken");
+          Cookies.remove("refreshToken");
+          window.location.reload();
+          ctx.setLoginModal(true);
+          ctx.setStatus("Session timed out: You have been logged out");
+        } else {
+          navigate("/error", {
+            state: { error: error.error, status: error.status },
+          });
+        }
       });
   };
 
