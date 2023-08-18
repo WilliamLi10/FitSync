@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { refreshToken } from "../../../../util/auth";
+import { refreshToken } from "../../../../../util/auth";
 
 export const programViewLoader = ({ params }) => {
   return refreshToken()
@@ -27,6 +27,6 @@ export const programViewLoader = ({ params }) => {
       return data.program;
     })
     .catch((error) => {
-      return { error: "An error occurred while loading the program." };
+      return error;
     });
 };

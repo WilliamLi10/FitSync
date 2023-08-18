@@ -31,6 +31,7 @@ programsSchema.methods.createProgram = async function (userID) {
     const newProgram = new mongoose.model("programs")({
       name: "Untitled",
       owner: userID,
+      editors: [userID],
       lastModified: [{ user: userID, date: Date() }],
       workouts: [
         {
@@ -67,9 +68,30 @@ programsSchema.methods.createProgram = async function (userID) {
   }
 };
 
-programsSchema.methods.getProgram = async function (programID) {
+programsSchema.methods.getProgram = async function (programID, userID) {
   try {
-    return await mongoose.model("programs").findOne({ _id: programID });
+    const program = await mongoose
+      .model("programs")
+      .findOne({ _id: programID })
+      .lean();
+
+    const userIDObject = new mongoose.Types.ObjectId(userID);
+    const isEditor = program.editors.some((editorId) =>
+      editorId.equals(userIDObject)
+    );
+    const isViewer = program.viewers.some((viewerId) =>
+      viewerId.equals(userIDObject)
+    );
+
+    if (isEditor) {
+      program.userRole = "editor";
+    } else if (isViewer) {
+      program.userRole = "viewer";
+    } else {
+      program.userRole = "none";
+    }
+
+    return program;
   } catch (error) {
     console.log("Error getting program");
     throw error;
@@ -83,6 +105,20 @@ programsSchema.methods.saveProgram = async function (program, programID) {
       .findOneAndUpdate({ _id: programID }, program);
   } catch (error) {
     console.log("Error saving program");
+    throw error;
+  }
+};
+
+programsSchema.methods.getUsers = async function (programID) {
+  try {
+    return await mongoose
+      .model("programs")
+      .findOne({ _id: programID }, { editors: 1, viewers: 1, owner: 1 })
+      .populate("owner", "username")
+      .populate("editors", "username")
+      .populate("viewers", "username");
+  } catch (error) {
+    console.log("Error getting users");
     throw error;
   }
 };

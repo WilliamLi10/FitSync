@@ -27,10 +27,15 @@ router.post("/load-program", verifyAccessToken, (req, res) => {
   console.log("Loading program...");
 
   const programID = req.body.programID;
+  const userID = req.userID;
 
   new Programs()
-    .getProgram(programID)
+    .getProgram(programID, userID)
     .then((program) => {
+      if (program.userRole === "none") {
+        console.log("Unauthorized user");
+        return res.status(401).json({ error: "Unauthorized" });
+      }
       console.log("Loaded program successfully");
       res.json({ program: program });
     })
@@ -87,6 +92,25 @@ router.post("/save-program", verifyAccessToken, (req, res) => {
     .then(() => {
       console.log("Saved program successfully");
       return res.json({});
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
+router.post("/get-users", verifyAccessToken, (req, res) => {
+  console.log("+++");
+  console.log("Getting users...");
+
+  new Programs()
+    .getUsers(req.body.programID)
+    .then((users) => {
+      res.json({
+        editors: users.editors,
+        viewers: users.viewers,
+        owner: users.owner,
+      });
     })
     .catch((error) => {
       console.log(error);

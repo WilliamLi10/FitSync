@@ -4,11 +4,8 @@ import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import AuthContext from "../../context/auth-context";
 
 const Login = (props) => {
-  const ctx = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState({ value: "", valid: false });
   const [pass, setPass] = useState({ value: "", valid: false });

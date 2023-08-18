@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { RiAddLine } from "react-icons/ri";
-import ProgramList from "./ProgramList";
+import ProgramList from "./ProgramList/ProgramList";
 import { refreshToken } from "../../../../util/auth";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";

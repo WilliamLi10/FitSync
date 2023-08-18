@@ -14,13 +14,14 @@ import Product from "./pages/LoggedOut/Product";
 import Contact from "./pages/LoggedOut/Contact";
 import DiscoverPrograms from "./components/Programs/DiscoverPrograms/DiscoverPrograms";
 import MyPrograms from "./components/Programs/MyPrograms/components/MyPrograms";
-import ProgramView from "./components/Programs/MyPrograms/components/ProgramView";
-import { programViewLoader } from "./components/Programs/MyPrograms/loaders/ProgramViewLoader";
+import ProgramView from "./components/Programs/MyPrograms/components/ProgramView/ProgramView";
+import { programViewLoader } from "./components/Programs/MyPrograms/components/ProgramView/ProgramViewLoader";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root />,
+    errorElement: <Error />,
     children: [
       { path: "/", element: <Home /> },
       { path: "progress", element: <Progress /> },
