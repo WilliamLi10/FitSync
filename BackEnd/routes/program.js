@@ -106,6 +106,7 @@ router.post("/get-users", verifyAccessToken, (req, res) => {
   new Programs()
     .getUsers(req.body.programID)
     .then((users) => {
+      console.log("Users loaded successfully");
       res.json({
         editors: users.editors,
         viewers: users.viewers,
