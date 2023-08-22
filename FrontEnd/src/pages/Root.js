@@ -31,8 +31,10 @@ const Root = () => {
   return (
     <div>
       <TopBar />
-      {status && <StatusBanner msg={status} closeHandler={statusCloseHandler}/>}
-      <div>
+      {status && (
+        <StatusBanner msg={status} closeHandler={statusCloseHandler} />
+      )}
+      <div className="pt-16">
         <Outlet />
         {loginModal && <LoginModal />}
         {loginModal && (

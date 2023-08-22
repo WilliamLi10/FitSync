@@ -10,6 +10,7 @@ const programsSchema = new mongoose.Schema({
     ref: "users",
     required: true,
   },
+  editorPermissions: { type: Boolean, required: true },
   editors: [
     { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
   ],
@@ -31,6 +32,7 @@ programsSchema.methods.createProgram = async function (userID) {
     const newProgram = new mongoose.model("programs")({
       name: "Untitled",
       owner: userID,
+      editorPermissions: false,
       editors: [userID],
       lastModified: [{ user: userID, date: Date() }],
       workouts: [
@@ -76,6 +78,7 @@ programsSchema.methods.getProgram = async function (programID, userID) {
       .lean();
 
     const userIDObject = new mongoose.Types.ObjectId(userID);
+    const isOwner = program.owner.equals(userIDObject);
     const isEditor = program.editors.some((editorId) =>
       editorId.equals(userIDObject)
     );
@@ -83,7 +86,9 @@ programsSchema.methods.getProgram = async function (programID, userID) {
       viewerId.equals(userIDObject)
     );
 
-    if (isEditor) {
+    if (isOwner) {
+      program.userRole = "owner";
+    } else if (isEditor) {
       program.userRole = "editor";
     } else if (isViewer) {
       program.userRole = "viewer";
@@ -113,12 +118,41 @@ programsSchema.methods.getUsers = async function (programID) {
   try {
     return await mongoose
       .model("programs")
-      .findOne({ _id: programID }, { editors: 1, viewers: 1, owner: 1 })
+      .findOne(
+        { _id: programID },
+        { editors: 1, viewers: 1, owner: 1, editorPermissions: 1 }
+      )
       .populate("owner", "username")
       .populate("editors", "username")
       .populate("viewers", "username");
   } catch (error) {
     console.log("Error getting users");
+    throw error;
+  }
+};
+
+programsSchema.methods.saveUsers = async function (
+  programID,
+  viewers,
+  editors
+) {
+  try {
+
+    await mongoose.model("programs").findOneAndUpdate(
+      { _id: programID },
+      { viewers: viewers, editors: editors }
+    );
+
+    await mongoose
+      .model("users")
+      .updateMany(
+        { _id: { $in: [...viewers, ...editors] } },
+        { $addToSet: { programs: { program: programID, date: new Date() } } }
+      );
+
+    console.log("Users and program updated successfully");
+  } catch (error) {
+    console.log("Error saving users and program:", error);
     throw error;
   }
 };

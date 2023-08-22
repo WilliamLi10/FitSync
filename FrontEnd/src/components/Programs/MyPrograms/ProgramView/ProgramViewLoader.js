@@ -1,5 +1,5 @@
 import Cookies from "js-cookie";
-import { refreshToken } from "../../../../../util/auth";
+import { refreshToken } from "../../../../util/auth";
 
 export const programViewLoader = ({ params }) => {
   return refreshToken()

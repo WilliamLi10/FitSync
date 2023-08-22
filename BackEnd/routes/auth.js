@@ -15,7 +15,7 @@ router.post("/refresh-token", verifyRefreshToken, (req, res) => {
   console.log(userID);
 
   new Users()
-    .getUser(userID)
+    .getUserByID(userID)
     .then((user) => {
       if (user) {
         newAccess = jwt.sign(
@@ -57,19 +57,19 @@ router.post("/register", (req, res) => {
   console.log("Registering account...");
 
   const user = req.body;
-  const checkEmail = new Users().checkEmail(user.email);
-  const checkUserName = new Users().checkUserName(user.user);
+  const checkEmail = new Users().checkEmailExists(user.email);
+  const checkUserName = new Users().checkUserNameExists(user.user);
 
   Promise.all([checkEmail, checkUserName])
     .then(([emailExists, userExists]) => {
-      if (userExists || emailExists) {
+      if (userExists.exists || emailExists) {
         res.json({
           success: false,
-          user: userExists,
+          user: userExists.exists,
           email: emailExists,
         });
       } else {
-        new Users().addUser(user).then((savedUser) => {
+        new Users().addNewUser(user).then(() => {
           res.json({ success: true });
           console.log("Registration successful");
         });

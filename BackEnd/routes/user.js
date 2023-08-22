@@ -3,15 +3,19 @@ const router = express.Router();
 const Users = require("../models/Users");
 const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 
-router.post("/check-user", verifyAccessToken, (req, res) => {
+router.post("/search-user", verifyAccessToken, (req, res) => {
   console.log("+++");
-  console.log("Checking user...");
+  console.log("Searching user...");
 
   new Users()
-    .checkUserName(req.body.username)
+    .checkUserNameExists(req.body.username)
     .then((userExists) => {
-      console.log("Checked user successfully");
-      res.json({ success: userExists });
+      console.log("Searched user successfully");
+      if (!userExists.exists) {
+        return res.json({ success: userExists.exists });
+      } else {
+        return res.json({ success: userExists.exists, user: userExists.user });
+      }
     })
     .catch((error) => {
       console.log(error);
