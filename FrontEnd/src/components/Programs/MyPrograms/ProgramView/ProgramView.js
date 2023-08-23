@@ -2,14 +2,14 @@ import { useState, useEffect, useContext } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { RiAddLine } from "react-icons/ri";
 import { CiSaveDown2 } from "react-icons/ci";
-import { refreshToken, getAccessToken } from "../../../../../util/auth";
+import { refreshToken, getAccessToken } from "../../../../util/auth";
 import Workout from "./Workout";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import AuthContext from "../../../../../context/auth-context";
+import AuthContext from "../../../../context/auth-context";
 import Cookies from "js-cookie";
-import StatusBanner from "../../../../StatusBanner";
+import StatusBanner from "../../../StatusBanner";
 import { BsShare } from "react-icons/bs";
-import ProgramShareModal from "./ProgramShareModal";
+import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
 
 const ProgramView = () => {
   const ctx = useContext(AuthContext);
@@ -29,7 +29,6 @@ const ProgramView = () => {
     setWorkouts((prevWorkouts) => {
       const newWorkouts = [...prevWorkouts];
       newWorkouts[index] = workout;
-      console.log(newWorkouts);
       return newWorkouts;
     });
   };
@@ -210,86 +209,89 @@ const ProgramView = () => {
   };
 
   return (
-    <form className="bg-gray-50 w-full h-full px-5 py-5">
-      {status !== "" && (
-        <StatusBanner
-          msg={status}
-          closeHandler={() => {
-            setStatus("");
-          }}
-        />
-      )}
+    <div className="bg-gray-50 w-full h-full px-5 py-5">
       {shareModal && (
         <ProgramShareModal
           modalHandler={setShareModal}
           title={title}
           programID={program._id}
+          role={program.userRole}
         />
       )}
       {shareModal && (
         <div className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-auto bg-black opacity-[15%]" />
       )}
-      <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-row items-center">
-          <button
-            onClick={() => {
-              navigate("/programs/myprograms");
+      <form>
+        {status !== "" && (
+          <StatusBanner
+            msg={status}
+            closeHandler={() => {
+              setStatus("");
             }}
-          >
-            <BiArrowBack className="h-8" />
-          </button>
-          <input
-            value={title}
-            placeholder="Untitled"
-            type="text"
-            onChange={titleHandler}
-            disabled={program.userRole === "viewer"}
-            className="border-none bg-gray-50 pl-2 ml-2 h-6 py-1 rounded-md transition-all duration-300 hover:border-solid hover:border-[1px] focus:border-none"
           />
+        )}
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row items-center">
+            <button
+              onClick={() => {
+                navigate("/programs/myprograms");
+              }}
+            >
+              <BiArrowBack className="h-8" />
+            </button>
+            <input
+              value={title}
+              placeholder="Untitled"
+              type="text"
+              onChange={titleHandler}
+              disabled={program.userRole === "viewer"}
+              className="border-none bg-gray-50 pl-2 ml-2 h-6 py-1 rounded-md transition-all duration-300 hover:border-solid hover:border-[1px] focus:border-none"
+            />
+          </div>
+          <div>
+            <button
+              className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 rounded-full hover:bg-slate-100"
+              onClick={shareModalHandler}
+            >
+              <BsShare /> &#160;Share
+            </button>
+          </div>
         </div>
-        <div>
-          <button
-            className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 rounded-full hover:bg-slate-100"
-            onClick={shareModalHandler}
-          >
-            <BsShare /> &#160;Share
-          </button>
-        </div>
-      </div>
-      {workouts.map((workout, index) => {
-        return (
-          <Workout
-            key={index}
-            workout={workout}
-            workouts={workouts}
-            update={workoutHandler}
-            delete={removeWorkout}
-            duplicate={duplicateWorkout}
-            move={moveWorkout}
-            index={index}
-          />
-        );
-      })}
-      {program.userRole === "editor" && (
-        <div className="flex flex-row justify-between">
-          <button
-            className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 mt-5 hover:bg-slate-100"
-            onClick={addWorkout}
-            type="button"
-          >
-            <RiAddLine /> &#160;Add Workout
-          </button>
-          <button
-            className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 mt-5 hover:bg-slate-100"
-            type="submit"
-            onClick={saveProgram}
-          >
-            <CiSaveDown2 />
-            &#160;Save Program
-          </button>
-        </div>
-      )}
-    </form>
+        {workouts.map((workout, index) => {
+          return (
+            <Workout
+              key={index}
+              workout={workout}
+              workouts={workouts}
+              update={workoutHandler}
+              delete={removeWorkout}
+              duplicate={duplicateWorkout}
+              move={moveWorkout}
+              index={index}
+            />
+          );
+        })}
+        {(program.userRole === "editor" || program.userRole === "owner") && (
+          <div className="flex flex-row justify-between">
+            <button
+              className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 mt-5 hover:bg-slate-100"
+              onClick={addWorkout}
+              type="button"
+            >
+              <RiAddLine /> &#160;Add Workout
+            </button>
+            <button
+              className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 mt-5 hover:bg-slate-100"
+              type="submit"
+              onClick={saveProgram}
+            >
+              <CiSaveDown2 />
+              &#160;Save Program
+            </button>
+          </div>
+        )}
+      </form>
+    </div>
   );
 };
 

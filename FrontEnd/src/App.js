@@ -13,9 +13,9 @@ import LogWorkout from "./pages/LoggedIn/LogWorkout";
 import Product from "./pages/LoggedOut/Product";
 import Contact from "./pages/LoggedOut/Contact";
 import DiscoverPrograms from "./components/Programs/DiscoverPrograms/DiscoverPrograms";
-import MyPrograms from "./components/Programs/MyPrograms/components/MyPrograms";
-import ProgramView from "./components/Programs/MyPrograms/components/ProgramView/ProgramView";
-import { programViewLoader } from "./components/Programs/MyPrograms/components/ProgramView/ProgramViewLoader";
+import MyPrograms from "./components/Programs/MyPrograms/MyPrograms";
+import ProgramView from "./components/Programs/MyPrograms/ProgramView/ProgramView";
+import { programViewLoader } from "./components/Programs/MyPrograms/ProgramView/ProgramViewLoader";
 
 const router = createBrowserRouter([
   {

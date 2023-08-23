@@ -106,11 +106,41 @@ router.post("/get-users", verifyAccessToken, (req, res) => {
   new Programs()
     .getUsers(req.body.programID)
     .then((users) => {
+      const editorUsernames = users.editors.map((editor) => editor.username);
+      const viewerUsernames = users.viewers.map((viewer) => viewer.username);
+      const ownerUsername = users.owner.username;
+      const editorPermissions = users.editorPermissions;
+
+      console.log("Users loaded successfully");
+
       res.json({
-        editors: users.editors,
-        viewers: users.viewers,
-        owner: users.owner,
+        editors: editorUsernames,
+        viewers: viewerUsernames,
+        owner: ownerUsername,
+        editorPermissions: editorPermissions,
       });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
+router.post("/save-users", verifyAccessToken, (req, res) => {
+  console.log("+++");
+  console.log("Saving users...");
+
+  const convertViewers = new Users().usernameToID(req.body.viewers);
+  const convertEditors = new Users().usernameToID(req.body.editors);
+
+  Promise.all([convertEditors, convertViewers])
+    .then(([editors, viewers]) => {
+      new Programs()
+        .saveUsers(req.body.programID, viewers, editors)
+        .then(() => {
+          console.log("Saved users successfully");
+          res.json({});
+        });
     })
     .catch((error) => {
       console.log(error);

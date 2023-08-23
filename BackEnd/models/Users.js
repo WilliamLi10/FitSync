@@ -34,15 +34,15 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-userSchema.methods.checkUserName = (username) => {
+userSchema.methods.checkUserNameExists = (username) => {
   return mongoose
     .model("users")
-    .findOne({ username: username })
+    .findOne({ username: username }, { username: 1, dob: 1, email: 1 })
     .then((existingUser) => {
       if (existingUser) {
         console.log("User exists");
       }
-      return !!existingUser;
+      return { exists: !!existingUser, user: existingUser };
     })
     .catch((error) => {
       console.log("Error checking username");
@@ -50,7 +50,7 @@ userSchema.methods.checkUserName = (username) => {
     });
 };
 
-userSchema.methods.checkEmail = (email) => {
+userSchema.methods.checkEmailExists = (email) => {
   return mongoose
     .model("users")
     .findOne({ email: { $regex: new RegExp(email, "i") } })
@@ -66,7 +66,7 @@ userSchema.methods.checkEmail = (email) => {
     });
 };
 
-userSchema.methods.addUser = (user) => {
+userSchema.methods.addNewUser = (user) => {
   return bcrypt
     .genSalt(10)
     .then((salt) => {
@@ -94,8 +94,7 @@ userSchema.methods.addUser = (user) => {
     });
 };
 
-userSchema.methods.getUser = (userID) => {
-  console.log("Getting User Info %s",userID)
+userSchema.methods.getUserByID = (userID) => {
   return mongoose
     .model("users")
     .findOne({ _id: userID }, { username: 1, dob: 1, email: 1 })
@@ -153,7 +152,18 @@ userSchema.methods.updateLastOpened = async function (userID, programID) {
     user.programs[programIndex].date = new Date();
     await user.save();
   } catch (error) {
-    console.log("Error updating last opened date:");
+    console.log("Error updating last opened date");
+    throw error;
+  }
+};
+
+userSchema.methods.usernameToID = async function (usernameArray) {
+  try {
+    return await Users.find({
+      username: { $in: usernameArray },
+    }).distinct("_id");
+  } catch (error) {
+    console.log("Error converting username to id");
     throw error;
   }
 };
