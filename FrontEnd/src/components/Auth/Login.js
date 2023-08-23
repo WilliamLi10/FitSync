@@ -40,7 +40,7 @@ const Login = (props) => {
           if (data.success) {
             const expirationDate15Min = new Date();
             expirationDate15Min.setMinutes(
-              expirationDate15Min.getMinutes() + 15
+              expirationDate15Min.getMinutes() + 1
             );
 
             Cookies.set("accessToken", data.accessToken, {

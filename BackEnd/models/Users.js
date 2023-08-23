@@ -95,6 +95,7 @@ userSchema.methods.addUser = (user) => {
 };
 
 userSchema.methods.getUser = (userID) => {
+  console.log("Getting User Info %s",userID)
   return mongoose
     .model("users")
     .findOne({ _id: userID }, { username: 1, dob: 1, email: 1 })
