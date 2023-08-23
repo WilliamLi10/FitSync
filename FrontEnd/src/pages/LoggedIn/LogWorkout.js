@@ -47,7 +47,7 @@ const LogWorkout = () => {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen w-screen px-10 py-5 min-w-[950px] mt-16">
+    <div className="bg-gray-50 min-h-screen w-screen px-10 py-5 min-w-[950px]">
       <div className="bg-white mb-5 px-4 py-3 shadow-sm rounded-md w-full flex flex-col">
         <div className="font-thin">{`${day.format("dddd")}, ${day.format(
           "MMMM"

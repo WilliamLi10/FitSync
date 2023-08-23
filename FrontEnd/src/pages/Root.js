@@ -4,11 +4,13 @@ import TopBar from "../components/TopBar/TopBar";
 import LoginModal from "../components/Auth/LoginModal";
 import SignUpRedirect from "../components/Auth/SignUpRedirect";
 import AuthContext from "../context/auth-context";
+import StatusBanner from "../components/StatusBanner";
 
 const Root = () => {
   const ctx = useContext(AuthContext);
   const [loginModal, setLoginModal] = useState(ctx.loginModal);
   const [redirectModal, setRedirectModal] = useState(ctx.redirectModal);
+  const [status, setStatus] = useState(ctx.status);
 
   useEffect(() => {
     setLoginModal(ctx.loginModal);
@@ -18,10 +20,21 @@ const Root = () => {
     setRedirectModal(ctx.redirectModal);
   }, [ctx.redirectModal]);
 
+  useEffect(() => {
+    setStatus(ctx.status);
+  }, [ctx.status]);
+
+  const statusCloseHandler = () => {
+    ctx.setStatus("");
+  };
+
   return (
     <div>
       <TopBar />
-      <div>
+      {status && (
+        <StatusBanner msg={status} closeHandler={statusCloseHandler} />
+      )}
+      <div className="pt-16">
         <Outlet />
         {loginModal && <LoginModal />}
         {loginModal && (

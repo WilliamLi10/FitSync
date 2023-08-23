@@ -3,9 +3,12 @@ import { BsGear } from "react-icons/bs";
 import { MdOutlineLogout } from "react-icons/md";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import AuthContext from "../../context/auth-context";
 
 const AccountOptions = () => {
   const navigate = useNavigate();
+  const ctx = useContext(AuthContext);
 
   const optionCSS =
     "transition-all duration-150 hover:bg-slate-200 px-2 py-1 cursor-pointer flex flex-row items-center";
@@ -15,27 +18,34 @@ const AccountOptions = () => {
       method: "POST",
       headers: {
         "Content-type": "application/json",
-        Authorization: `Bearer ${Cookies.get("jwt")}`,
+        "x-refresh-token": Cookies.get("refreshToken"),
       },
     })
       .then((response) => {
         if (!response.ok) {
           return response.json().then((data) => {
-            navigate("/error", {
-              state: { error: data.error, status: response.status },
-            });
-            throw "";
+            throw { error: data.error, status: response.status };
           });
         }
         return response.json();
       })
       .then((data) => {
-        Cookies.remove("jwt");
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        navigate("/");
         window.location.reload();
       })
       .catch((error) => {
-        if (`${error}` !== "") {
-          navigate("/error", { state: { error: `${error}`, status: 500 } });
+        if (error.response === 401) {
+          Cookies.remove("accessToken");
+          Cookies.remove("refreshToken");
+          window.location.reload();
+          ctx.setLoginModal(true);
+          ctx.setStatus("Session timed out: You have been logged out");
+        } else {
+          navigate("/error", {
+            state: { error: error.error, status: error.status },
+          });
         }
       });
   };

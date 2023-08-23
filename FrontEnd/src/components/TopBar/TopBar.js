@@ -4,7 +4,7 @@ import TopLink from "./TopLink";
 import AccountOptions from "./AccountOptions";
 import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
-import { checkJWT, getJWT } from "../../util/auth";
+import { checkAccessToken, getAccessToken } from "../../util/auth";
 
 const TopBar = (props) => {
   const ctx = useContext(AuthContext);
@@ -35,28 +35,28 @@ const TopBar = (props) => {
   }, [location.pathname]);
 
   return (
-    <>
-      <nav className="fixed top-0 left-0 bg-white w-screen h-16 flex justify-between gap-4 text-md pl-[1.2rem] pr-10 shadow-sm z-8">
+    <> 
+      <nav className="bg-white w-screen h-16 flex justify-between gap-4 text-md pl-[1.2rem] pr-10 shadow-sm z-10 fixed">
         <div className="h-full flex">
           <Link to="/" className="self-center pr-4 ">
             <TbLetterW className="cursor-pointer h-5 w-5" />{" "}
           </Link>
-          {checkJWT() ? (
+          {checkAccessToken() ? (
             <>
               <TopLink link="/" name="Dashboard" />
-              <TopLink link="/LogWorkout" name="Log Workout" />
-              <TopLink link="/Progress" name="Progress" />
-              <TopLink link="/Programs" name="Programs" />
+              <TopLink link="/logworkout" name="Log Workout" />
+              <TopLink link="/progress" name="Progress" />
+              <TopLink link="/programs" name="Programs" />
             </>
           ) : (
             <>
               <TopLink link="/" name="About" />
-              <TopLink link="/Product" name="Product" />
-              <TopLink link="/Contact" name="Contact" />
+              <TopLink link="/product" name="Product" />
+              <TopLink link="/contact" name="Contact" />
             </>
           )}
         </div>
-        {checkJWT() ? (
+        {checkAccessToken() ? (
           <div className="w-52">
             <div
               className={`flex items-center justify-end h-full self-center ${
@@ -68,7 +68,7 @@ const TopBar = (props) => {
                 className={`py-4 px-4 cursor-pointer hover:bg-slate-50 
                 `}
               >
-                {getJWT().username}
+                {getAccessToken().username}
               </p>
             </div>
             {showMenu && <AccountOptions />}

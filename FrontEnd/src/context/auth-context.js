@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export const AuthContextProvider = (props) => {
   const [loginModal, setLoginModal] = useState(false);
   const [redirectModal, setRedirectModal] = useState(false);
+  const [status, setStatus] = useState("");
 
   return (
     <AuthContext.Provider
@@ -13,6 +14,8 @@ export const AuthContextProvider = (props) => {
         setLoginModal: setLoginModal,
         redirectModal: redirectModal,
         setRedirectModal: setRedirectModal,
+        status: status,
+        setStatus: setStatus,
       }}
     >
       {props.children}

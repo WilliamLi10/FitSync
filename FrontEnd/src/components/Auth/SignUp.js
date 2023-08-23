@@ -3,7 +3,6 @@ import { HiOutlineMail } from "react-icons/hi";
 import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import { BsPerson } from "react-icons/bs";
-import { getCSRF } from "../../util/auth";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
 
@@ -23,53 +22,41 @@ const SignUp = (props) => {
     setSubmit(true);
 
     if (user.valid && dob.valid && email.valid && pass.valid) {
-      getCSRF()
-        .then((token) => {
-          return fetch("http://localhost:5000/auth/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-Token": token,
-            },
-            body: JSON.stringify({
-              user: user.value,
-              dob: dob.value,
-              email: email.value,
-              pass: pass.value,
-            }),
-          });
-        })
+      fetch("http://localhost:5000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: user.value,
+          dob: dob.value,
+          email: email.value,
+          pass: pass.value,
+        }),
+      })
         .then((response) => {
           if (!response.ok) {
-            if (response.status === 409) {
-              return response.json().then((data) => {
-                setEmailError(data.email);
-                setEmail({ ...email, valid: !data.email });
-                setUserError(data.user);
-                setUser({ ...user, valid: !data.user });
-                throw "";
-              });
-            } else {
-              return response.json().then((data) => {
-                navigate("/error", {
-                  state: { error: data.error, status: response.status },
-                });
-                throw "";
-              });
-            }
+            return response.json().then((data) => {
+              throw { error: data.error, status: response.status };
+            });
           }
           return response.json();
         })
         .then((data) => {
-          ctx.setLoginModal(false);
-          ctx.setRedirectModal(true);
+          if (data.success) {
+            ctx.setLoginModal(false);
+            ctx.setRedirectModal(true);
+          } else {
+            setEmailError(data.email);
+            setEmail({ ...email, valid: !data.email });
+            setUserError(data.user);
+            setUser({ ...user, valid: !data.user });
+          }
         })
         .catch((error) => {
-          if (`${error}` !== "") {
-            navigate("/error", {
-              state: { error: `${error}`, status: 500 },
-            });
-          }
+          navigate("/error", {
+            state: { error: error.error, status: error.status },
+          });
         });
     }
   };
