@@ -58,7 +58,7 @@ export const refreshToken = () => {
           });
 
           const expirationDate1Hour = new Date();
-          expirationDate1Hour.setHours(expirationDate1Hour.getHours() + 15);
+          expirationDate1Hour.setHours(expirationDate1Hour.getHours() + 1);
 
           Cookies.set("refreshToken", data.refreshToken, {
             expires: expirationDate1Hour,
