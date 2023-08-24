@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const Programs = require("./Programs");
 
 const activeProgramSchema = new mongoose.Schema({
   name: String,
-  id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
+  _id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
   frequency: Number,
   workouts: [{ type: Object, required: true }],
 });
@@ -28,13 +29,26 @@ const userSchema = new mongoose.Schema({
   activeProgram: activeProgramSchema,
   programs: [
     {
-      program: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
       date: { type: Date, default: Date.now },
     },
   ],
 });
 
-userSchema.methods.checkUserNameExists = (username) => {
+/*
+  Returns if given username exists and username, dob, and email of that user
+
+  input: username string
+  output: {
+    exists: bool, 
+    user: {
+      username string, 
+      dob date, 
+      email string
+    }
+  }
+*/
+userSchema.methods.getUserByUsername = (username) => {
   return mongoose
     .model("users")
     .findOne({ username: username }, { username: 1, dob: 1, email: 1 })
@@ -50,15 +64,31 @@ userSchema.methods.checkUserNameExists = (username) => {
     });
 };
 
-userSchema.methods.checkEmailExists = (email) => {
+/*
+  Returns if given email exists and username, dob, and email of that user
+
+  input: email string
+  output: {
+    exists: bool, 
+    user: {
+      username string, 
+      dob date, 
+      email string
+    }
+  }
+*/
+userSchema.methods.getUserByEmail = (email) => {
   return mongoose
     .model("users")
-    .findOne({ email: { $regex: new RegExp(email, "i") } })
+    .findOne(
+      { email: { $regex: new RegExp(email, "i") } },
+      { username: 1, dob: 1, email: 1 }
+    )
     .then((existingEmail) => {
       if (existingEmail) {
         console.log("Email exists");
       }
-      return !!existingEmail;
+      return { exists: !!existingEmail, user: existingEmail };
     })
     .catch((error) => {
       console.log("Error checking email");
@@ -66,15 +96,21 @@ userSchema.methods.checkEmailExists = (email) => {
     });
 };
 
-userSchema.methods.addNewUser = (user) => {
+/*
+  Hashes and salts given password. Creates new user with given information and encrypted password. Returns new user
+
+  input: pass string, email string, username string, dob date
+  output: user object
+*/
+userSchema.methods.createUser = (pass, email, username, dob) => {
   return bcrypt
     .genSalt(10)
     .then((salt) => {
-      return bcrypt.hash(user.pass, salt).then((hashedPass) => {
+      return bcrypt.hash(pass, salt).then((hashedPass) => {
         const newUser = new mongoose.model("users")({
-          username: user.user,
-          dob: user.dob,
-          email: user.email,
+          username: username,
+          dob: dob,
+          email: email,
           password: hashedPass,
         });
 
@@ -94,6 +130,19 @@ userSchema.methods.addNewUser = (user) => {
     });
 };
 
+/*
+  Returns username, dob, and email of user with given user id
+
+  input: user id
+  output: {
+    exists: bool, 
+    user: {
+      username string, 
+      dob date, 
+      email string
+    }
+  }
+*/
 userSchema.methods.getUserByID = (userID) => {
   return mongoose
     .model("users")
@@ -104,13 +153,25 @@ userSchema.methods.getUserByID = (userID) => {
     });
 };
 
-userSchema.methods.getProgramList = (userID, index) => {
+/*
+  Returns an array of programs in user with given user id's program array. Returns all programs from index to inc. Returns only program id, program name, owner name, and owner last opened
+
+  input: user id, index number, inc number
+  output: [{
+    _id: program id, 
+    name: program name string, 
+    ownerName: owner name string, 
+    lastOpened: owner last opened date
+  }]
+*/
+userSchema.methods.getProgramListStaggered = (userID, index, inc) => {
   return mongoose
     .model("users")
     .findOne({ _id: userID })
     .populate({
-      path: "programs.program",
-      populate: [{ path: "workouts" }, { path: "owner", select: "username" }],
+      path: "programs._id",
+      select: "name owner",
+      populate: [{ path: "owner", select: "username" }],
     })
     .then((user) => {
       if (!user) {
@@ -119,10 +180,11 @@ userSchema.methods.getProgramList = (userID, index) => {
 
       const programs = user.programs
         .sort((a, b) => b.date - a.date)
-        .slice(index, index + 20)
+        .slice(index, index + inc)
         .map((program) => ({
-          ...program.program.toObject(),
-          ownerName: program.program.owner.username,
+          _id: program._id._id,
+          name: program._id.name,
+          ownerName: program._id.owner.username,
           lastOpened: program.date,
         }));
 
@@ -134,19 +196,43 @@ userSchema.methods.getProgramList = (userID, index) => {
     });
 };
 
+/*
+  Update user with given user id's program array to have program with given program id's last opened date be right now
+
+  input: user id, program id
+  output: none
+*/
 userSchema.methods.updateLastOpened = async function (userID, programID) {
   try {
-    const user = await mongoose.model("users").findById(userID);
+    const user = await mongoose
+      .model("users")
+      .findOne({ _id: userID }, { programs: 1 });
+
     if (!user) {
       throw new Error("User not found");
     }
 
     const programIndex = user.programs.findIndex(
-      (program) => program.program.toString() === programID
+      (program) => program._id.toString() === programID
     );
 
     if (programIndex === -1) {
-      throw new Error("Program not found in user's programs");
+      const program = await mongoose
+        .model("programs")
+        .findOne({ _id: programID }, { isPublic: 1, viewers: 1 });
+
+      if (program.isPublic) {
+        Promise.all[
+          (new Users().addProgramToManyUsers(programID, [userID]),
+          new Programs().updateProgram({
+            viewers: [...program.viewers, userID],
+            programID,
+          }))
+        ];
+        return;
+      } else {
+        throw new Error("Private program is not accessible by user");
+      }
     }
 
     user.programs[programIndex].date = new Date();
@@ -157,13 +243,52 @@ userSchema.methods.updateLastOpened = async function (userID, programID) {
   }
 };
 
-userSchema.methods.usernameToID = async function (usernameArray) {
+/*
+  Takes an array of usernames and converts them to their corresponding user id
+
+  input: [username string] array
+  output: [user id] array
+*/
+userSchema.methods.manyUsernameToManyID = async function (usernameArray) {
   try {
     return await Users.find({
       username: { $in: usernameArray },
     }).distinct("_id");
   } catch (error) {
     console.log("Error converting username to id");
+    throw error;
+  }
+};
+
+/*
+  Adds a given program id to the program array of all the users in the given newUsers array
+
+  input: program id, [user id] array
+  output: none
+*/
+userSchema.methods.addProgramToManyUsers = async function (
+  programID,
+  newUsers
+) {
+  try {
+    const users = await mongoose
+      .model("users")
+      .find({ _id: { $in: [...newUsers] } });
+
+    for (const user of users) {
+      const existingProgram = user.programs.find(
+        (program) => program._id.toString() === programID.toString()
+      );
+
+      if (!existingProgram) {
+        user.programs.push({ _id: programID, date: new Date() });
+        await user.save();
+      }
+    }
+
+    console.log("Users and program updated successfully");
+  } catch (error) {
+    console.log("Error adding programs", error);
     throw error;
   }
 };

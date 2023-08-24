@@ -11,6 +11,7 @@ const programsSchema = new mongoose.Schema({
     required: true,
   },
   editorPermissions: { type: Boolean, required: true },
+  isPublic: { type: Boolean, required: true },
   editors: [
     { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
   ],
@@ -18,21 +19,26 @@ const programsSchema = new mongoose.Schema({
     { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
   ],
   workouts: [{ type: Object, required: true }],
-  lastModified: [
-    {
-      user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
-      date: { type: Date },
-    },
-  ],
+  lastModified: {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
+    date: { type: Date },
+  },
   valid: { type: Boolean, required: true },
 });
 
+/* 
+  Creates a new empty program. Sets given user id as owner. Returns new program id
+
+  input: user id
+  output: program id
+*/
 programsSchema.methods.createProgram = async function (userID) {
   try {
     const newProgram = new mongoose.model("programs")({
       name: "Untitled",
       owner: userID,
       editorPermissions: false,
+      isPublic: false,
       editors: [userID],
       lastModified: [{ user: userID, date: Date() }],
       workouts: [
@@ -60,7 +66,7 @@ programsSchema.methods.createProgram = async function (userID) {
       .model("users")
       .findOneAndUpdate(
         { _id: userID },
-        { $push: { programs: { program: savedProgram._id, date: Date() } } }
+        { $push: { programs: { _id: savedProgram._id, date: Date() } } }
       );
 
     return savedProgram._id;
@@ -70,89 +76,62 @@ programsSchema.methods.createProgram = async function (userID) {
   }
 };
 
-programsSchema.methods.getProgram = async function (programID, userID) {
+/* 
+  Retreives lean version of program with given program id
+
+  input: program id
+  output: lean program object
+*/
+programsSchema.statics.getLeanProgram = async function (programID) {
   try {
-    const program = await mongoose
-      .model("programs")
-      .findOne({ _id: programID })
-      .lean();
-
-    const userIDObject = new mongoose.Types.ObjectId(userID);
-    const isOwner = program.owner.equals(userIDObject);
-    const isEditor = program.editors.some((editorId) =>
-      editorId.equals(userIDObject)
-    );
-    const isViewer = program.viewers.some((viewerId) =>
-      viewerId.equals(userIDObject)
-    );
-
-    if (isOwner) {
-      program.userRole = "owner";
-    } else if (isEditor) {
-      program.userRole = "editor";
-    } else if (isViewer) {
-      program.userRole = "viewer";
-    } else {
-      program.userRole = "none";
-    }
-
-    return program;
+    return await this.findOne({ _id: programID }).lean();
   } catch (error) {
     console.log("Error getting program");
     throw error;
   }
 };
 
-programsSchema.methods.saveProgram = async function (program, programID) {
+/*
+  Updates program with given program id with the information in given object
+
+  input: object, program id
+  output: nothing
+*/
+programsSchema.methods.updateProgram = async function (newData, programID) {
   try {
     await mongoose
       .model("programs")
-      .findOneAndUpdate({ _id: programID }, program);
+      .findOneAndUpdate({ _id: programID }, newData);
   } catch (error) {
     console.log("Error saving program");
     throw error;
   }
 };
 
-programsSchema.methods.getUsers = async function (programID) {
+/*
+  Retreives all the viewers, editors, and owner of the program with the given program id. Also retreives editor permissions
+
+  input: program id
+  output: {
+    editors: [{_id, username} object] array, 
+    viewers: [{_id, username} object] array, 
+    owner: {_id, username} object 
+    editorPermissions: bool
+  }
+*/
+programsSchema.methods.getProgramPermissions = async function (programID) {
   try {
     return await mongoose
       .model("programs")
       .findOne(
         { _id: programID },
-        { editors: 1, viewers: 1, owner: 1, editorPermissions: 1 }
+        { editors: 1, viewers: 1, owner: 1, editorPermissions: 1, isPublic: 1 }
       )
       .populate("owner", "username")
       .populate("editors", "username")
       .populate("viewers", "username");
   } catch (error) {
     console.log("Error getting users");
-    throw error;
-  }
-};
-
-programsSchema.methods.saveUsers = async function (
-  programID,
-  viewers,
-  editors
-) {
-  try {
-
-    await mongoose.model("programs").findOneAndUpdate(
-      { _id: programID },
-      { viewers: viewers, editors: editors }
-    );
-
-    await mongoose
-      .model("users")
-      .updateMany(
-        { _id: { $in: [...viewers, ...editors] } },
-        { $addToSet: { programs: { program: programID, date: new Date() } } }
-      );
-
-    console.log("Users and program updated successfully");
-  } catch (error) {
-    console.log("Error saving users and program:", error);
     throw error;
   }
 };

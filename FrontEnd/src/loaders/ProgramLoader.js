@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
-import { refreshToken } from "../../../../util/auth";
+import { refreshToken } from "../util/auth.js";
 
-export const programViewLoader = ({ params }) => {
+export const programLoader = ({ params }) => {
   return refreshToken()
     .then(() => {
       return fetch("http://localhost:5000/program/load-program", {
@@ -27,6 +27,6 @@ export const programViewLoader = ({ params }) => {
       return data.program;
     })
     .catch((error) => {
-      return error;
+      return error
     });
 };

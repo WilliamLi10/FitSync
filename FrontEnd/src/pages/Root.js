@@ -29,7 +29,7 @@ const Root = () => {
   };
 
   return (
-    <div>
+    <div className="h-screen">
       <TopBar />
       {status && (
         <StatusBanner msg={status} closeHandler={statusCloseHandler} />

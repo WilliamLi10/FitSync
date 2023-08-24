@@ -153,7 +153,7 @@ const ProgramView = () => {
         break;
       }
     }
-
+ 
     refreshToken()
       .then(() => {
         return fetch("http://localhost:5000/program/save-program", {
@@ -169,7 +169,7 @@ const ProgramView = () => {
               valid: !hasError,
               lastModified: { user: getAccessToken().userID, date: Date() },
             },
-            id: program._id,
+            programID: program._id,
           }),
         });
       })
@@ -216,6 +216,8 @@ const ProgramView = () => {
           title={title}
           programID={program._id}
           role={program.userRole}
+          editPermissions={program.editorPermissions}
+          isPublic={program.isPublic}
         />
       )}
       {shareModal && (
@@ -228,6 +230,7 @@ const ProgramView = () => {
             closeHandler={() => {
               setStatus("");
             }}
+            className="mb-2"
           />
         )}
         <div className="flex flex-row justify-between items-center">
@@ -245,7 +248,11 @@ const ProgramView = () => {
               type="text"
               onChange={titleHandler}
               disabled={program.userRole === "viewer"}
-              className="border-none bg-gray-50 pl-2 ml-2 h-6 py-1 rounded-md transition-all duration-300 hover:border-solid hover:border-[1px] focus:border-none"
+              className={`border-none bg-gray-50 pl-2 ml-2 h-6 py-1 rounded-md transition-all duration-300 ${
+                program.userRole === "viewer"
+                  ? ""
+                  : "hover:border-solid hover:border-[1px] focus:border-none"
+              }`}
             />
           </div>
           <div>
@@ -268,6 +275,7 @@ const ProgramView = () => {
               duplicate={duplicateWorkout}
               move={moveWorkout}
               index={index}
+              role={program.userRole}
             />
           );
         })}

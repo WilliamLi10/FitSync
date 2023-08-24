@@ -56,20 +56,24 @@ router.post("/register", (req, res) => {
   console.log("+++");
   console.log("Registering account...");
 
-  const user = req.body;
-  const checkEmail = new Users().checkEmailExists(user.email);
-  const checkUserName = new Users().checkUserNameExists(user.user);
+  const email = req.body.email;
+  const pass = req.body.pass;
+  const user = req.body.user;
+  const dob = req.body.dob;
+
+  const checkEmail = new Users().getUserByEmail(email);
+  const checkUserName = new Users().getUserByUsername(user);
 
   Promise.all([checkEmail, checkUserName])
     .then(([emailExists, userExists]) => {
-      if (userExists.exists || emailExists) {
+      if (userExists.exists || emailExists.exists) {
         res.json({
           success: false,
           user: userExists.exists,
-          email: emailExists,
+          email: emailExists.exists,
         });
       } else {
-        new Users().addNewUser(user).then(() => {
+        new Users().createUser(pass, email, user, dob).then(() => {
           res.json({ success: true });
           console.log("Registration successful");
         });

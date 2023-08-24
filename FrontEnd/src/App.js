@@ -15,7 +15,7 @@ import Contact from "./pages/LoggedOut/Contact";
 import DiscoverPrograms from "./components/Programs/DiscoverPrograms/DiscoverPrograms";
 import MyPrograms from "./components/Programs/MyPrograms/MyPrograms";
 import ProgramView from "./components/Programs/MyPrograms/ProgramView/ProgramView";
-import { programViewLoader } from "./components/Programs/MyPrograms/ProgramView/ProgramViewLoader";
+import { programLoader } from "./loaders/ProgramLoader";
 
 const router = createBrowserRouter([
   {
@@ -39,7 +39,7 @@ const router = createBrowserRouter([
           {
             path: "/programs/myprograms/:programID",
             element: <ProgramView />,
-            loader: programViewLoader,
+            loader: programLoader,
           },
         ],
       },

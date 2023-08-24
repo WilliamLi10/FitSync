@@ -8,7 +8,7 @@ router.post("/search-user", verifyAccessToken, (req, res) => {
   console.log("Searching user...");
 
   new Users()
-    .checkUserNameExists(req.body.username)
+    .getUserByUsername(req.body.username)
     .then((userExists) => {
       console.log("Searched user successfully");
       if (!userExists.exists) {

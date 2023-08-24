@@ -3,6 +3,8 @@ const router = express.Router();
 const Programs = require("../models/Programs");
 const Users = require("../models/Users");
 const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
+const verifyEditAccess = require("../middleware/programs/verifyEditAccess");
+const mongoose = require("mongoose");
 
 router.post("/create-program", verifyAccessToken, (req, res) => {
   console.log("+++");
@@ -22,27 +24,49 @@ router.post("/create-program", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/load-program", verifyAccessToken, (req, res) => {
+router.post("/load-program", verifyAccessToken, async (req, res) => {
   console.log("+++");
   console.log("Loading program...");
 
   const programID = req.body.programID;
   const userID = req.userID;
 
-  new Programs()
-    .getProgram(programID, userID)
-    .then((program) => {
-      if (program.userRole === "none") {
-        console.log("Unauthorized user");
-        return res.status(401).json({ error: "Unauthorized" });
-      }
-      console.log("Loaded program successfully");
-      res.json({ program: program });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ error: "Internal server error" });
-    });
+  try {
+    const program = await Programs.getLeanProgram(programID);
+
+    if (!program) {
+      console.log("Program not found");
+      return res.status(404).json({ error: "Page not found" });
+    }
+
+    let userRole = "none";
+
+    const userIDObject = new mongoose.Types.ObjectId(userID);
+    if (program.owner.equals(userIDObject)) {
+      userRole = "owner";
+    } else if (
+      program.editors.some((editorId) => editorId.equals(userIDObject))
+    ) {
+      userRole = "editor";
+    } else if (
+      program.viewers.some((viewerId) => viewerId.equals(userIDObject)) ||
+      program.isPublic
+    ) {
+      userRole = "viewer";
+    }
+
+    if (userRole === "none") {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    program.userRole = userRole;
+
+    console.log("Loaded program successfully");
+    res.json({ program: program });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 router.post("/update-last-opened", verifyAccessToken, (req, res) => {
@@ -63,13 +87,14 @@ router.post("/update-last-opened", verifyAccessToken, (req, res) => {
 
 router.post("/load-program-list", verifyAccessToken, (req, res) => {
   console.log("+++");
-  console.log("Loading next twenty programs...");
+  console.log("Loading next programs...");
 
   const index = req.body.index;
   const userID = req.userID;
+  const inc = req.body.inc;
 
   new Users()
-    .getProgramList(userID, index)
+    .getProgramListStaggered(userID, index, inc)
     .then((programs) => {
       console.log("Loaded programs successfully");
       if (programs.length !== 0) {
@@ -83,41 +108,51 @@ router.post("/load-program-list", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/save-program", verifyAccessToken, (req, res) => {
+router.post(
+  "/save-program",
+  [verifyAccessToken, verifyEditAccess],
+  (req, res) => {
+    console.log("+++");
+    console.log("Saving program...");
+
+    if (!req.canEditProgram) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    new Programs()
+      .updateProgram(req.body.program, req.body.programID)
+      .then(() => {
+        console.log("Saved program successfully");
+        return res.json({});
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  }
+);
+
+router.post("/get-permissions", verifyAccessToken, (req, res) => {
   console.log("+++");
-  console.log("Saving program...");
+  console.log("Getting permissions...");
 
   new Programs()
-    .saveProgram(req.body.program, req.body.id)
-    .then(() => {
-      console.log("Saved program successfully");
-      return res.json({});
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ error: "Internal server error" });
-    });
-});
-
-router.post("/get-users", verifyAccessToken, (req, res) => {
-  console.log("+++");
-  console.log("Getting users...");
-
-  new Programs()
-    .getUsers(req.body.programID)
+    .getProgramPermissions(req.body.programID)
     .then((users) => {
       const editorUsernames = users.editors.map((editor) => editor.username);
       const viewerUsernames = users.viewers.map((viewer) => viewer.username);
       const ownerUsername = users.owner.username;
       const editorPermissions = users.editorPermissions;
+      const isPublic = users.isPublic;
 
-      console.log("Users loaded successfully");
+      console.log("Permissions loaded successfully");
 
       res.json({
         editors: editorUsernames,
         viewers: viewerUsernames,
         owner: ownerUsername,
         editorPermissions: editorPermissions,
+        isPublic: isPublic,
       });
     })
     .catch((error) => {
@@ -126,26 +161,52 @@ router.post("/get-users", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/save-users", verifyAccessToken, (req, res) => {
-  console.log("+++");
-  console.log("Saving users...");
+router.post(
+  "/save-permissions",
+  [verifyAccessToken, verifyEditAccess],
+  (req, res) => {
+    console.log("+++");
+    console.log("Saving users...");
 
-  const convertViewers = new Users().usernameToID(req.body.viewers);
-  const convertEditors = new Users().usernameToID(req.body.editors);
+    if (!req.canEditPermissions) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
 
-  Promise.all([convertEditors, convertViewers])
-    .then(([editors, viewers]) => {
-      new Programs()
-        .saveUsers(req.body.programID, viewers, editors)
-        .then(() => {
-          console.log("Saved users successfully");
-          res.json({});
-        });
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ error: "Internal server error" });
-    });
-});
+    const programID = req.body.programID;
+    const viewers = req.body.viewers;
+    const editors = req.body.editors;
+    const editorPermissions = req.body.editorPermissions;
+    const isPublic = req.body.isPublic;
+
+    const convertViewers = new Users().manyUsernameToManyID(viewers);
+    const convertEditors = new Users().manyUsernameToManyID(editors);
+
+    Promise.all([convertEditors, convertViewers])
+      .then(([editorID, viewerID]) => {
+        const updateProgram = new Programs().updateProgram(
+          {
+            editors: editorID,
+            viewers: viewerID,
+            isPublic: isPublic,
+            editorPermissions: editorPermissions,
+          },
+          programID
+        );
+
+        const updateUsers = new Users()
+          .addProgramToManyUsers(req.body.programID, [...viewerID, ...editorID])
+          .then(() => {
+            console.log("Saved users successfully");
+            res.json({});
+          });
+
+        Promise.all([updateProgram, updateUsers]);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  }
+);
 
 module.exports = router;
