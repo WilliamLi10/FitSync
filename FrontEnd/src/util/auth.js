@@ -9,6 +9,7 @@ export const checkAccessToken = () => {
 export const getAccessToken = () => {
   const jwt = Cookies.get("accessToken");
   if (jwt) {
+    
     return jwt_decode(jwt);
   }
 };
@@ -57,7 +58,7 @@ export const refreshToken = () => {
           });
 
           const expirationDate1Hour = new Date();
-          expirationDate1Hour.setHours(expirationDate1Hour.getHours() + 1);
+          expirationDate1Hour.setHours(expirationDate1Hour.getHours() + 15);
 
           Cookies.set("refreshToken", data.refreshToken, {
             expires: expirationDate1Hour,

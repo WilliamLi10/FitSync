@@ -11,7 +11,7 @@ router.post("/refresh-token", verifyRefreshToken, (req, res) => {
   console.log("+++");
   console.log("Refreshing JWT...");
 
-  const [userID] = req.userID;
+  const userID = req.userID;
   console.log(userID);
 
   new Users()
@@ -95,7 +95,7 @@ router.post("/login", (req, res) => {
         error: "Internal server error",
       });
     }
-
+    console.log(user._id);
     if (!user) {
       console.log(info.message);
       return res.json({
@@ -121,6 +121,7 @@ router.post("/login", (req, res) => {
       `${process.env.SECRET_KEY}`,
       { expiresIn: "1h", subject: `${user._id}` }
     );
+    
 
     res.json({
       accessToken: accessToken,
