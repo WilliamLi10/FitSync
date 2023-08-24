@@ -5,7 +5,7 @@ import { refreshToken } from "../../../util/auth";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import AuthContext from "../../../context/auth-context";
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 
 const MyPrograms = () => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const MyPrograms = () => {
             "Content-type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
           },
-          body: JSON.stringify({ index: index }),
+          body: JSON.stringify({ index: index, inc: 20 }),
         });
       })
       .then((response) => {

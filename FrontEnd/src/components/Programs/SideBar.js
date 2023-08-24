@@ -27,7 +27,7 @@ const SideBar = () => {
   return (
     <nav
       ref={barRef}
-      className={`bg-white h-screen transition-all duration-300 transform shadow-sm ${
+      className={`bg-white h-screen transition-all duration-300 transform shadow-sm sticky ${
         barOpen ? "w-1/6 min-w-[250px]" : "w-[60px] min-w-[60px]"
       }`}
     >
@@ -40,7 +40,6 @@ const SideBar = () => {
             <div className="h-5 w-5">
               <FaBars />
             </div>
-            <h1 className="text-md">{barOpen && "Programs"}</h1>
           </div>
         </li>
         <li>

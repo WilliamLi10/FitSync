@@ -9,7 +9,7 @@ const ShareUser = (props) => {
   const [drop, setDrop] = useState(false);
 
   return (
-    <div className="flex flex-row text-sm justify-between transition-all duration-150 hover:bg-slate-100 py-2 px-1">
+    <div className="flex flex-row text-sm justify-between transition-all duration-150 hover:bg-slate-100 py-2 px-3">
       <div>{props.name}</div>
       {props.type !== "owner" &&
       (props.role === "owner" ||
