@@ -3,12 +3,12 @@ const router = express.Router();
 const Users = require("../models/Users");
 const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 
-router.post("/search-user", verifyAccessToken, (req, res) => {
+router.get("/search-user", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Searching user...");
-
+  const username = req.query.username;
   new Users()
-    .getUserByUsername(req.body.username)
+    .getUserByUsername(username)
     .then((userExists) => {
       console.log("Searched user successfully");
       if (!userExists.exists) {

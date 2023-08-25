@@ -24,11 +24,11 @@ router.post("/create-program", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/load-program", verifyAccessToken, async (req, res) => {
+router.get("/load-program", verifyAccessToken, async (req, res) => {
   console.log("+++");
   console.log("Loading program...");
 
-  const programID = req.body.programID;
+  const programID = req.query.programID;
   const userID = req.userID;
 
   try {
@@ -85,13 +85,13 @@ router.post("/update-last-opened", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/load-program-list", verifyAccessToken, (req, res) => {
+router.get("/load-program-list", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Loading next programs...");
 
-  const index = req.body.index;
+  const index = req.query.index;
   const userID = req.userID;
-  const inc = req.body.inc;
+  const inc = req.query.inc;
 
   new Users()
     .getProgramListStaggered(userID, index, inc)
@@ -132,12 +132,12 @@ router.post(
   }
 );
 
-router.post("/get-permissions", verifyAccessToken, (req, res) => {
+router.get("/get-permissions", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Getting permissions...");
-
+  const programID = req.query.programID;
   new Programs()
-    .getProgramPermissions(req.body.programID)
+    .getProgramPermissions(programID)
     .then((users) => {
       const editorUsernames = users.editors.map((editor) => editor.username);
       const viewerUsernames = users.viewers.map((viewer) => viewer.username);

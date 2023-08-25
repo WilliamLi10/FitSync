@@ -40,15 +40,12 @@ const ProgramShareModel = (props) => {
     setLoading(true);
     refreshToken()
       .then(() => {
-        return fetch("http://localhost:5000/program/get-permissions", {
-          method: "POST",
+        return fetch(`http://localhost:5000/program/get-permissions?programID=${props.programID}`, {
+          method: "GET",
           headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
           },
-          body: JSON.stringify({
-            programID: props.programID,
-          }),
         });
       })
       .then((response) => {
@@ -88,15 +85,12 @@ const ProgramShareModel = (props) => {
     event.preventDefault();
     refreshToken()
       .then(() => {
-        return fetch("http://localhost:5000/user/search-user", {
-          method: "POST",
+        return fetch(`http://localhost:5000/user/search-user?username=${username}`, {
+          method: "GET",
           headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
           },
-          body: JSON.stringify({
-            username: username,
-          }),
         });
       })
       .then((response) => {

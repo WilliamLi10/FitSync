@@ -80,7 +80,7 @@ const Login = (props) => {
   };
 
   return (
-    <form className="flex flex-col px-8 py-4 w-full items-center">
+    <form className="flex flex-col px-8 py-4 w-full items-center" onSubmit = {submitHandler}>
       <h2 className="font-bold text-slate-700 text-3xl text-center mt-16">
         Log In to FitSync
       </h2>
