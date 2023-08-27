@@ -28,6 +28,10 @@ router.get("/get-user", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Getting user...");
   const username = req.query.username;
+  if (req.username != username){
+    
+    return res.status(401).json({error: "User Not Authorized"});
+  }
   new Users()
     .getUserByUsername(username)
     .then((user) => {

@@ -19,6 +19,7 @@ const verifyAccessToken = (req, res, next) => {
     }
 
     req.userID = decoded.userID;
+    req.username = decoded.username
 
     console.log("Access token verified");
 
