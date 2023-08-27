@@ -10,6 +10,8 @@ import Cookies from "js-cookie";
 import StatusBanner from "../../../StatusBanner";
 import { BsShare } from "react-icons/bs";
 import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { MdOutlineDragHandle } from "react-icons/md";
 
 const ProgramView = () => {
   const ctx = useContext(AuthContext);
@@ -20,6 +22,7 @@ const ProgramView = () => {
   const [workouts, setWorkouts] = useState([]);
   const [status, setStatus] = useState("");
   const [shareModal, setShareModal] = useState(false);
+  const [drag, setDrag] = useState(false);
 
   const titleHandler = (event) => {
     setTitle(event.target.value);
@@ -53,6 +56,21 @@ const ProgramView = () => {
     ]);
   };
 
+  const handleDrop = (droppedWorkout) => {
+    if (!droppedWorkout.destination) return;
+    var updatedWorkout = [...workouts];
+    const [reorderedWorkout] = updatedWorkout.splice(
+      droppedWorkout.source.index,
+      1
+    );
+    updatedWorkout.splice(
+      droppedWorkout.destination.index,
+      0,
+      reorderedWorkout
+    );
+    setWorkouts(updatedWorkout);
+  };
+
   const removeWorkout = (index) => {
     const newWorkouts = [...workouts];
     newWorkouts.splice(index, 1);
@@ -62,7 +80,11 @@ const ProgramView = () => {
   const duplicateWorkout = (index) => {
     const newWorkouts = [...workouts];
     const workoutToDuplicate = newWorkouts[index];
-    newWorkouts.splice(index + 1, 0, { ...workoutToDuplicate });
+
+    newWorkouts.splice(index + 1, 0, {
+      ...workoutToDuplicate,
+      Name: `Copy of ${workoutToDuplicate.Name}`,
+    });
     setWorkouts(newWorkouts);
   };
 
@@ -153,7 +175,7 @@ const ProgramView = () => {
         break;
       }
     }
- 
+
     refreshToken()
       .then(() => {
         return fetch("http://localhost:5000/program/save-program", {
@@ -264,21 +286,50 @@ const ProgramView = () => {
             </button>
           </div>
         </div>
-        {workouts.map((workout, index) => {
-          return (
-            <Workout
-              key={index}
-              workout={workout}
-              workouts={workouts}
-              update={workoutHandler}
-              delete={removeWorkout}
-              duplicate={duplicateWorkout}
-              move={moveWorkout}
-              index={index}
-              role={program.userRole}
-            />
-          );
-        })}
+        <DragDropContext onDragEnd={handleDrop}>
+          <Droppable droppableId="workouts">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {workouts.map((workout, index) => {
+                  return (
+                    <Draggable
+                      key={index}
+                      draggableId={`workout-${index}`}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          className={`flex flex-row items-center w-full `}
+                          {...provided.draggableProps}
+                        >
+                          <div {...provided.dragHandleProps} className={`transition-all duration-150 ${drag ? "w-[53px]" : "w-0"}`}>
+                            <MdOutlineDragHandle className="w-8 h-8 mr-5" />
+                          </div>
+                          <div className="flex-grow">
+                            <Workout
+                              workout={workout}
+                              workouts={workouts}
+                              update={workoutHandler}
+                              delete={removeWorkout}
+                              copy={duplicateWorkout}
+                              move={moveWorkout}
+                              index={index}
+                              role={program.userRole}
+                              canDelete={workouts.length > 1}
+                              drag={setDrag}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
         {(program.userRole === "editor" || program.userRole === "owner") && (
           <div className="flex flex-row justify-between">
             <button

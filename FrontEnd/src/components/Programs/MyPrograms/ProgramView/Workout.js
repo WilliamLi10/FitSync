@@ -1,12 +1,11 @@
-import { useState, useRef, useEffect } from "react";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { useState } from "react";
 import { TfiReload } from "react-icons/tfi";
 import { RiAddLine } from "react-icons/ri";
-import WorkoutDrop from "./WorkoutDrop";
+import { BsTrash } from "react-icons/bs";
+import { LuCopy } from "react-icons/lu";
+import { AiOutlineDrag } from "react-icons/ai";
 
 const Workout = (props) => {
-  const dropRef = useRef(null);
-  const [drop, setDrop] = useState(false);
   const [weight, setWeight] = useState(true);
   const [rest, setRest] = useState("sec");
 
@@ -66,22 +65,6 @@ const Workout = (props) => {
     });
   };
 
-  const dropHandler = () => {
-    setDrop((prevDrop) => !prevDrop);
-  };
-
-  const deleteHandler = () => {
-    props.delete(props.index);
-  };
-
-  const duplicateHandler = () => {
-    props.duplicate(props.index);
-  };
-
-  const moveHandler = (newIndex) => {
-    props.move(props.index, newIndex);
-  };
-
   const workoutNameHandler = (event) => {
     props.update({ ...props.workout, Name: event.target.value }, props.index);
   };
@@ -135,18 +118,6 @@ const Workout = (props) => {
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropRef.current && !dropRef.current.contains(event.target)) {
-        setDrop(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [dropRef]);
-
   const titleCSS = "text-center border-solid border-white";
   const itemCSS =
     "w-full border-solid border-slate-200 border-b-[1px] border-r-[1px]";
@@ -168,16 +139,27 @@ const Workout = (props) => {
           disabled={props.role === "viewer"}
         />
         {props.role !== "viewer" && (
-          <div onClick={dropHandler} className="cursor-pointer" ref={dropRef}>
-            <IoMdArrowDropdown className="ml-1 rounded-full hover:border-solid hover:border-[1px] hover:border-slate-500" />
-            {drop && (
-              <WorkoutDrop
-                delete={deleteHandler}
-                duplicate={duplicateHandler}
-                move={moveHandler}
-                workouts={props.workouts}
+          <div className="flex flex-row pl-2 text-gray-500 items-align">
+            <LuCopy
+              className="cursor-pointer"
+              onClick={() => {
+                props.copy(props.index);
+              }}
+            />
+            {props.canDelete && (
+              <BsTrash
+                className="ml-1 cursor-pointer"
+                onClick={() => {
+                  props.delete(props.index);
+                }}
               />
             )}
+            <AiOutlineDrag
+              className="ml-1 cursor-pointer"
+              onClick={() => {
+                props.drag((prevDrag) => !prevDrag);
+              }}
+            />
           </div>
         )}
       </div>
