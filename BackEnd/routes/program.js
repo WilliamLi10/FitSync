@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Programs = require("../models/Programs");
 const Users = require("../models/Users");
+const UpcomingWorkouts = require("../models/UpcomingWorkouts");
 const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
-const verifyEditAccess = require("../middleware/programs/verifyEditAccess");
+const getPermissions = require("../middleware/programs/getPermissions");
 const mongoose = require("mongoose");
 
 router.post("/create-program", verifyAccessToken, (req, res) => {
@@ -24,11 +25,11 @@ router.post("/create-program", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/load-program", verifyAccessToken, async (req, res) => {
+router.get("/load-program", verifyAccessToken, async (req, res) => {
   console.log("+++");
   console.log("Loading program...");
 
-  const programID = req.body.programID;
+  const programID = req.query.programID;
   const userID = req.userID;
 
   try {
@@ -85,13 +86,13 @@ router.post("/update-last-opened", verifyAccessToken, (req, res) => {
     });
 });
 
-router.post("/load-program-list", verifyAccessToken, (req, res) => {
+router.get("/load-program-list", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Loading next programs...");
 
-  const index = req.body.index;
+  const index = req.query.index;
   const userID = req.userID;
-  const inc = req.body.inc;
+  const inc = req.query.inc;
 
   new Users()
     .getProgramListStaggered(userID, index, inc)
@@ -110,12 +111,15 @@ router.post("/load-program-list", verifyAccessToken, (req, res) => {
 
 router.post(
   "/save-program",
-  [verifyAccessToken, verifyEditAccess],
+  [verifyAccessToken, getPermissions],
   (req, res) => {
     console.log("+++");
     console.log("Saving program...");
 
-    if (!req.canEditProgram) {
+    if (
+      req.permissions.userRole != "Owner" &&
+      req.permissions.userRole != "Editor"
+    ) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
@@ -132,12 +136,12 @@ router.post(
   }
 );
 
-router.post("/get-permissions", verifyAccessToken, (req, res) => {
+router.get("/get-permissions", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Getting permissions...");
-
+  const programID = req.query.programID;
   new Programs()
-    .getProgramPermissions(req.body.programID)
+    .getProgramPermissions(programID)
     .then((users) => {
       const editorUsernames = users.editors.map((editor) => editor.username);
       const viewerUsernames = users.viewers.map((viewer) => viewer.username);
@@ -163,12 +167,12 @@ router.post("/get-permissions", verifyAccessToken, (req, res) => {
 
 router.post(
   "/save-permissions",
-  [verifyAccessToken, verifyEditAccess],
+  [verifyAccessToken, getPermissions],
   (req, res) => {
     console.log("+++");
     console.log("Saving users...");
 
-    if (!req.canEditPermissions) {
+    if (!req.permissions.canEditPermissions) {
       return res.status(403).json({ error: "Forbidden" });
     }
 
@@ -201,6 +205,74 @@ router.post(
           });
 
         Promise.all([updateProgram, updateUsers]);
+      })
+      .catch((error) => {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  }
+);
+
+/* 
+Starts Program with req.query.programID for user with req.query.username.
+The endpoint will use the Users current squat bench and deadlift maxes to fill in the template with weights,
+and then pull information from the request body to get start date and which days they will be working out. The day of 
+week will be represented with a number from 0 - 6
+request body format will look like this:
+{
+  startDate: date,
+  frequency: Number,
+  duration: Number,
+  workoutDays: {
+    Upper 1: 2,
+    Upper 2: 4,
+    Lower 1: 5
+    Lower 2: 3,
+  }
+}
+*/
+
+router.post(
+  "/start-program",
+  [verifyAccessToken, getPermissions],
+  (req, res) => {
+    username = req.query.username;
+    programID = req.query.programID;
+    const startDate = new Date(req.body.startDate);
+    new Users()
+      .getUserByUsername(username)
+      .then(async (user) => {
+        if (!user.exists) {
+          res.status(404).json({ error: "User Not Found" });
+        } else {
+          const program = await Programs.getLeanProgram(programID);
+          program.workouts.forEach(async (workout, i) => {
+            workoutDate = startDate;
+            while (
+              workoutDate.getDay() != req.query.workoutDays[workout.Name]
+            ) {
+              workoutDate.setDate(workoutDate.getDate() + 1);
+            }
+            for (let j = 0; j < req.body.duration; ++j) {
+              try {
+                await UpcomingWorkouts.addWorkout(
+                  username,
+                  workoutDate,
+                  workout
+                );
+                workoutDate.setDate(workoutDate.getDate() + 7);
+              } catch {
+                console.log(error);
+                throw error;
+              }
+            }
+            user.activeProgram = true;
+            return user.save();
+          });
+        }
+      })
+      .then((updatedUser) => {
+        res.status(200).send();
       })
       .catch((error) => {
         console.log(error);

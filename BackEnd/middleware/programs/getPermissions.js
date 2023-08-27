@@ -1,9 +1,18 @@
-const Programs = require("../../models/Programs")
+const Programs = require("../../models/Programs");
 const mongoose = require("mongoose");
 
-const verifyEditAccess = async (req, res, next) => {
+/*
+Modifies: req.permissions 
+Effect: sets req.permissions to hold a json that represents all permissions of a user container userID req.userID for
+program with programID
+  {
+    userRole: Owner || Editor || Viewer
+    canEditPermissions: true/false,
+  }
+*/
+const getPermissions = async (req, res, next) => {
   console.log("+++");
-  console.log("Verifying edit access...");
+  console.log("Getting Program Permissions...");
 
   const userID = req.userID;
   const programID = req.body.programID;
@@ -34,11 +43,12 @@ const verifyEditAccess = async (req, res, next) => {
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    req.canEditProgram = userRole === "owner" || userRole === "editor";
-    req.canEditPermissions =
-      userRole === "owner" ||
-      (userRole === "editor" && program.editorPermissions);
-
+    req.permissions = {
+      userRole: userRole,
+      canEditPermissions:
+        userRole === "owner" ||
+        (userRole === "editor" && program.editorPermissions),
+    };
     console.log("Edit access verified successfully");
     next();
   } catch (error) {
@@ -47,4 +57,4 @@ const verifyEditAccess = async (req, res, next) => {
   }
 };
 
-module.exports = verifyEditAccess;
+module.exports = getPermissions;

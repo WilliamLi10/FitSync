@@ -55,13 +55,12 @@ const MyPrograms = () => {
     setIsLoading(true);
     refreshToken()
       .then(() => {
-        return fetch("http://localhost:5000/program/load-program-list", {
-          method: "POST",
+        return fetch(`http://localhost:5000/program/load-program-list?index=${index}&inc=20`, {
+          method: "GET",
           headers: {
             "Content-type": "application/json",
             Authorization: `Bearer ${Cookies.get("accessToken")}`,
           },
-          body: JSON.stringify({ index: index, inc: 20 }),
         });
       })
       .then((response) => {

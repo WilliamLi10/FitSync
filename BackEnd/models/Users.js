@@ -2,12 +2,7 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Programs = require("./Programs");
 
-const activeProgramSchema = new mongoose.Schema({
-  name: String,
-  _id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
-  frequency: Number,
-  workouts: [{ type: Object, required: true }],
-});
+
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -26,13 +21,28 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  activeProgram: activeProgramSchema,
+  activeProgram:{
+    type: Boolean,
+    required: true,
+  },
   programs: [
     {
       _id: { type: mongoose.Schema.Types.ObjectId, ref: "programs" },
       date: { type: Date, default: Date.now },
     },
   ],
+  benchMax: {
+    type: Number,
+    required: false, 
+  },
+  squatMax: {
+    type: Number,
+    required: false, 
+  },
+  deadliftMax: {
+    type: Number,
+    required: false, 
+  },
 });
 
 /*
@@ -112,6 +122,7 @@ userSchema.methods.createUser = (pass, email, username, dob) => {
           dob: dob,
           email: email,
           password: hashedPass,
+          activeProgram: false,
         });
 
         return newUser

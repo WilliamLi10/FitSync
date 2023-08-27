@@ -4,15 +4,12 @@ import { refreshToken } from "../util/auth.js";
 export const programLoader = ({ params }) => {
   return refreshToken()
     .then(() => {
-      return fetch("http://localhost:5000/program/load-program", {
-        method: "POST",
+      return fetch(`http://localhost:5000/program/load-program?programID=${params.programID}`, {
+        method: "GET",
         headers: {
           "Content-type": "application/json",
           Authorization: `Bearer ${Cookies.get("accessToken")}`,
         },
-        body: JSON.stringify({
-          programID: params.programID,
-        }),
       });
     })
     .then((response) => {
