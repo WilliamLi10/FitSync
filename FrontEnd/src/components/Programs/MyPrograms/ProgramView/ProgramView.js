@@ -56,19 +56,41 @@ const ProgramView = () => {
     ]);
   };
 
-  const handleDrop = (droppedWorkout) => {
-    if (!droppedWorkout.destination) return;
-    var updatedWorkout = [...workouts];
-    const [reorderedWorkout] = updatedWorkout.splice(
-      droppedWorkout.source.index,
-      1
-    );
-    updatedWorkout.splice(
-      droppedWorkout.destination.index,
-      0,
-      reorderedWorkout
-    );
-    setWorkouts(updatedWorkout);
+  const handleDrop = (droppedItem) => {
+    if (!droppedItem.destination) return;
+    if (droppedItem.type === "workout") {
+      var updatedWorkout = [...workouts];
+      const [reorderedWorkout] = updatedWorkout.splice(
+        droppedItem.source.index,
+        1
+      );
+      updatedWorkout.splice(droppedItem.destination.index, 0, reorderedWorkout);
+      setWorkouts(updatedWorkout);
+    } else if (droppedItem.type === "exercise") {
+      const srcWorkoutIndex = parseInt(
+        droppedItem.source.droppableId.split("-")[1]
+      );
+      const dstWorkoutIndex = parseInt(
+        droppedItem.destination.droppableId.split("-")[1]
+      );
+      const srcWorkout = workouts[srcWorkoutIndex];
+      const dstWorkout = workouts[dstWorkoutIndex];
+      var updatedSrc = [...srcWorkout.Exercises];
+      const [reorderedExercise] = updatedSrc.splice(
+        droppedItem.source.index,
+        1
+      );
+      var updatedWorkout = [...workouts];
+      if (srcWorkoutIndex === dstWorkoutIndex) {
+        updatedSrc.splice(droppedItem.destination.index, 0, reorderedExercise);
+      } else {
+        var updatedDst = [...dstWorkout.Exercises];
+        updatedDst.splice(droppedItem.destination.index, 0, reorderedExercise);
+        updatedWorkout[dstWorkoutIndex].Exercises = updatedDst;
+      }
+      updatedWorkout[srcWorkoutIndex].Exercises = updatedSrc;
+      setWorkouts(updatedWorkout);
+    }
   };
 
   const removeWorkout = (index) => {
@@ -287,7 +309,7 @@ const ProgramView = () => {
           </div>
         </div>
         <DragDropContext onDragEnd={handleDrop}>
-          <Droppable droppableId="workouts">
+          <Droppable droppableId="workouts" type="workout">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 {workouts.map((workout, index) => {
@@ -303,7 +325,12 @@ const ProgramView = () => {
                           className={`flex flex-row items-center w-full `}
                           {...provided.draggableProps}
                         >
-                          <div {...provided.dragHandleProps} className={`transition-all duration-150 ${drag ? "w-[53px]" : "w-0"}`}>
+                          <div
+                            {...provided.dragHandleProps}
+                            className={`transition-all duration-150 ${
+                              drag ? "w-[53px]" : "w-0"
+                            }`}
+                          >
                             <MdOutlineDragHandle className="w-8 h-8 mr-5" />
                           </div>
                           <div className="flex-grow">
