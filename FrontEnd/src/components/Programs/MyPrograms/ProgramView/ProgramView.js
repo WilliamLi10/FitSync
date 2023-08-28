@@ -23,6 +23,7 @@ const ProgramView = () => {
   const [status, setStatus] = useState("");
   const [shareModal, setShareModal] = useState(false);
   const [drag, setDrag] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const titleHandler = (event) => {
     setTitle(event.target.value);
@@ -56,6 +57,12 @@ const ProgramView = () => {
     ]);
   };
 
+  const handleDrag = (draggedItem) => {
+    if (draggedItem.type === "exercise") {
+      setIsDragging(true);
+    }
+  };
+
   const handleDrop = (droppedItem) => {
     if (!droppedItem.destination) return;
     if (droppedItem.type === "workout") {
@@ -67,29 +74,59 @@ const ProgramView = () => {
       updatedWorkout.splice(droppedItem.destination.index, 0, reorderedWorkout);
       setWorkouts(updatedWorkout);
     } else if (droppedItem.type === "exercise") {
-      const srcWorkoutIndex = parseInt(
-        droppedItem.source.droppableId.split("-")[1]
-      );
-      const dstWorkoutIndex = parseInt(
-        droppedItem.destination.droppableId.split("-")[1]
-      );
-      const srcWorkout = workouts[srcWorkoutIndex];
-      const dstWorkout = workouts[dstWorkoutIndex];
-      var updatedSrc = [...srcWorkout.Exercises];
-      const [reorderedExercise] = updatedSrc.splice(
-        droppedItem.source.index,
-        1
-      );
-      var updatedWorkout = [...workouts];
-      if (srcWorkoutIndex === dstWorkoutIndex) {
-        updatedSrc.splice(droppedItem.destination.index, 0, reorderedExercise);
+      if (droppedItem.destination.droppableId.split("-")[0] === "delete") {
+        const dstIndex = parseInt(
+          droppedItem.destination.droppableId.split("-")[1]
+        );
+        const srcIndex = parseInt(droppedItem.source.droppableId.split("-")[1]);
+        if (dstIndex !== srcIndex) {
+          return;
+        }
+        var updatedWorkout = [...workouts];
+        var updatedExercise = [...updatedWorkout[srcIndex].Exercises];
+        if (updatedExercise.length === 1) {
+          return;
+        }
+        updatedExercise.splice(droppedItem.source.index, 1);
+        updatedWorkout[srcIndex].Exercises = updatedExercise;
+        setWorkouts(updatedWorkout);
       } else {
-        var updatedDst = [...dstWorkout.Exercises];
-        updatedDst.splice(droppedItem.destination.index, 0, reorderedExercise);
-        updatedWorkout[dstWorkoutIndex].Exercises = updatedDst;
+        const srcWorkoutIndex = parseInt(
+          droppedItem.source.droppableId.split("-")[1]
+        );
+        const dstWorkoutIndex = parseInt(
+          droppedItem.destination.droppableId.split("-")[1]
+        );
+        const srcWorkout = workouts[srcWorkoutIndex];
+        const dstWorkout = workouts[dstWorkoutIndex];
+        var updatedSrc = [...srcWorkout.Exercises];
+        if (updatedSrc.length === 1) {
+          return;
+        }
+        const [reorderedExercise] = updatedSrc.splice(
+          droppedItem.source.index,
+          1
+        );
+        var updatedWorkout = [...workouts];
+        if (srcWorkoutIndex === dstWorkoutIndex) {
+          updatedSrc.splice(
+            droppedItem.destination.index,
+            0,
+            reorderedExercise
+          );
+        } else {
+          var updatedDst = [...dstWorkout.Exercises];
+          updatedDst.splice(
+            droppedItem.destination.index,
+            0,
+            reorderedExercise
+          );
+          updatedWorkout[dstWorkoutIndex].Exercises = updatedDst;
+        }
+        updatedWorkout[srcWorkoutIndex].Exercises = updatedSrc;
+        setWorkouts(updatedWorkout);
+        setIsDragging(false);
       }
-      updatedWorkout[srcWorkoutIndex].Exercises = updatedSrc;
-      setWorkouts(updatedWorkout);
     }
   };
 
@@ -308,7 +345,7 @@ const ProgramView = () => {
             </button>
           </div>
         </div>
-        <DragDropContext onDragEnd={handleDrop}>
+        <DragDropContext onDragEnd={handleDrop} onDragStart={handleDrag}>
           <Droppable droppableId="workouts" type="workout">
             {(provided) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -344,7 +381,9 @@ const ProgramView = () => {
                               index={index}
                               role={program.userRole}
                               canDelete={workouts.length > 1}
-                              drag={setDrag}
+                              setDrag={setDrag}
+                              drag={drag}
+                              isDragging={isDragging}
                             />
                           </div>
                         </div>
