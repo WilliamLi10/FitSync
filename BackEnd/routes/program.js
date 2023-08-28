@@ -115,10 +115,10 @@ router.post(
   (req, res) => {
     console.log("+++");
     console.log("Saving program...");
-
+    console.log(req.permissions.userRole);
     if (
-      req.permissions.userRole != "Owner" &&
-      req.permissions.userRole != "Editor"
+      req.permissions.userRole != "owner" &&
+      req.permissions.userRole != "editor"
     ) {
       return res.status(403).json({ error: "Forbidden" });
     }

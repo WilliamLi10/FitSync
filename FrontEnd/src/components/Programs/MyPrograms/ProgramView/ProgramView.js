@@ -10,6 +10,8 @@ import Cookies from "js-cookie";
 import StatusBanner from "../../../StatusBanner";
 import { BsShare } from "react-icons/bs";
 import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { MdOutlineDragHandle } from "react-icons/md";
 
 const ProgramView = () => {
   const ctx = useContext(AuthContext);
@@ -20,6 +22,8 @@ const ProgramView = () => {
   const [workouts, setWorkouts] = useState([]);
   const [status, setStatus] = useState("");
   const [shareModal, setShareModal] = useState(false);
+  const [drag, setDrag] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const titleHandler = (event) => {
     setTitle(event.target.value);
@@ -53,6 +57,79 @@ const ProgramView = () => {
     ]);
   };
 
+  const handleDrag = (draggedItem) => {
+    if (draggedItem.type === "exercise") {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDrop = (droppedItem) => {
+    if (!droppedItem.destination) return;
+    if (droppedItem.type === "workout") {
+      var updatedWorkout = [...workouts];
+      const [reorderedWorkout] = updatedWorkout.splice(
+        droppedItem.source.index,
+        1
+      );
+      updatedWorkout.splice(droppedItem.destination.index, 0, reorderedWorkout);
+      setWorkouts(updatedWorkout);
+    } else if (droppedItem.type === "exercise") {
+      if (droppedItem.destination.droppableId.split("-")[0] === "delete") {
+        const dstIndex = parseInt(
+          droppedItem.destination.droppableId.split("-")[1]
+        );
+        const srcIndex = parseInt(droppedItem.source.droppableId.split("-")[1]);
+        if (dstIndex !== srcIndex) {
+          return;
+        }
+        var updatedWorkout = [...workouts];
+        var updatedExercise = [...updatedWorkout[srcIndex].Exercises];
+        if (updatedExercise.length === 1) {
+          return;
+        }
+        updatedExercise.splice(droppedItem.source.index, 1);
+        updatedWorkout[srcIndex].Exercises = updatedExercise;
+        setWorkouts(updatedWorkout);
+      } else {
+        const srcWorkoutIndex = parseInt(
+          droppedItem.source.droppableId.split("-")[1]
+        );
+        const dstWorkoutIndex = parseInt(
+          droppedItem.destination.droppableId.split("-")[1]
+        );
+        const srcWorkout = workouts[srcWorkoutIndex];
+        const dstWorkout = workouts[dstWorkoutIndex];
+        var updatedSrc = [...srcWorkout.Exercises];
+        if (updatedSrc.length === 1) {
+          return;
+        }
+        const [reorderedExercise] = updatedSrc.splice(
+          droppedItem.source.index,
+          1
+        );
+        var updatedWorkout = [...workouts];
+        if (srcWorkoutIndex === dstWorkoutIndex) {
+          updatedSrc.splice(
+            droppedItem.destination.index,
+            0,
+            reorderedExercise
+          );
+        } else {
+          var updatedDst = [...dstWorkout.Exercises];
+          updatedDst.splice(
+            droppedItem.destination.index,
+            0,
+            reorderedExercise
+          );
+          updatedWorkout[dstWorkoutIndex].Exercises = updatedDst;
+        }
+        updatedWorkout[srcWorkoutIndex].Exercises = updatedSrc;
+        setWorkouts(updatedWorkout);
+        setIsDragging(false);
+      }
+    }
+  };
+
   const removeWorkout = (index) => {
     const newWorkouts = [...workouts];
     newWorkouts.splice(index, 1);
@@ -62,7 +139,11 @@ const ProgramView = () => {
   const duplicateWorkout = (index) => {
     const newWorkouts = [...workouts];
     const workoutToDuplicate = newWorkouts[index];
-    newWorkouts.splice(index + 1, 0, { ...workoutToDuplicate });
+
+    newWorkouts.splice(index + 1, 0, {
+      ...workoutToDuplicate,
+      Name: `Copy of ${workoutToDuplicate.Name}`,
+    });
     setWorkouts(newWorkouts);
   };
 
@@ -153,7 +234,7 @@ const ProgramView = () => {
         break;
       }
     }
- 
+
     refreshToken()
       .then(() => {
         return fetch("http://localhost:5000/program/save-program", {
@@ -264,21 +345,57 @@ const ProgramView = () => {
             </button>
           </div>
         </div>
-        {workouts.map((workout, index) => {
-          return (
-            <Workout
-              key={index}
-              workout={workout}
-              workouts={workouts}
-              update={workoutHandler}
-              delete={removeWorkout}
-              duplicate={duplicateWorkout}
-              move={moveWorkout}
-              index={index}
-              role={program.userRole}
-            />
-          );
-        })}
+        <DragDropContext onDragEnd={handleDrop} onDragStart={handleDrag}>
+          <Droppable droppableId="workouts" type="workout">
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {workouts.map((workout, index) => {
+                  return (
+                    <Draggable
+                      key={index}
+                      draggableId={`workout-${index}`}
+                      index={index}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          className={`flex flex-row items-center w-full `}
+                          {...provided.draggableProps}
+                        >
+                          <div
+                            {...provided.dragHandleProps}
+                            className={`transition-all duration-150 ${
+                              drag ? "w-[53px]" : "w-0"
+                            }`}
+                          >
+                            <MdOutlineDragHandle className="w-8 h-8 mr-5" />
+                          </div>
+                          <div className="flex-grow">
+                            <Workout
+                              workout={workout}
+                              workouts={workouts}
+                              update={workoutHandler}
+                              delete={removeWorkout}
+                              copy={duplicateWorkout}
+                              move={moveWorkout}
+                              index={index}
+                              role={program.userRole}
+                              canDelete={workouts.length > 1}
+                              setDrag={setDrag}
+                              drag={drag}
+                              isDragging={isDragging}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  );
+                })}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
         {(program.userRole === "editor" || program.userRole === "owner") && (
           <div className="flex flex-row justify-between">
             <button
