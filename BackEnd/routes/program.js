@@ -115,10 +115,10 @@ router.post(
   (req, res) => {
     console.log("+++");
     console.log("Saving program...");
-
+    console.log(req.permissions.userRole);
     if (
-      req.permissions.userRole != "Owner" &&
-      req.permissions.userRole != "Editor"
+      req.permissions.userRole != "owner" &&
+      req.permissions.userRole != "editor"
     ) {
       return res.status(403).json({ error: "Forbidden" });
     }
@@ -221,7 +221,6 @@ week will be represented with a number from 0 - 6
 request body format will look like this:
 {
   startDate: date,
-  frequency: Number,
   duration: Number,
   workoutDays: {
     Upper 1: 2,
@@ -236,39 +235,61 @@ router.post(
   "/start-program",
   [verifyAccessToken, getPermissions],
   (req, res) => {
-    username = req.query.username;
-    programID = req.query.programID;
-    const startDate = new Date(req.body.startDate);
+    console.log("+++");
+    console.log("Starting User Program");
+    const username = req.query.username;
+    const programID = req.query.programID;
+    const [year, month, day] = req.body.startDate.split('-').map(Number);
+    const startDate = new Date(year, month - 1, day);
     new Users()
       .getUserByUsername(username)
       .then(async (user) => {
         if (!user.exists) {
-          res.status(404).json({ error: "User Not Found" });
+          return res.status(404).json({ error: "User Not Found" });
         } else {
-          const program = await Programs.getLeanProgram(programID);
-          program.workouts.forEach(async (workout, i) => {
-            workoutDate = startDate;
+          const program = await Programs.getProgram(programID);
+          for(let i = 0; i < program.workouts.length; ++i){
+            let workoutDate = new Date(startDate);
+            console.log(req.body.workoutDays);
+            console.log();
             while (
-              workoutDate.getDay() != req.query.workoutDays[workout.Name]
+              workoutDate.getDay() != req.body.workoutDays[program.workouts[i].Name]
             ) {
               workoutDate.setDate(workoutDate.getDate() + 1);
             }
+            program.workouts[i].Exercises.forEach((exercise, j) => {
+              const intensity = program.workouts[i].Exercises[j].intensity;
+              delete program.workouts[i].Exercises[j].intensity;
+              program.workouts[i].Exercises[j].Weight = null;
+              if (intensity != "") {
+                if (program.workouts[i].Exercises[j].Name.toLowerCase().includes("bench")) {
+                  program.workouts[i].Exercises[j].Weight = user.userData.benchMax * (parseInt(intensity, 10) / 100);
+                } else if (program.workouts[i].Name.toLowerCase().includes("squat")) {
+                  program.workouts[i].Exercises[j].Weight = user.userData.squatMax * (parseInt(intensity, 10) / 100);
+                } else if (program.workouts[i].Name.toLowerCase().includes("deadlift")) {
+                  program.workouts[i].Exercises[j].Weight = user.userData.deadliftMax * (parseInt(intensity, 10) / 100);
+                }
+              }
+              console.log("Successfully Set Exercise %s",exercise.Name)
+            });
             for (let j = 0; j < req.body.duration; ++j) {
               try {
                 await UpcomingWorkouts.addWorkout(
                   username,
                   workoutDate,
-                  workout
+                  program.workouts[i]
                 );
                 workoutDate.setDate(workoutDate.getDate() + 7);
-              } catch {
+                console.log("Successfully added Workout %s",program.workouts[i].Name);
+              } catch(error) {
+                console.log("Failed adding Workout %s", program.workouts[i].Name);
                 console.log(error);
                 throw error;
               }
             }
-            user.activeProgram = true;
-            return user.save();
-          });
+          }
+          user.activeProgram = true;
+          return user.userData.save();
         }
       })
       .then((updatedUser) => {

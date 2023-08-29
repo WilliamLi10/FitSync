@@ -1,12 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { IoMdArrowDropdown } from "react-icons/io";
+import { useState } from "react";
 import { TfiReload } from "react-icons/tfi";
 import { RiAddLine } from "react-icons/ri";
-import WorkoutDrop from "./WorkoutDrop";
+import { BsTrash } from "react-icons/bs";
+import { LuCopy } from "react-icons/lu";
+import { RxDragHandleDots2 } from "react-icons/rx";
+import { IoMdMove } from "react-icons/io";
+import { FiEdit } from "react-icons/fi";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 
 const Workout = (props) => {
-  const dropRef = useRef(null);
-  const [drop, setDrop] = useState(false);
   const [weight, setWeight] = useState(true);
   const [rest, setRest] = useState("sec");
 
@@ -66,22 +68,6 @@ const Workout = (props) => {
     });
   };
 
-  const dropHandler = () => {
-    setDrop((prevDrop) => !prevDrop);
-  };
-
-  const deleteHandler = () => {
-    props.delete(props.index);
-  };
-
-  const duplicateHandler = () => {
-    props.duplicate(props.index);
-  };
-
-  const moveHandler = (newIndex) => {
-    props.move(props.index, newIndex);
-  };
-
   const workoutNameHandler = (event) => {
     props.update({ ...props.workout, Name: event.target.value }, props.index);
   };
@@ -135,21 +121,7 @@ const Workout = (props) => {
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropRef.current && !dropRef.current.contains(event.target)) {
-        setDrop(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [dropRef]);
-
-  const titleCSS = "text-center border-solid border-white";
-  const itemCSS =
-    "w-full border-solid border-slate-200 border-b-[1px] border-r-[1px]";
+  const titleCSS = "text-center border-solid border-white bg-slate-200";
   const inputCSS = "w-full px-2 h-full border-none text-sm";
 
   return (
@@ -168,146 +140,200 @@ const Workout = (props) => {
           disabled={props.role === "viewer"}
         />
         {props.role !== "viewer" && (
-          <div onClick={dropHandler} className="cursor-pointer" ref={dropRef}>
-            <IoMdArrowDropdown className="ml-1 rounded-full hover:border-solid hover:border-[1px] hover:border-slate-500" />
-            {drop && (
-              <WorkoutDrop
-                delete={deleteHandler}
-                duplicate={duplicateHandler}
-                move={moveHandler}
-                workouts={props.workouts}
+          <div className="flex flex-row pl-2 text-gray-500 items-align">
+            <FiEdit
+              className="cursor-pointer"
+              onClick={() => {
+                props.setDrag((prevDrag) => !prevDrag);
+              }}
+            />
+            <LuCopy
+              className="ml-1 cursor-pointer"
+              onClick={() => {
+                props.copy(props.index);
+              }}
+            />
+            {props.canDelete && (
+              <BsTrash
+                className="ml-1 cursor-pointer"
+                onClick={() => {
+                  props.delete(props.index);
+                }}
               />
             )}
           </div>
         )}
       </div>
-      <div className="flex flex-row font-thin bg-slate-200">
-        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
-          <div>Exercise</div>
-          {props.workout.Exercises.map((_, index) => (
-            <div key={index} className={`${itemCSS} border-l-[1px]`}>
-              <input
-                value={props.workout.Exercises[index].Name}
-                onChange={(event) => exerciseNameHandler(event, index)}
-                type="text"
-                disabled={props.role === "viewer"}
-                className={`${inputCSS} text-center ${
-                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
-          <div>Sets</div>
-          {props.workout.Exercises.map((_, index) => (
-            <div key={index} className={`${itemCSS}`}>
-              <input
-                key={index}
-                value={props.workout.Exercises[index].Sets}
-                onChange={(event) => setsHandler(event, index)}
-                type="number"
-                min="0"
-                disabled={props.role === "viewer"}
-                className={`${inputCSS} text-center ${
-                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
-          <div>Reps</div>
-          {props.workout.Exercises.map((_, index) => (
-            <div key={index} className={`${itemCSS}`}>
-              <input
-                key={index}
-                value={props.workout.Exercises[index].Reps}
-                onChange={(event) => repsHandler(event, index)}
-                type="number"
-                min="0"
-                disabled={props.role === "viewer"}
-                className={`${inputCSS} text-center ${
-                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
-          <div className="flex flex-row items-center justify-center">
-            Weights ({weight ? "lb" : "kg"})&#160;
-            <TfiReload
-              className="h-3 cursor-pointer"
-              onClick={weightSwitcher}
-            />
-          </div>
-          {props.workout.Exercises.map((_, index) => (
-            <div key={index} className={`${itemCSS}`}>
-              <input
-                key={index}
-                value={props.workout.Exercises[index].Weight}
-                onChange={(event) => weightsHandler(event, index)}
-                type="number"
-                min="0"
-                disabled={props.role === "viewer"}
-                className={`${inputCSS} text-center ${
-                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>
-          <div className="flex flex-row items-center justify-center">
-            Rest ({rest})&#160;
-            <TfiReload className="h-3 cursor-pointer" onClick={restSwitcher} />
-          </div>
-          {props.workout.Exercises.map((_, index) => (
-            <div key={index} className={`${itemCSS}`}>
-              <input
-                key={index}
-                value={props.workout.Exercises[index].Rest}
-                onChange={(event) => restHandler(event, index)}
-                type="number"
-                min="0"
-                disabled={props.role === "viewer"}
-                className={`${inputCSS} text-center ${
-                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-        <div className={`${titleCSS} w-[25%]`}>
-          <div>Description</div>
-          {props.workout.Exercises.map((_, index) => (
-            <div key={index} className={`${itemCSS}`}>
-              <input
-                key={index}
-                value={props.workout.Exercises[index].Description}
-                onChange={(event) => descriptionHandler(event, index)}
-                placeholder={props.role === "viewer" ? "" : "optional"}
-                type="text"
-                disabled={props.role === "viewer"}
-                className={`${inputCSS} ${
-                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
-                }`}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      {props.role !== "viewer" && (
-        <button
-          className="font-thin border-solid border-[1px] py-2 bg-white text-sm flex flex-row w-full justify-center items-center transition-all duration-150 hover:bg-slate-100"
-          type="button"
-          onClick={addExercise}
+      <div
+        className={`flex flex-row font-thin ${
+          props.drag ? "w-[97%]" : "w-full"
+        }`}
+      >
+        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>Exercise</div>
+        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>Sets</div>
+        <div className={`${titleCSS} border-r-[1px] w-[15%]`}>Reps</div>
+        <div
+          className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
         >
-          <RiAddLine />
-          &#160;Add Exercise
-        </button>
-      )}
+          Weights ({weight ? "lb" : "kg"})&#160;
+          <TfiReload className="h-3 cursor-pointer" onClick={weightSwitcher} />
+        </div>
+        <div
+          className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
+        >
+          Rest ({rest})&#160;
+          <TfiReload className="h-3 cursor-pointer" onClick={restSwitcher} />
+        </div>
+        <div className={`${titleCSS} w-[25%]`}>Description</div>
+      </div>
+      <Droppable droppableId={`exercises-${props.index}`} type="exercise">
+        {(provided) => {
+          return (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              {props.workout.Exercises.map((exercise, index) => {
+                return (
+                  <Draggable
+                    key={index}
+                    draggableId={`exercise-${index}-${props.index}`}
+                    index={index}
+                  >
+                    {(provided) => {
+                      return (
+                        <div
+                          className="flex flex-row"
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                        >
+                          <div className="flex flex-grow flex-row">
+                            <div className="w-[15%] border-solid border-slate-200 border-l-[1px] border-r-[1px] border-b-[1px]">
+                              <input
+                                value={exercise.Name}
+                                onChange={(event) =>
+                                  exerciseNameHandler(event, index)
+                                }
+                                type="text"
+                                disabled={props.role === "viewer"}
+                                className={`${inputCSS} text-center ${
+                                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                                }`}
+                              />
+                            </div>
+                            <div className="w-[15%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                              <input
+                                key={index}
+                                value={exercise.Sets}
+                                onChange={(event) => setsHandler(event, index)}
+                                type="number"
+                                min="0"
+                                disabled={props.role === "viewer"}
+                                className={`${inputCSS} text-center ${
+                                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                                }`}
+                              />
+                            </div>
+                            <div className="w-[15%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                              <input
+                                value={exercise.Reps}
+                                onChange={(event) => repsHandler(event, index)}
+                                type="number"
+                                min="0"
+                                disabled={props.role === "viewer"}
+                                className={`${inputCSS} text-center ${
+                                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                                }`}
+                              />
+                            </div>
+                            <div className="w-[15%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                              <input
+                                value={exercise.Weight}
+                                onChange={(event) =>
+                                  weightsHandler(event, index)
+                                }
+                                type="number"
+                                min="0"
+                                disabled={props.role === "viewer"}
+                                className={`${inputCSS} text-center ${
+                                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                                }`}
+                              />
+                            </div>
+                            <div className="w-[15%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                              <input
+                                value={exercise.Rest}
+                                onChange={(event) => restHandler(event, index)}
+                                type="number"
+                                min="0"
+                                disabled={props.role === "viewer"}
+                                className={`${inputCSS} text-center ${
+                                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                                }`}
+                              />
+                            </div>
+                            <div className="w-[25%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                              <input
+                                value={exercise.Description}
+                                onChange={(event) =>
+                                  descriptionHandler(event, index)
+                                }
+                                placeholder={
+                                  props.role === "viewer" ? "" : "optional"
+                                }
+                                type="text"
+                                disabled={props.role === "viewer"}
+                                className={`${inputCSS} ${
+                                  index % 2 === 0 ? "bg-white" : "bg-slate-100"
+                                }`}
+                              />
+                            </div>
+                          </div>
+
+                          <div
+                            {...provided.dragHandleProps}
+                            className={`flex flex-row items-center transition-all duration-150 ${
+                              props.drag ? "w-[3%]" : "w-0"
+                            }`}
+                          >
+                            <RxDragHandleDots2 className="w-6 h-6" />
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </Draggable>
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          );
+        }}
+      </Droppable>
+      {props.role !== "viewer" &&
+        (props.drag ? (
+          <Droppable droppableId={`delete-${props.index}`} type="exercise">
+            {(provided) => {
+              return (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  <div
+                    className={`text-center font-thin text-sm border-solid border-[1px] py-2 border-red-500 bg-red-500 text-white transition-all duration-150 ${
+                      props.drag ? "w-[97%]" : "w-full"
+                    }`}
+                  >
+                    Drag exercises here to delete
+                  </div>
+                  {provided.placeholder}
+                </div>
+              );
+            }}
+          </Droppable>
+        ) : (
+          <button
+            className="font-thin border-solid border-[1px] py-2 bg-white text-sm flex flex-row w-full justify-center items-center transition-all duration-150 hover:bg-slate-100"
+            type="button"
+            onClick={addExercise}
+          >
+            <RiAddLine />
+            &#160;Add Exercise
+          </button>
+        ))}
     </div>
   );
 };

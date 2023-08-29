@@ -15,7 +15,7 @@ const getPermissions = async (req, res, next) => {
   console.log("Getting Program Permissions...");
 
   const userID = req.userID;
-  const programID = req.body.programID;
+  const programID = req.query.programID;
   try {
     const program = await Programs.getLeanProgram(programID);
     if (!program) {

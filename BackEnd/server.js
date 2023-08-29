@@ -25,6 +25,7 @@ connectDB()
     app.use("/auth", authRouter);
     app.use("/program", programRouter);
     app.use("/user", userRouter);
+    
 
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);

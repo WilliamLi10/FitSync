@@ -66,7 +66,7 @@ userSchema.methods.getUserByUsername = (username) => {
       if (existingUser) {
         console.log("User exists");
       }
-      return { exists: !!existingUser, user: existingUser };
+      return { exists: !!existingUser, userData: existingUser };
     })
     .catch((error) => {
       console.log("Error checking username");
