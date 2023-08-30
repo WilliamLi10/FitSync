@@ -164,7 +164,7 @@ const ProgramView = () => {
       setTitle(program.name);
       refreshToken()
         .then(() => {
-          return fetch("http://localhost:5000/program/update-last-opened", {
+          return fetch(`http://localhost:5000/program/update-last-opened?programID=${program._id}`, {
             method: "POST",
             headers: {
               "Content-type": "application/json",
@@ -237,7 +237,7 @@ const ProgramView = () => {
 
     refreshToken()
       .then(() => {
-        return fetch("http://localhost:5000/program/save-program", {
+        return fetch(`http://localhost:5000/program/save-program?programID=${program._id}`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
