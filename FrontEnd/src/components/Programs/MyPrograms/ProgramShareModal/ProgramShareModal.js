@@ -149,7 +149,7 @@ const ProgramShareModel = (props) => {
     event.preventDefault();
     refreshToken()
       .then(() => {
-        return fetch("http://localhost:5000/program/save-permissions", {
+        return fetch(`http://localhost:5000/program/save-permissions?programID=${props.programID}`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
