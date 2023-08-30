@@ -7,6 +7,10 @@ const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 const getPermissions = require("../middleware/programs/getPermissions");
 const mongoose = require("mongoose");
 
+function roundToNearestFive(n) {
+  return Math.round(n / 5) * 5;
+}
+
 router.post("/create-program", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Creating program...");
@@ -239,58 +243,73 @@ router.post(
     console.log("Starting User Program");
     const username = req.query.username;
     const programID = req.query.programID;
-    const [year, month, day] = req.body.startDate.split('-').map(Number);
+    const [year, month, day] = req.body.startDate.split("-").map(Number);
     const startDate = new Date(year, month - 1, day);
     new Users()
-      .getUserByUsername(username)
+      .getFullUser(username)
       .then(async (user) => {
-        if (!user.exists) {
-          return res.status(404).json({ error: "User Not Found" });
-        } else {
-          const program = await Programs.getProgram(programID);
-          for(let i = 0; i < program.workouts.length; ++i){
-            let workoutDate = new Date(startDate);
-            console.log(req.body.workoutDays);
-            console.log();
-            while (
-              workoutDate.getDay() != req.body.workoutDays[program.workouts[i].Name]
-            ) {
-              workoutDate.setDate(workoutDate.getDate() + 1);
-            }
-            program.workouts[i].Exercises.forEach((exercise, j) => {
-              const intensity = program.workouts[i].Exercises[j].intensity;
-              delete program.workouts[i].Exercises[j].intensity;
-              program.workouts[i].Exercises[j].Weight = null;
-              if (intensity != "") {
-                if (program.workouts[i].Exercises[j].Name.toLowerCase().includes("bench")) {
-                  program.workouts[i].Exercises[j].Weight = user.userData.benchMax * (parseInt(intensity, 10) / 100);
-                } else if (program.workouts[i].Name.toLowerCase().includes("squat")) {
-                  program.workouts[i].Exercises[j].Weight = user.userData.squatMax * (parseInt(intensity, 10) / 100);
-                } else if (program.workouts[i].Name.toLowerCase().includes("deadlift")) {
-                  program.workouts[i].Exercises[j].Weight = user.userData.deadliftMax * (parseInt(intensity, 10) / 100);
-                }
-              }
-              console.log("Successfully Set Exercise %s",exercise.Name)
-            });
-            for (let j = 0; j < req.body.duration; ++j) {
-              try {
-                await UpcomingWorkouts.addWorkout(
-                  username,
-                  workoutDate,
-                  program.workouts[i]
+        console.log(user);
+        const program = await Programs.getProgram(programID);
+        for (let i = 0; i < program.workouts.length; ++i) {
+          let workoutDate = new Date(startDate);
+          console.log(req.body.workoutDays);
+          console.log();
+          while (
+            workoutDate.getDay() !=
+            req.body.workoutDays[program.workouts[i].Name]
+          ) {
+            workoutDate.setDate(workoutDate.getDate() + 1);
+          }
+          program.workouts[i].Exercises.forEach((exercise, j) => {
+            const intensity = program.workouts[i].Exercises[j].Intensity;
+            delete program.workouts[i].Exercises[j].Intensity;
+            program.workouts[i].Exercises[j].Weight = null;
+            if (intensity != "") {
+              if (
+                program.workouts[i].Exercises[j].Name.toLowerCase().includes(
+                  "bench"
+                )
+              ) {
+                program.workouts[i].Exercises[j].Weight = roundToNearestFive(
+                  user.benchMax * (parseInt(intensity, 10) / 100)
                 );
-                workoutDate.setDate(workoutDate.getDate() + 7);
-                console.log("Successfully added Workout %s",program.workouts[i].Name);
-              } catch(error) {
-                console.log("Failed adding Workout %s", program.workouts[i].Name);
-                console.log(error);
-                throw error;
+              } else if (
+                program.workouts[i].Name.toLowerCase().includes("squat")
+              ) {
+                program.workouts[i].Exercises[j].Weight = roundToNearestFive(
+                  user.squatMax * (parseInt(intensity, 10) / 100)
+                );
+              } else if (
+                program.workouts[i].Name.toLowerCase().includes("deadlift")
+              ) {
+                program.workouts[i].Exercises[j].Weight = roundToNearestFive(
+                  user.deadliftMax * (parseInt(intensity, 10) / 100)
+                );
               }
+            }
+            console.log("Successfully Set Exercise %s", exercise.Name);
+          });
+          for (let j = 0; j < req.body.duration; ++j) {
+            try {
+              await UpcomingWorkouts.addWorkout(
+                username,
+                workoutDate,
+                program.workouts[i]
+              );
+              workoutDate.setDate(workoutDate.getDate() + 7);
+              console.log(
+                "Successfully added Workout %s",
+                program.workouts[i].Name
+              );
+            } catch (error) {
+              console.log("Failed adding Workout %s", program.workouts[i].Name);
+              console.log(error);
+              throw error;
             }
           }
-          user.activeProgram = true;
-          return user.userData.save();
         }
+        user.activeProgram = true;
+        return user.save();
       })
       .then((updatedUser) => {
         res.status(200).send();

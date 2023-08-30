@@ -74,6 +74,33 @@ userSchema.methods.getUserByUsername = (username) => {
     });
 };
 
+userSchema.methods.getFullUser = (username) => {
+  return mongoose
+    .model("users")
+    .findOne({ username: username })
+    .then((existingUser) => {
+      return existingUser ;
+    })
+    .catch((error) => {
+      console.log("Error checking username");
+      throw error;
+    });
+};
+
+userSchema.statics.getUserStat = (username, stat) => {
+  return mongoose
+    .model("users")
+    .findOne({ username: username }, stat)
+    .then((userStat) => {
+
+      return userStat;
+    })
+    .catch((error) => {
+      console.log("Error checking username");
+      throw error;
+    });
+
+}
 /*
   Returns if given email exists and username, dob, and email of that user
 
