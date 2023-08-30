@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const upcomingWorkoutsSchema = new mongoose.Schema({
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "users",
     required: true,
   },
@@ -54,8 +54,8 @@ upcomingWorkoutsSchema.methods.deleteWorkout = (username, data) => {
           of the new workout
 
 */
-upcomingWorkoutsSchema.methods.addWorkout = async (username, date, workoutData) => {
-  const newWorkout = new mongoose.model("upcomingWorkout")({
+upcomingWorkoutsSchema.statics.addWorkout = async (username, date, workoutData) => {
+  const newWorkout = new mongoose.model("upcomingWorkouts")({
     user: username,
     date: date,
     workoutData: workoutData,
