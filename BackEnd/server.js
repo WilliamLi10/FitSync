@@ -5,6 +5,7 @@ const connectDB = require("./config/mongodb");
 const authRouter = require("./routes/auth");
 const programRouter = require("./routes/program");
 const userRouter = require("./routes/user");
+const workoutRouter = require("./routes/workout")
 const redisClient = require("./config/redis");
 const port = 5000;
 
@@ -25,7 +26,7 @@ connectDB()
     app.use("/auth", authRouter);
     app.use("/program", programRouter);
     app.use("/user", userRouter);
-    
+    app.use("/workout",workoutRouter)
 
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);

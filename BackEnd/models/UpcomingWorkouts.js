@@ -11,6 +11,10 @@ const upcomingWorkoutsSchema = new mongoose.Schema({
     required: true,
   },
   workoutData: { type: Object, required: true },
+  completed: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 /* 
@@ -54,14 +58,19 @@ upcomingWorkoutsSchema.methods.deleteWorkout = (username, data) => {
           of the new workout
 
 */
-upcomingWorkoutsSchema.statics.addWorkout = async (username, date, workoutData) => {
+upcomingWorkoutsSchema.statics.addWorkout = async (
+  username,
+  date,
+  workoutData
+) => {
   const newWorkout = new mongoose.model("upcomingWorkouts")({
     user: username,
     date: date,
     workoutData: workoutData,
+    completed: false,
   });
 
-  return  await newWorkout
+  return await newWorkout
     .save()
     .then((savedWorkout) => {
       return savedWorkout;

@@ -295,7 +295,10 @@ router.post(
                 username,
                 workoutDate,
                 program.workouts[i]
-              );
+              ).catch((error) => {
+                console.log("Error with creating new upcoming workout");
+                throw error;
+              });
               workoutDate.setDate(workoutDate.getDate() + 7);
               console.log(
                 "Successfully added Workout %s",
