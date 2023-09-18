@@ -9,7 +9,7 @@ import { FiEdit } from "react-icons/fi";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
 const Workout = (props) => {
-  const [weight, setWeight] = useState(true);
+  const [intensity, setIntensity] = useState(true);
   const [rest, setRest] = useState("sec");
 
   const restSwitcher = () => {
@@ -19,7 +19,7 @@ const Workout = (props) => {
           props.update(
             {
               ...props.workout,
-              Unit: { rest: "hour", weight: weight ? "lb" : "kg" },
+              Unit: { rest: "hour" },
             },
             props.index
           );
@@ -28,7 +28,7 @@ const Workout = (props) => {
           props.update(
             {
               ...props.workout,
-              Unit: { rest: "sec", weight: weight ? "lb" : "kg" },
+              Unit: { rest: "sec"},
             },
             props.index
           );
@@ -37,7 +37,7 @@ const Workout = (props) => {
           props.update(
             {
               ...props.workout,
-              Unit: { rest: "min", weight: weight ? "lb" : "kg" },
+              Unit: { rest: "min" },
             },
             props.index
           );
@@ -46,25 +46,12 @@ const Workout = (props) => {
           props.update(
             {
               ...props.workout,
-              Unit: { rest: "min", weight: weight ? "lb" : "kg" },
+              Unit: { rest: "min" },
             },
             props.index
           );
           return "min";
       }
-    });
-  };
-
-  const weightSwitcher = () => {
-    setWeight((prevWeight) => {
-      props.update(
-        {
-          ...props.workout,
-          Unit: { weight: !prevWeight ? "lb" : "kg", rest: rest },
-        },
-        props.index
-      );
-      return !prevWeight;
     });
   };
 
@@ -90,9 +77,9 @@ const Workout = (props) => {
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
-  const weightsHandler = (event, index) => {
+  const intensityHandler = (event, index) => {
     const newExercises = [...props.workout.Exercises];
-    newExercises[index].Weight = event.target.value;
+    newExercises[index].Intensity = event.target.value;
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
@@ -114,7 +101,7 @@ const Workout = (props) => {
       Name: "Untitled",
       Sets: "",
       Reps: "",
-      Weight: "",
+      Intensity: "",
       Rest: "",
       Description: "",
     });
@@ -175,8 +162,7 @@ const Workout = (props) => {
         <div
           className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
         >
-          Weights ({weight ? "lb" : "kg"})&#160;
-          <TfiReload className="h-3 cursor-pointer" onClick={weightSwitcher} />
+          Intensity (% 1RM)
         </div>
         <div
           className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
@@ -245,9 +231,9 @@ const Workout = (props) => {
                             </div>
                             <div className="w-[15%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
                               <input
-                                value={exercise.Weight}
+                                value={exercise.Intensity}
                                 onChange={(event) =>
-                                  weightsHandler(event, index)
+                                  intensityHandler(event, index)
                                 }
                                 type="number"
                                 min="0"

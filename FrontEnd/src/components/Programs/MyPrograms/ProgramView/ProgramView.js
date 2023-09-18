@@ -9,7 +9,9 @@ import AuthContext from "../../../../context/auth-context";
 import Cookies from "js-cookie";
 import StatusBanner from "../../../StatusBanner";
 import { BsShare } from "react-icons/bs";
+import { VscDebugStart } from "react-icons/vsc";
 import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
+import StartProgramModal from "../StartProgramModal/StartProgramModal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { MdOutlineDragHandle } from "react-icons/md";
 
@@ -22,6 +24,7 @@ const ProgramView = () => {
   const [workouts, setWorkouts] = useState([]);
   const [status, setStatus] = useState("");
   const [shareModal, setShareModal] = useState(false);
+  const [startProgramModal, setStartProgramModal] = useState(false);
   const [drag, setDrag] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -138,7 +141,7 @@ const ProgramView = () => {
 
   const duplicateWorkout = (index) => {
     const newWorkouts = [...workouts];
-    const workoutToDuplicate = newWorkouts[index];
+    const workoutToDuplicate = JSON.parse(JSON.stringify(newWorkouts[index]));
 
     newWorkouts.splice(index + 1, 0, {
       ...workoutToDuplicate,
@@ -164,16 +167,19 @@ const ProgramView = () => {
       setTitle(program.name);
       refreshToken()
         .then(() => {
-          return fetch(`http://localhost:5000/program/update-last-opened?programID=${program._id}`, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              Authorization: `Bearer ${Cookies.get("accessToken")}`,
-            },
-            body: JSON.stringify({
-              id: program._id,
-            }),
-          });
+          return fetch(
+            `http://localhost:5000/program/update-last-opened?programID=${program._id}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${Cookies.get("accessToken")}`,
+              },
+              body: JSON.stringify({
+                id: program._id,
+              }),
+            }
+          );
         })
         .then((response) => {
           if (!response.ok) {
@@ -237,22 +243,25 @@ const ProgramView = () => {
 
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/program/save-program?programID=${program._id}`, {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${Cookies.get("accessToken")}`,
-          },
-          body: JSON.stringify({
-            program: {
-              workouts: workouts,
-              name: title,
-              valid: !hasError,
-              lastModified: { user: getAccessToken().userID, date: Date() },
+        return fetch(
+          `http://localhost:5000/program/save-program?programID=${program._id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${Cookies.get("accessToken")}`,
             },
-            programID: program._id,
-          }),
-        });
+            body: JSON.stringify({
+              program: {
+                workouts: workouts,
+                name: title,
+                valid: !hasError,
+                lastModified: { user: getAccessToken().userID, date: Date() },
+              },
+              programID: program._id,
+            }),
+          }
+        );
       })
       .then((response) => {
         if (!response.ok) {
@@ -288,6 +297,10 @@ const ProgramView = () => {
     event.preventDefault();
     setShareModal(true);
   };
+  const startProgramModalHandler = (event) => {
+    event.preventDefault();
+    setStartProgramModal(true);
+  };
 
   return (
     <div className="bg-gray-50 w-full h-full px-5 py-5">
@@ -301,7 +314,15 @@ const ProgramView = () => {
           isPublic={program.isPublic}
         />
       )}
-      {shareModal && (
+      {startProgramModal && <StartProgramModal
+          modalHandler={setStartProgramModal}
+          title={title}
+          programID={program._id}
+          role={program.userRole}
+          editPermissions={program.editorPermissions}
+          isPublic={program.isPublic}
+        />}
+      {(shareModal || startProgramModal) && (
         <div className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-auto bg-black opacity-[15%]" />
       )}
       <form>
@@ -337,12 +358,20 @@ const ProgramView = () => {
             />
           </div>
           <div>
-            <button
-              className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 rounded-full hover:bg-slate-100"
-              onClick={shareModalHandler}
-            >
-              <BsShare /> &#160;Share
-            </button>
+            <div className = "flex flex-row gap-4">
+              <button
+                className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 rounded-full hover:bg-slate-100"
+                onClick={startProgramModalHandler}
+              >
+                <VscDebugStart/> &#160;Start Program
+              </button>
+              <button
+                className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 rounded-full hover:bg-slate-100"
+                onClick={shareModalHandler}
+              >
+                <BsShare /> &#160;Share
+              </button>
+            </div>
           </div>
         </div>
         <DragDropContext onDragEnd={handleDrop} onDragStart={handleDrag}>
