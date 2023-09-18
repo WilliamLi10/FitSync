@@ -59,6 +59,7 @@ upcomingWorkoutsSchema.statics.addWorkout = async (username, date, workoutData) 
     user: username,
     date: date,
     workoutData: workoutData,
+    completed: false,
   });
 
   return  await newWorkout
