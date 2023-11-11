@@ -4,68 +4,34 @@ import { RiAddLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 import { LuCopy } from "react-icons/lu";
 import { RxDragHandleDots2 } from "react-icons/rx";
-import { IoMdMove } from "react-icons/io";
 import { FiEdit } from "react-icons/fi";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
 const Workout = (props) => {
-  const [weight, setWeight] = useState(true);
-  const [rest, setRest] = useState("sec");
-
   const restSwitcher = () => {
-    setRest((prevRest) => {
-      switch (prevRest) {
-        case "min":
-          props.update(
-            {
-              ...props.workout,
-              Unit: { rest: "hour", weight: weight ? "lb" : "kg" },
-            },
-            props.index
-          );
-          return "hour";
-        case "hour":
-          props.update(
-            {
-              ...props.workout,
-              Unit: { rest: "sec", weight: weight ? "lb" : "kg" },
-            },
-            props.index
-          );
-          return "sec";
-        case "sec":
-          props.update(
-            {
-              ...props.workout,
-              Unit: { rest: "min", weight: weight ? "lb" : "kg" },
-            },
-            props.index
-          );
-          return "min";
-        default:
-          props.update(
-            {
-              ...props.workout,
-              Unit: { rest: "min", weight: weight ? "lb" : "kg" },
-            },
-            props.index
-          );
-          return "min";
-      }
-    });
+    props.update(
+      {
+        ...props.workout,
+        Unit: {
+          ...props.workout.Unit,
+          rest: props.workout.Unit.rest == "sec" ? "min" : "sec",
+        },
+      },
+      props.index
+    );
   };
 
-  const weightSwitcher = () => {
-    setWeight((prevWeight) => {
-      props.update(
-        {
-          ...props.workout,
-          Unit: { weight: !prevWeight ? "lb" : "kg", rest: rest },
+  const intensitySwitcher = () => {
+    props.update(
+      {
+        ...props.workout,
+        Unit: {
+          ...props.workout.Unit,
+          intensity: props.workout.Unit.intensity == "RPE" ? "%ORM" : "RPE",
         },
-        props.index
-      );
-      return !prevWeight;
-    });
+      },
+      props.index
+    );
   };
 
   const workoutNameHandler = (event) => {
@@ -90,9 +56,9 @@ const Workout = (props) => {
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
-  const weightsHandler = (event, index) => {
+  const intensityHandler = (event, index) => {
     const newExercises = [...props.workout.Exercises];
-    newExercises[index].Weight = event.target.value;
+    newExercises[index].Intensity = event.target.value;
     props.update({ ...props.workout, Exercises: newExercises }, props.index);
   };
 
@@ -114,7 +80,7 @@ const Workout = (props) => {
       Name: "Untitled",
       Sets: "",
       Reps: "",
-      Weight: "",
+      Intensity: "",
       Rest: "",
       Description: "",
     });
@@ -173,18 +139,18 @@ const Workout = (props) => {
         <div className={`${titleCSS} border-r-[1px] w-[15%]`}>Sets</div>
         <div className={`${titleCSS} border-r-[1px] w-[15%]`}>Reps</div>
         <div
-          className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
+          className={`${titleCSS} border-r-[1px] w-[21%] flex flex-row items-center justify-center`}
         >
-          Weights ({weight ? "lb" : "kg"})&#160;
-          <TfiReload className="h-3 cursor-pointer" onClick={weightSwitcher} />
+          Intensity ({props.workout.Unit.intensity})&#160;
+          <TfiReload className="h-3 cursor-pointer" onClick={intensitySwitcher} />
         </div>
         <div
           className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
         >
-          Rest ({rest})&#160;
+          Rest ({props.workout.Unit.rest})&#160;
           <TfiReload className="h-3 cursor-pointer" onClick={restSwitcher} />
         </div>
-        <div className={`${titleCSS} w-[25%]`}>Description</div>
+        <div className={`${titleCSS} w-[19%]`}>Description</div>
       </div>
       <Droppable droppableId={`exercises-${props.index}`} type="exercise">
         {(provided) => {
@@ -211,6 +177,7 @@ const Workout = (props) => {
                                 onChange={(event) =>
                                   exerciseNameHandler(event, index)
                                 }
+                                placeholder="Untitled"
                                 type="text"
                                 disabled={props.role === "viewer"}
                                 className={`${inputCSS} text-center ${
@@ -243,11 +210,11 @@ const Workout = (props) => {
                                 }`}
                               />
                             </div>
-                            <div className="w-[15%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                            <div className="w-[21%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
                               <input
-                                value={exercise.Weight}
+                                value={exercise.Intensity}
                                 onChange={(event) =>
-                                  weightsHandler(event, index)
+                                  intensityHandler(event, index)
                                 }
                                 type="number"
                                 min="0"
@@ -269,7 +236,7 @@ const Workout = (props) => {
                                 }`}
                               />
                             </div>
-                            <div className="w-[25%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
+                            <div className="w-[19%] border-solid border-slate-200 border-r-[1px] border-b-[1px]">
                               <input
                                 value={exercise.Description}
                                 onChange={(event) =>
