@@ -91,6 +91,17 @@ programsSchema.statics.getLeanProgram = async function (programID) {
   }
 };
 
+programsSchema.statics.getProgram = async function (programID) {
+  try {
+    const program = await this.findOne({ _id: programID });
+    console.log(program);
+    return program;
+  } catch (error) {
+    console.log("Error getting program");
+    throw error;
+  }
+};
+
 /*
   Updates program with given program id with the information in given object
 

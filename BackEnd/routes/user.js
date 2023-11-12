@@ -15,7 +15,7 @@ router.get("/search-user", verifyAccessToken, (req, res) => {
       if (!userExists.exists) {
         return res.json({ success: userExists.exists });
       } else {
-        return res.json({ success: userExists.exists, user: userExists.user });
+        return res.json({ success: userExists.exists, user: userExists.userData });
       }
     })
     .catch((error) => {
@@ -39,7 +39,7 @@ router.get("/get-user", verifyAccessToken, (req, res) => {
         res.status(404).json({ error: "User Not Found" });
       } else {
         res.status(200);
-        return res.json(user.user);
+        return res.json(user.userData);
       }
     })
     .catch((error) => {
