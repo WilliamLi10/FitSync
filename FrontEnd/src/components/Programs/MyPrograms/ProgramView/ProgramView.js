@@ -12,12 +12,12 @@ import { BsShare } from "react-icons/bs";
 import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { MdOutlineDragHandle } from "react-icons/md";
+import cloneDeep from "lodash/cloneDeep";
 
 const ProgramView = () => {
   const ctx = useContext(AuthContext);
   const program = useLoaderData();
   const navigate = useNavigate();
-
   const [title, setTitle] = useState("");
   const [workouts, setWorkouts] = useState([]);
   const [status, setStatus] = useState("");
@@ -33,6 +33,7 @@ const ProgramView = () => {
     setWorkouts((prevWorkouts) => {
       const newWorkouts = [...prevWorkouts];
       newWorkouts[index] = workout;
+      console.log(workout.Unit)
       return newWorkouts;
     });
   };
@@ -47,12 +48,12 @@ const ProgramView = () => {
             Name: "Untitled",
             Sets: "",
             Reps: "",
-            Weight: "",
+            Intensity: "",
             Rest: "",
             Description: "",
           },
         ],
-        Unit: { weight: "lb", rest: "min" },
+        Unit: { intensity: "RPE", rest: "min" },
       },
     ]);
   };
@@ -139,11 +140,9 @@ const ProgramView = () => {
   const duplicateWorkout = (index) => {
     const newWorkouts = [...workouts];
     const workoutToDuplicate = newWorkouts[index];
-
-    newWorkouts.splice(index + 1, 0, {
-      ...workoutToDuplicate,
-      Name: `Copy of ${workoutToDuplicate.Name}`,
-    });
+    const duplicatedWorkout = cloneDeep(workoutToDuplicate);
+    duplicatedWorkout.Name = `Copy of ${workoutToDuplicate.Name}`;
+    newWorkouts.splice(index + 1, 0, duplicatedWorkout);
     setWorkouts(newWorkouts);
   };
 
@@ -200,39 +199,48 @@ const ProgramView = () => {
 
   const saveProgram = (event) => {
     event.preventDefault();
-
-    let hasError = false;
-    for (let i = 0; i < workouts.length; i++) {
-      for (let j = 0; j < workouts[i].Exercises.length; j++) {
+    let missingValue = false;
+    let dupTitle = false;
+    let missingExerciseName = false;
+    let titles = new Set([]);
+    let i = 0;
+    if (title == "") {
+      setTitle("Untitled");
+    }
+    while (
+      i < workouts.length &&
+      (!missingValue || !dupTitle || !missingExerciseName)
+    ) {
+      dupTitle = titles.has(workouts[i].Name) || dupTitle;
+      titles.add(workouts[i].Name);
+      let j = 0;
+      while (
+        j < workouts[i].Exercises.length &&
+        (!missingValue || !dupTitle || !missingExerciseName)
+      ) {
         const exercise = workouts[i].Exercises[j];
         const set = Number(exercise.Sets);
         const rep = Number(exercise.Reps);
-        const weight = Number(exercise.Weight);
+        const intensity = Number(exercise.Intensity);
         const rest = Number(exercise.Rest);
-        if (isNaN(set) || set <= 0 || !Number.isInteger(set)) {
-          hasError = true;
-          break;
-        }
-        if (isNaN(rep) || rep <= 0 || !Number.isInteger(rep)) {
-          hasError = true;
-          break;
-        }
-        if (
-          isNaN(weight) ||
-          weight < 0 ||
-          workouts[i].Exercises[j].Weight === ""
-        ) {
-          hasError = true;
-          break;
-        }
-        if (isNaN(rest) || rest < 0 || workouts[i].Exercises[j].Rest === "") {
-          hasError = true;
-          break;
-        }
+        missingExerciseName = missingExerciseName || exercise.Name == "";
+        missingValue =
+          isNaN(set) ||
+          set <= 0 ||
+          !Number.isInteger(set) ||
+          isNaN(rep) ||
+          rep <= 0 ||
+          !Number.isInteger(rep) ||
+          isNaN(intensity) ||
+          intensity < 0 ||
+          workouts[i].Exercises[j].Intensity === "" ||
+          isNaN(rest) ||
+          rest < 0 ||
+          workouts[i].Exercises[j].Rest === "" ||
+          missingValue;
+        j++;
       }
-      if (hasError) {
-        break;
-      }
+      i++;
     }
 
     refreshToken()
@@ -246,8 +254,10 @@ const ProgramView = () => {
           body: JSON.stringify({
             program: {
               workouts: workouts,
-              name: title,
-              valid: !hasError,
+              name: title == "" ? "Untitled" : title,
+              missingValue: missingValue,
+              dupTitle: dupTitle,
+              missingExerciseName: missingExerciseName,
               lastModified: { user: getAccessToken().userID, date: Date() },
             },
             programID: program._id,
@@ -264,8 +274,14 @@ const ProgramView = () => {
       })
       .then(() => {
         setStatus(
-          `Saved.${
-            hasError ? " Please include a value for every exercise field." : ""
+          `Saved. ${
+            missingValue
+              ? "Please include a value for every exercise field."
+              : ""
+          } ${dupTitle ? "Each workout needs to have a unique title." : ""} ${
+            missingExerciseName
+              ? "Each exercise must have a non-empty name."
+              : ""
           }`
         );
       })
@@ -290,7 +306,7 @@ const ProgramView = () => {
   };
 
   return (
-    <div className="bg-gray-50 w-full h-full px-5 py-5">
+    <div className="bg-gray-50 min-w-[900px] h-full px-5 py-5">
       {shareModal && (
         <ProgramShareModal
           modalHandler={setShareModal}

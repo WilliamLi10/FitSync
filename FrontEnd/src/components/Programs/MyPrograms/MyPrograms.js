@@ -118,7 +118,7 @@ const MyPrograms = () => {
   }, [isLoading]);
 
   return (
-    <div className="bg-gray-50 w-full h-full px-5 py-5">
+    <div className="bg-gray-50 min-w-[600px] h-full px-5 py-5">
       <div>
         <button
           className="flex flex-row items-center text-sm font-thin bg-white rounded-md shadow-sm px-4 py-2 mb-5 border-solid border-[1px] transition-all duration-300 hover:bg-gray-50"
