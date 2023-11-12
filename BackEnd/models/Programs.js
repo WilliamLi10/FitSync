@@ -23,7 +23,9 @@ const programsSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     date: { type: Date },
   },
-  valid: { type: Boolean, required: true },
+  missingValue: { type: Boolean, required: true },
+  dupTitle: { type: Boolean, required: false },
+  missingExerciseName: { type: Boolean, required: false },
 });
 
 /* 
@@ -54,10 +56,12 @@ programsSchema.methods.createProgram = async function (userID) {
               Description: "",
             },
           ],
-          Unit: { weight: "lb", rest: "min" },
+          Unit: { intensity: "RPE", rest: "min" },
         },
       ],
-      valid: false,
+      missingValue: true,
+      dupTitle: false,
+      missingExerciseName: true,
     });
 
     const savedProgram = await newProgram.save();
@@ -109,6 +113,7 @@ programsSchema.statics.getProgram = async function (programID) {
   output: nothing
 */
 programsSchema.methods.updateProgram = async function (newData, programID) {
+  console.log(newData);
   try {
     await mongoose
       .model("programs")
