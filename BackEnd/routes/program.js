@@ -252,6 +252,7 @@ router.post(
         const program = await Programs.getProgram(programID);
         for (let i = 0; i < program.workouts.length; ++i) {
           let workoutDate = new Date(startDate);
+          workoutDate.setUTCHours(0, 0, 0, 0);
           console.log(req.body.workoutDays);
           console.log();
           while (
@@ -263,6 +264,7 @@ router.post(
           program.workouts[i].Exercises.forEach((exercise, j) => {
             const intensity = program.workouts[i].Exercises[j].Intensity;
             delete program.workouts[i].Exercises[j].Intensity;
+            console.log(intensity,user.benchMax,user.squatMax,user.deadliftMax);
             program.workouts[i].Exercises[j].Weight = null;
             if (intensity != "") {
               if (
@@ -295,10 +297,7 @@ router.post(
                 username,
                 workoutDate,
                 program.workouts[i]
-              ).catch((error) => {
-                console.log("Error with creating new upcoming workout");
-                throw error;
-              });
+              );
               workoutDate.setDate(workoutDate.getDate() + 7);
               console.log(
                 "Successfully added Workout %s",

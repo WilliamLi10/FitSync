@@ -3,14 +3,18 @@ const router = express.Router();
 const Programs = require("../models/Programs");
 const Users = require("../models/Users");
 const UpcomingWorkouts = require("../models/UpcomingWorkouts");
-const Progress = require("../models/Progress");
+const ExerciseLogs = require("../models/ExerciseLogs");
 const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 const getPermissions = require("../middleware/programs/getPermissions");
 const mongoose = require("mongoose");
 
 router.get("/get-workout", verifyAccessToken, (req, res) => {
+  console.log("+++\nGetting Workout")
   const username = req.query.username;
-  const workoutDate = req.query.date;
+  console.log(req.query.date);
+  
+  const workoutDate = new Date(req.query.date);
+  workoutDate.setUTCHours(0, 0, 0, 0);
   new UpcomingWorkouts()
     .getWorkout(username, workoutDate)
     .then((workoutData) => {
@@ -18,9 +22,10 @@ router.get("/get-workout", verifyAccessToken, (req, res) => {
         if (workoutData.workout.user != req.username) {
           return res.status(403).json({ error: "Forbidden" });
         } else {
-          return res.status(200).json(workoutData.workout);
+          return res.status(200).json(workoutData.workout.workoutData);
         }
       } else {
+
         return res.status(404).json({ error: "Workout Not Found" });
       }
     })
@@ -32,32 +37,36 @@ router.get("/get-workout", verifyAccessToken, (req, res) => {
 router.post("/log-workout", verifyAccessToken, (req, res) => {
   username = req.query.username;
   workoutDate = req.query.date;
-  workoutData = req.body.data;
+  workoutData = req.body.workoutData;
   new UpcomingWorkouts()
     .getWorkout(username, workoutDate)
     .then((workoutObj) => {
       if (workoutObj.exists) {
-        if (workoutObj.workout.user != req.username) {
+        if (workoutObj.workout.user != req.username || workoutObj.workout.completed) {
           return res.status(403).json({ error: "Forbidden" });
         } else {
+          console.log("Logging Workout", workoutData)
           for (var exerciseName in workoutData) {
-            new Progress.uploadData(
+            ExerciseLogs.uploadData(
               username,
               exerciseName,
               workoutDate,
               workoutData[exerciseName]
             ).catch((error) => {
-              return res.status(500).json({ error: "Internal server error" });
+
+              return res.status(500).json({ error: "Workout Logging Error 1" });
             });
           }
-
+          console.log("Saved Workouts")
+          workoutObj.workout.completed = true;
           workoutObj
+            .workout
             .save()
             .then((savedWorkout) => {
               return res.status(200).send();;
             })
             .catch((error) => {
-                return res.status(500).json({ error: "Internal server error" });
+                return res.status(500).json({ error: "Workout Logging Error 2" });
             });
         }
       } else {
@@ -65,8 +74,9 @@ router.post("/log-workout", verifyAccessToken, (req, res) => {
       }
     })
     .catch((error) => {
-      return res.status(500).json({ error: "Internal server error" });
+      console.log(error);
+      return res.status(500).json({ error: "Workout Logging Error 3" });
     });
 });
 
-router.module.exports = router;
+module.exports = router;
