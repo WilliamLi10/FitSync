@@ -11,19 +11,27 @@ const upcomingWorkoutsSchema = new mongoose.Schema({
     required: true,
   },
   workoutData: { type: Object, required: true },
+  completed: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 /* 
 @param username: username of the workout needed
 @param date: date of the workout needed
 */
-upcomingWorkoutsSchema.methods.getWorkout = (username, date) => {
+upcomingWorkoutsSchema.methods.getWorkout = function (username, date) {
+  console.log(username);
+  console.log(date);
   return this.model("upcomingWorkouts")
-    .findOne({ user: username, date: date }, "workoutData")
+    .findOne({ user: username, date: date })
     .then((workout) => {
+      console.log(workout);
       return { exists: !!workout, workout: workout };
     })
     .catch((error) => {
+      console.log(error)
       throw error;
     });
 };
@@ -34,7 +42,7 @@ upcomingWorkoutsSchema.methods.getWorkout = (username, date) => {
 @returns: error if there was an error in deleting the workout
 @modifies: upcoming workouts collection
 */
-upcomingWorkoutsSchema.methods.deleteWorkout = (username, data) => {
+upcomingWorkoutsSchema.methods.deleteWorkout = function (username, data)  {
   return this.model("upcomingWorkouts")
     .deleteOne({ user: username, date: date })
     .then(() => {
@@ -54,7 +62,11 @@ upcomingWorkoutsSchema.methods.deleteWorkout = (username, data) => {
           of the new workout
 
 */
-upcomingWorkoutsSchema.statics.addWorkout = async (username, date, workoutData) => {
+upcomingWorkoutsSchema.statics.addWorkout = async function (
+  username,
+  date,
+  workoutData
+)  {
   const newWorkout = new mongoose.model("upcomingWorkouts")({
     user: username,
     date: date,
@@ -62,7 +74,7 @@ upcomingWorkoutsSchema.statics.addWorkout = async (username, date, workoutData) 
     completed: false,
   });
 
-  return  await newWorkout
+  return await newWorkout
     .save()
     .then((savedWorkout) => {
       return savedWorkout;
