@@ -101,6 +101,25 @@ userSchema.statics.getUserStat = (username, stat) => {
     });
 
 }
+
+
+userSchema.statics.updateUserStat = (username, statName, newValue) => {
+  return mongoose
+    .model("users")
+    .findOneAndUpdate(
+      { username: username },
+      { $set: { [statName]: newValue } },
+      { new: true } // Returns the updated document
+    )
+    .then((updatedUser) => {
+      return updatedUser;
+    })
+    .catch((error) => {
+      console.log("Error updating user stat");
+      throw error;
+    });
+}
+
 /*
   Returns if given email exists and username, dob, and email of that user
 
@@ -139,7 +158,7 @@ userSchema.methods.getUserByEmail = (email) => {
   input: pass string, email string, username string, dob date
   output: user object
 */
-userSchema.methods.createUser = (pass, email, username, dob) => {
+userSchema.methods.createUser = (pass, email, username, dob, benchMax, squatMax, deadliftMax) => {
   return bcrypt
     .genSalt(10)
     .then((salt) => {
@@ -150,6 +169,9 @@ userSchema.methods.createUser = (pass, email, username, dob) => {
           email: email,
           password: hashedPass,
           activeProgram: false,
+          benchMax: benchMax,
+          squatMax: squatMax,
+          deadliftMax: deadliftMax
         });
 
         return newUser
