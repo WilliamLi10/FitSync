@@ -11,6 +11,16 @@ function roundToNearestFive(n) {
   return Math.round(n / 5) * 5;
 }
 
+/*
+Creates a new workout program, see program model for specific details on document structure
+Params:
+  userId: username of the user who will own the new program
+
+Returns:
+  onSuccess: program id of the newly created program
+  onFailure: internal server error
+*/
+
 router.post("/create-program", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Creating program...");
@@ -28,6 +38,16 @@ router.post("/create-program", verifyAccessToken, (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     });
 });
+
+/*
+Get Endpoint for getting program data
+Params: 
+  programId: program id of the program the query is asking for
+  userId: user id of the user who is querying for the program
+Returns: 
+  onSuccess: returns program info if the user is one of owner, editor, or viewer permissions
+  onFailure: returns status error
+*/
 
 router.get("/load-program", verifyAccessToken, async (req, res) => {
   console.log("+++");
@@ -74,6 +94,13 @@ router.get("/load-program", verifyAccessToken, async (req, res) => {
   }
 });
 
+/* 
+Post endpoint to update the last opened field for a particular program
+Params:
+  userId: user id of the user making the post endpoint
+  id: program id of the program that is being updated
+*/
+
 router.post("/update-last-opened", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Updating last opened...");
@@ -90,6 +117,13 @@ router.post("/update-last-opened", verifyAccessToken, (req, res) => {
     });
 });
 
+/* 
+Get endpoint for loading a users list of programs
+Params:
+  index: index of the first program to load from the total list of programs
+  userId: user id of the user who made the request
+  inc: number of programs after index to include
+*/
 router.get("/load-program-list", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Loading next programs...");
@@ -113,6 +147,19 @@ router.get("/load-program-list", verifyAccessToken, (req, res) => {
     });
 });
 
+
+/*
+Saves new data to an existing workout program
+Params:
+  None
+Body:
+  program: new program data
+  programID: the id of the updated program
+
+Returns: 
+  onSuccess: success status code
+  onFailure: failure status code
+*/
 router.post(
   "/save-program",
   [verifyAccessToken, getPermissions],
@@ -140,6 +187,22 @@ router.post(
   }
 );
 
+
+/* 
+Will get permissions of a given program
+Params:
+  programID: the program id of the program that the query is asking permissions for
+
+Returns:
+  onSuccess: 
+  {
+    editors: list of editor usernames
+    viewers: list of viewer usernames
+    owner: owner username string
+    editorPermissions: boolean value (1) editors can share (0) editors can not share
+    isPublic: boolean value to determine if the program can be publicly viewed
+  }
+*/
 router.get("/get-permissions", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Getting permissions...");
@@ -168,6 +231,19 @@ router.get("/get-permissions", verifyAccessToken, (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     });
 });
+
+/* 
+Saves new permissions for a given program
+RequestBody:
+  {
+    programID: id of program associated with the new permissions
+    viewers: list of viewers for program
+    editors: list of editors for program
+    owner: owner of the program
+    eitorPermissions: boolean value that determines if editors can share the program
+    isPublic: boolean value determining if the progam is public or not
+  }
+*/
 
 router.post(
   "/save-permissions",

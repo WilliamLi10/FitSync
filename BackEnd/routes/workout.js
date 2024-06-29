@@ -8,6 +8,24 @@ const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 const getPermissions = require("../middleware/programs/getPermissions");
 const mongoose = require("mongoose");
 
+
+/* 
+
+*/
+
+
+
+/* 
+Get endpoint for getting an upcoming workout given a request date
+Params:
+  username: username of user
+  date; date of the workout 
+
+Returns: 
+  onSuccess: workout data in the form of a json (see upcomingWorkout model for fields)
+  onFailure: status error
+*/
+
 router.get("/get-workout", verifyAccessToken, (req, res) => {
   console.log("+++\nGetting Workout")
   const username = req.query.username;
@@ -34,6 +52,14 @@ router.get("/get-workout", verifyAccessToken, (req, res) => {
     });
 });
 
+
+/* 
+post request that uploads workout data that corresponds to an upcoming workout document
+Params:
+  username: username of the user who is logging the workout
+  date: date of the workout 
+  workoutData: Uploads data about the workout that the user just performed. see ExerciseLogs model for more info 
+*/
 router.post("/log-workout", verifyAccessToken, (req, res) => {
   username = req.query.username;
   workoutDate = req.query.date;

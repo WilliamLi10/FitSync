@@ -20,16 +20,8 @@ const ExerciseLogsSchema = new mongoose.Schema({
   },
 });
 
-ExerciseLogsSchema.statics.uploadData = (username, exerciseName, date, data) => {
-  const newData = new mongoose.model("ExerciseLogs")({
-    user: username,
-    date: date,
-    exerciseName: exerciseName,
-    performanceData: data,
-  });
-
-  return newData.save();
-};
+ExerciseLogsSchema.index({ user: 1, exerciseName: 1 });
+ExerciseLogsSchema.index({ user: 1, date: 1 });
 
 const ExerciseLogs = mongoose.model("ExerciseLogs", ExerciseLogsSchema);
 
