@@ -52,6 +52,12 @@ router.post("/refresh-token", verifyRefreshToken, (req, res) => {
     });
 });
 
+//Checks string to make sure it follows (someChars)@(moreChars).(someMoreCHars)
+const  validEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
 router.post("/register", (req, res) => {
   console.log("+++");
   console.log("Registering account...");
@@ -60,9 +66,6 @@ router.post("/register", (req, res) => {
   const pass = req.body.pass;
   const user = req.body.user;
   const dob = req.body.dob;
-  const benchMax = req.body.benchMax;
-  const squatMax = req.body.squatMax;
-  const deadliftMax = req.body.deadliftMax;
 
   const checkEmail = new Users().getUserByEmail(email);
   const checkUserName = new Users().getUserByUsername(user);
@@ -72,9 +75,15 @@ router.post("/register", (req, res) => {
       if (userExists.exists || emailExists.exists) {
         res.json({
           success: false,
+          reason: "Username/email address already exists",
           user: userExists.exists,
           email: emailExists.exists,
         });
+      } else if (!validEmail(email)) {
+        res.json({
+          success: false,
+          reason: "Invalid email"
+        })
       } else {
         new Users().createUser(pass, email, user, dob, benchMax, squatMax, deadliftMax).then(() => {
           res.json({ success: true });
