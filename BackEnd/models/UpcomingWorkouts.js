@@ -1,4 +1,10 @@
 const mongoose = require("mongoose");
+/* 
+An upcoming workout corresponds to a list of exercises including sets x reps x weights.
+Primary key for an upcoming workout document should be the (user, date)
+An upcoming workout document's username can not be changed but the date can be changed.
+*/
+
 
 const upcomingWorkoutsSchema = new mongoose.Schema({
   user: {

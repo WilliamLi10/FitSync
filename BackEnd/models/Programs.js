@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
-
+/*
+A Program represents a workout program template that users can edit.
+Multiple workouts combined together make a single workout program. Each workout can be templated with %One Rep Max calculations
+or hardcoded weights. Workout programs also include owner, viewer, and editor permissionsZ
+*/
 const programsSchema = new mongoose.Schema({
   name: {
     type: String,

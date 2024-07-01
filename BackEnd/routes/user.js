@@ -3,6 +3,23 @@ const router = express.Router();
 const Users = require("../models/Users");
 const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 
+
+/* 
+Get request to look for a user given a username
+Params:
+  username: username of the user
+
+Returns:
+  if user exists:
+    {
+      success: true,
+      user: userData document
+    }
+  else:
+    {
+      success: false
+    }
+*/
 router.get("/search-user", verifyAccessToken, (req, res) => {
   console.log("+++");
   console.log("Searching user...");
@@ -23,6 +40,15 @@ router.get("/search-user", verifyAccessToken, (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     });
 });
+
+/* 
+Get endpoint for getting user data
+Params:
+  username: username of the user this request is querying for
+
+Returns:
+  userData document
+*/
 
 router.get("/get-user", verifyAccessToken, (req, res) => {
   console.log("+++");
