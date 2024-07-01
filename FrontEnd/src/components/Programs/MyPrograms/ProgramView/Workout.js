@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { TfiReload } from "react-icons/tfi";
 import { RiAddLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
@@ -14,7 +13,7 @@ const Workout = (props) => {
         ...props.workout,
         Unit: {
           ...props.workout.Unit,
-          rest: props.workout.Unit.rest == "sec" ? "min" : "sec",
+          rest: props.workout.Unit.rest === "sec" ? "min" : "sec",
         },
       },
       props.index
@@ -27,7 +26,7 @@ const Workout = (props) => {
         ...props.workout,
         Unit: {
           ...props.workout.Unit,
-          intensity: props.workout.Unit.intensity == "RPE" ? "%ORM" : "RPE",
+          intensity: props.workout.Unit.intensity === "RPE" ? "%ORM" : "RPE",
         },
       },
       props.index
@@ -142,13 +141,20 @@ const Workout = (props) => {
           className={`${titleCSS} border-r-[1px] w-[21%] flex flex-row items-center justify-center`}
         >
           Intensity ({props.workout.Unit.intensity})&#160;
-          <TfiReload className="h-3 cursor-pointer" onClick={intensitySwitcher} />
+          {(props.role === "owner" || props.role === "editor") && (
+            <TfiReload
+              className="h-3 cursor-pointer"
+              onClick={intensitySwitcher}
+            />
+          )}
         </div>
         <div
           className={`${titleCSS} border-r-[1px] w-[15%] flex flex-row items-center justify-center`}
         >
           Rest ({props.workout.Unit.rest})&#160;
-          <TfiReload className="h-3 cursor-pointer" onClick={restSwitcher} />
+          {(props.role === "owner" || props.role === "editor") && (
+            <TfiReload className="h-3 cursor-pointer" onClick={restSwitcher} />
+          )}
         </div>
         <div className={`${titleCSS} w-[19%]`}>Description</div>
       </div>

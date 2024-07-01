@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Programs = require("./Programs");
 
-
-
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -21,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  activeProgram:{
+  activeProgram: {
     type: Boolean,
     required: true,
   },
@@ -33,15 +31,15 @@ const userSchema = new mongoose.Schema({
   ],
   benchMax: {
     type: Number,
-    required: false, 
+    required: false,
   },
   squatMax: {
     type: Number,
-    required: false, 
+    required: false,
   },
   deadliftMax: {
     type: Number,
-    required: false, 
+    required: false,
   },
 });
 
@@ -79,7 +77,7 @@ userSchema.methods.getFullUser = (username) => {
     .model("users")
     .findOne({ username: username })
     .then((existingUser) => {
-      return existingUser ;
+      return existingUser;
     })
     .catch((error) => {
       console.log("Error checking username");
@@ -92,16 +90,13 @@ userSchema.statics.getUserStat = (username, stat) => {
     .model("users")
     .findOne({ username: username }, stat)
     .then((userStat) => {
-
       return userStat;
     })
     .catch((error) => {
       console.log("Error checking username");
       throw error;
     });
-
-}
-
+};
 
 userSchema.statics.updateUserStat = (username, statName, newValue) => {
   return mongoose
@@ -118,7 +113,7 @@ userSchema.statics.updateUserStat = (username, statName, newValue) => {
       console.log("Error updating user stat");
       throw error;
     });
-}
+};
 
 /*
   Returns if given email exists and username, dob, and email of that user
@@ -158,7 +153,15 @@ userSchema.methods.getUserByEmail = (email) => {
   input: pass string, email string, username string, dob date
   output: user object
 */
-userSchema.methods.createUser = (pass, email, username, dob, benchMax, squatMax, deadliftMax) => {
+userSchema.methods.createUser = (
+  pass,
+  email,
+  username,
+  dob,
+  benchMax,
+  squatMax,
+  deadliftMax
+) => {
   return bcrypt
     .genSalt(10)
     .then((salt) => {
@@ -171,7 +174,7 @@ userSchema.methods.createUser = (pass, email, username, dob, benchMax, squatMax,
           activeProgram: false,
           benchMax: benchMax,
           squatMax: squatMax,
-          deadliftMax: deadliftMax
+          deadliftMax: deadliftMax,
         });
 
         return newUser

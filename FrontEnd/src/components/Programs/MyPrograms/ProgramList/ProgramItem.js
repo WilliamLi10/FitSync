@@ -34,11 +34,10 @@ const ProgramItem = (props) => {
       <div className="w-[20%] overflow-hidden overflow-ellipsis whitespace-nowrap pr-3">
         {`${month} ${day}, ${year}`}
       </div>
-      <SlOptionsVertical
-        className="transition-all duration-150 hover:bg-gray-300 rounded-full py-1 h-5 w-5"
-        onClick={editHandler}
-      />
-      {edit && <EditProgram />}
+      <div onClick={editHandler}>
+        <SlOptionsVertical className="transition-all duration-150 hover:bg-gray-300 rounded-full py-1 h-5 w-5" />
+        {edit && <EditProgram modalHandler={setEdit} />}
+      </div>
     </div>
   );
 };
