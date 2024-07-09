@@ -57,7 +57,6 @@ const ProgramShareModel = (props) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data)
         setOwner(data.owner);
         setEditors(new Set(data.editors));
         setViewers(new Set(data.viewers));
@@ -247,15 +246,16 @@ const ProgramShareModel = (props) => {
                 <RiAddLine /> &#160;Add
               </button>
             </div>
-            <h2 className="mt-2 font-semibold">People with access</h2>
+          <h2 className="mt-2 font-semibold">People with access</h2>
           </div>
           <div className="overflow-y-auto max-h-[250px]">
             <ShareUser type="owner" name={owner} />
             {[...editors].map((editor) => {
-              if (editor != owner) {
+              if (editor !== owner) {
                 return (
                   <ShareUser
                     type="editor"
+                    key={editor}
                     name={editor}
                     role={props.role}
                     editPermission={editorPermissions}
@@ -268,6 +268,7 @@ const ProgramShareModel = (props) => {
               return (
                 <ShareUser
                   type="viewer"
+                  key={viewer}
                   name={viewer}
                   role={props.role}
                   editPermission={editorPermissions}
@@ -312,7 +313,7 @@ const ProgramShareModel = (props) => {
                   <p className="text-[.75rem] text-gray-400 font-thin mb-2 ml-4">
                     Public programs can be found in Discover Programs and can be
                     viewed by anyone. Private programs can only be viewed by
-                    invited users
+                    invited users.
                   </p>
                 </div>
               )}
