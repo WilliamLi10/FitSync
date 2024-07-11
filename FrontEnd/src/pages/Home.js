@@ -4,7 +4,7 @@ import Calendar from "../components/Home/Calendar/Calendar";
 import MiniCalendar from "../components/Home/MiniCalendar/MiniCalendar";
 import Dashboard from "../components/Home/Dashboard";
 import Task from "../components/Home/Task/Task";
-import About from "./LoggedOut/About";
+import Landing from "./LoggedOut/Landing";
 import { checkAccessToken } from "../util/auth";
 
 const Home = () => {
@@ -53,7 +53,7 @@ const Home = () => {
       </div>
     </div>
   ) : (
-    <About />
+    <Landing />
   );
 };
 
