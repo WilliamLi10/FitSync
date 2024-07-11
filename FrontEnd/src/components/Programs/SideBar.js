@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { RiCompassDiscoverLine, RiFileList2Line } from "react-icons/ri";
+import { RiFileList2Line } from "react-icons/ri";
 import { FaBars } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
@@ -57,23 +57,6 @@ const SideBar = () => {
               <RiFileList2Line />
             </div>
             <h1 className="text-md">{barOpen && "My Programs"}</h1>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            to="discover"
-            className={({ isActive }) =>
-              `flex items-center py-10 px-5 gap-4 cursor-pointer h-[6rem] ${
-                isActive
-                  ? "bg-slate-100 border-solid border-r-[1px] border-slate-700"
-                  : "hover:bg-slate-50"
-              }`
-            }
-          >
-            <div className="h-5 w-5">
-              <RiCompassDiscoverLine />
-            </div>
-            <h1 className="text-md">{barOpen && "Discover Programs"}</h1>
           </NavLink>
         </li>
       </ul>

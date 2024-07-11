@@ -12,7 +12,6 @@ import Progress from "./pages/LoggedIn/Progress";
 import LogWorkout from "./pages/LoggedIn/LogWorkout";
 import Product from "./pages/LoggedOut/Product";
 import Contact from "./pages/LoggedOut/Contact";
-import DiscoverPrograms from "./components/Programs/DiscoverPrograms/DiscoverPrograms";
 import MyPrograms from "./components/Programs/MyPrograms/MyPrograms";
 import ProgramView from "./components/Programs/MyPrograms/ProgramView/ProgramView";
 import { programLoader } from "./loaders/ProgramLoader";
@@ -31,7 +30,6 @@ const router = createBrowserRouter([
         element: <Programs />,
         children: [
           { index: true, element: <Navigate to="myprograms" replace /> },
-          { path: "discover", element: <DiscoverPrograms /> },
           {
             path: "myprograms",
             element: <MyPrograms />,
