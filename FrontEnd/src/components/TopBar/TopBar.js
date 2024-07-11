@@ -50,9 +50,7 @@ const TopBar = (props) => {
             </>
           ) : (
             <>
-              <TopLink link="/" name="About" />
-              <TopLink link="/product" name="Product" />
-              <TopLink link="/contact" name="Contact" />
+              <TopLink link="/" name="Welcome" />
             </>
           )}
         </div>
