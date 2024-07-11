@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useContext } from "react";
-import { refreshToken } from "../../../../util/auth";
+import { refreshToken } from "../../../util/auth";
 import Cookies from "js-cookie";
-import AuthContext from "../../../../context/auth-context";
+import AuthContext from "../../../context/auth-context";
 import { useNavigate } from "react-router-dom";
 import { RiAddLine } from "react-icons/ri";
 import ShareUser from "./ShareUser";

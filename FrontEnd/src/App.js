@@ -1,8 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  Navigate,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./pages/Root";
 import Error from "./pages/Error";
 import "tailwindcss/tailwind.css";
@@ -12,8 +8,7 @@ import Progress from "./pages/LoggedIn/Progress";
 import LogWorkout from "./pages/LoggedIn/LogWorkout";
 import Product from "./pages/LoggedOut/Product";
 import Contact from "./pages/LoggedOut/Contact";
-import MyPrograms from "./components/Programs/MyPrograms/MyPrograms";
-import ProgramView from "./components/Programs/MyPrograms/ProgramView/ProgramView";
+import ProgramView from "./components/Programs/ProgramView/ProgramView";
 import { programLoader } from "./loaders/ProgramLoader";
 
 const router = createBrowserRouter([
@@ -25,21 +20,11 @@ const router = createBrowserRouter([
       { path: "/", element: <Home /> },
       { path: "progress", element: <Progress /> },
       { path: "logworkout", element: <LogWorkout /> },
+      { path: "programs", element: <Programs /> },
       {
-        path: "programs",
-        element: <Programs />,
-        children: [
-          { index: true, element: <Navigate to="myprograms" replace /> },
-          {
-            path: "myprograms",
-            element: <MyPrograms />,
-          },
-          {
-            path: "/programs/myprograms/:programID",
-            element: <ProgramView />,
-            loader: programLoader,
-          },
-        ],
+        path: "programs/:programID",
+        element: <ProgramView />,
+        loader: programLoader,
       },
       { path: "product", element: <Product /> },
       { path: "contact", element: <Contact /> },

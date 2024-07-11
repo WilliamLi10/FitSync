@@ -2,12 +2,12 @@ import { useState, useEffect, useContext } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { RiAddLine } from "react-icons/ri";
 import { CiSaveDown2 } from "react-icons/ci";
-import { refreshToken, getAccessToken } from "../../../../util/auth";
+import { refreshToken, getAccessToken } from "../../../util/auth";
 import Workout from "./Workout";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import AuthContext from "../../../../context/auth-context";
+import AuthContext from "../../../context/auth-context";
 import Cookies from "js-cookie";
-import StatusBanner from "../../../StatusBanner";
+import StatusBanner from "../../StatusBanner";
 import { BsShare } from "react-icons/bs";
 import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -306,7 +306,7 @@ const ProgramView = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-w-[900px] h-full px-5 py-5">
+    <div className="bg-gray-50 min-w-[900px] h-screen px-5 py-5">
       {shareModal && (
         <ProgramShareModal
           modalHandler={setShareModal}
@@ -334,7 +334,7 @@ const ProgramView = () => {
           <div className="flex flex-row items-center">
             <button
               onClick={() => {
-                navigate("/programs/myprograms");
+                navigate("/programs");
               }}
             >
               <BiArrowBack className="h-8" />
