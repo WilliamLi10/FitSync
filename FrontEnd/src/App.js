@@ -26,8 +26,6 @@ const router = createBrowserRouter([
         element: <ProgramView />,
         loader: programLoader,
       },
-      { path: "product", element: <Product /> },
-      { path: "contact", element: <Contact /> },
     ],
   },
 ]);
