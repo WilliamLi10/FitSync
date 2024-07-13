@@ -85,7 +85,7 @@ router.post("/register", (req, res) => {
           reason: "Invalid email"
         })
       } else {
-        new Users().createUser(pass, email, user, dob, benchMax, squatMax, deadliftMax).then(() => {
+        new Users().createUser(pass, email, user, dob).then(() => {
           res.json({ success: true });
           console.log("Registration successful");
         });

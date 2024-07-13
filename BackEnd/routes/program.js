@@ -187,6 +187,34 @@ router.post(
   }
 );
 
+router.delete(
+  "/delete-program",
+  [verifyAccessToken, getPermissions],
+  (req, res) => {
+    if (req.permissions.userRole != "owner") {
+      return res.status(403).json({ error: "Forbidden" });
+    } else {
+      const programId = req.query.programID;
+
+      if (!programId) {
+        return res.status(400).json({ error: "Program ID is required" });
+      }
+      console.log("ProgramID:",programId);
+      Programs.findByIdAndDelete(programId)
+        .then((deletedProgram) => {
+          if (!deletedProgram) {
+            return res.status(404).json({ error: "Program not found" });
+          }
+          console.log("Successfully deleted program");
+          return res.status(200).json({});
+        })
+        .catch((error) => {
+          console.error(error);
+          return res.status(500).json({ error: "Internal Server Error" });
+        });
+    }
+  }
+);
 
 /* 
 Will get permissions of a given program
@@ -307,6 +335,11 @@ request body format will look like this:
     Upper 2: 4,
     Lower 1: 5
     Lower 2: 3,
+  },
+  maxes: {
+    squatMax: number,
+    benchMax: number,
+    deadliftMax: number
   }
 }
 */
@@ -340,7 +373,6 @@ router.post(
           program.workouts[i].Exercises.forEach((exercise, j) => {
             const intensity = program.workouts[i].Exercises[j].Intensity;
             delete program.workouts[i].Exercises[j].Intensity;
-            console.log(intensity,user.benchMax,user.squatMax,user.deadliftMax);
             program.workouts[i].Exercises[j].Weight = null;
             if (intensity != "") {
               if (
@@ -349,19 +381,19 @@ router.post(
                 )
               ) {
                 program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  user.benchMax * (parseInt(intensity, 10) / 100)
+                  req.body.maxes["benchMax"] * (parseInt(intensity, 10) / 100)
                 );
               } else if (
                 program.workouts[i].Name.toLowerCase().includes("squat")
               ) {
                 program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  user.squatMax * (parseInt(intensity, 10) / 100)
+                  req.body.maxes["squatMax"] * (parseInt(intensity, 10) / 100)
                 );
               } else if (
                 program.workouts[i].Name.toLowerCase().includes("deadlift")
               ) {
                 program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  user.deadliftMax * (parseInt(intensity, 10) / 100)
+                  req.body.maxes["deadliftMax"]* (parseInt(intensity, 10) / 100)
                 );
               }
             }

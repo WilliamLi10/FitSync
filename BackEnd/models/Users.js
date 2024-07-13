@@ -29,18 +29,6 @@ const userSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now },
     },
   ],
-  benchMax: {
-    type: Number,
-    required: false,
-  },
-  squatMax: {
-    type: Number,
-    required: false,
-  },
-  deadliftMax: {
-    type: Number,
-    required: false,
-  },
 });
 
 /*
@@ -157,10 +145,7 @@ userSchema.methods.createUser = (
   pass,
   email,
   username,
-  dob,
-  benchMax,
-  squatMax,
-  deadliftMax
+  dob
 ) => {
   return bcrypt
     .genSalt(10)
@@ -172,9 +157,6 @@ userSchema.methods.createUser = (
           email: email,
           password: hashedPass,
           activeProgram: false,
-          benchMax: benchMax,
-          squatMax: squatMax,
-          deadliftMax: deadliftMax,
         });
 
         return newUser
