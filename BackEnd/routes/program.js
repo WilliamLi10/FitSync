@@ -147,7 +147,6 @@ router.get("/load-program-list", verifyAccessToken, (req, res) => {
     });
 });
 
-
 /*
 Saves new data to an existing workout program
 Params:
@@ -187,6 +186,29 @@ router.post(
   }
 );
 
+router.post(
+  "/duplicate-program",
+  [verifyAccessToken, getPermissions],
+  (req, res) => {
+    console.log("+++");
+    console.log("Duplicating program...");
+    if (
+      req.permissions.userRole !== "owner" &&
+      req.permissions.userRole !== "editor" &&
+      req.permissions.userRole !== "viewer"
+    ) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    Programs.duplicateProgram(req.query.programID, req.userID)
+      .then((duplicatedProgramId) => {
+        res.status(200).json({ duplicatedProgramId });
+      })
+      .catch((error) => {
+        res.status(500).json({ error: error.message });
+      });
+  }
+);
 
 /* 
 Will get permissions of a given program
@@ -340,7 +362,12 @@ router.post(
           program.workouts[i].Exercises.forEach((exercise, j) => {
             const intensity = program.workouts[i].Exercises[j].Intensity;
             delete program.workouts[i].Exercises[j].Intensity;
-            console.log(intensity,user.benchMax,user.squatMax,user.deadliftMax);
+            console.log(
+              intensity,
+              user.benchMax,
+              user.squatMax,
+              user.deadliftMax
+            );
             program.workouts[i].Exercises[j].Weight = null;
             if (intensity != "") {
               if (

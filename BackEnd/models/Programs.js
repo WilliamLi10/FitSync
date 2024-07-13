@@ -110,6 +110,25 @@ programsSchema.statics.getProgram = async function (programID) {
   }
 };
 
+programsSchema.statics.duplicateProgram = async function (programId, userId) {
+  try {
+    const program = await this.findById(programId);
+    if (!program) {
+      throw new Error("Program not found");
+    }
+
+    const newProgram = new this(program.toObject());
+    newProgram.owner = userId;
+    newProgram._id = mongoose.Types.ObjectId();
+    newProgram.isNew = true;
+
+    await newProgram.save();
+    return newProgram._id;
+  } catch (error) {
+    throw new Error(`Error duplicating program: ${error.message}`);
+  }
+};
+
 /*
   Updates program with given program id with the information in given object
 
