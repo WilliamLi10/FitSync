@@ -5,7 +5,7 @@ import AuthContext from "../../../context/auth-context";
 import { useNavigate } from "react-router-dom";
 import { RiAddLine } from "react-icons/ri";
 import ShareUser from "./ShareUser";
-
+import config from "../../../config";
 const ProgramShareModel = (props) => {
   const modalRef = useRef(null);
   const [owner, setOwner] = useState("");
@@ -40,7 +40,7 @@ const ProgramShareModel = (props) => {
     setLoading(true);
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/program/get-permissions?programID=${props.programID}`, {
+        return fetch(`${config.API_URL}/program/get-permissions?programID=${props.programID}`, {
           method: "GET",
           headers: {
             "Content-type": "application/json",
@@ -84,7 +84,7 @@ const ProgramShareModel = (props) => {
     event.preventDefault();
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/user/search-user?username=${username}`, {
+        return fetch(`${config.API_URL}/user/search-user?username=${username}`, {
           method: "GET",
           headers: {
             "Content-type": "application/json",
@@ -148,7 +148,7 @@ const ProgramShareModel = (props) => {
     event.preventDefault();
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/program/save-permissions?programID=${props.programID}`, {
+        return fetch(`${config.API_URL}/program/save-permissions?programID=${props.programID}`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",

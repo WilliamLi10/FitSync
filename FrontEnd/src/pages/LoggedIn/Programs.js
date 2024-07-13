@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import AuthContext from "../../context/auth-context";
 import debounce from "lodash.debounce";
-
+import config from "../../config";
 const Programs = () => {
   const navigate = useNavigate();
   const ctx = useContext(AuthContext);
@@ -17,7 +17,7 @@ const Programs = () => {
   const createProgram = () => {
     refreshToken()
       .then(() => {
-        return fetch("http://localhost:5000/program/create-program", {
+        return fetch(`${config.API_URL}/program/create-program`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
@@ -55,7 +55,7 @@ const Programs = () => {
     setIsLoading(true);
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/program/load-program-list?index=${index}&inc=20`, {
+        return fetch(`${config.API_URL}/program/load-program-list?index=${index}&inc=20`, {
           method: "GET",
           headers: {
             "Content-type": "application/json",

@@ -5,7 +5,7 @@ import { FaGooglePlusG } from "react-icons/fa";
 import { BsPerson } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
-
+import config from "../../config";
 const SignUp = (props) => {
   const ctx = useContext(AuthContext);
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const SignUp = (props) => {
     setSubmit(true);
 
     if (user.valid && dob.valid && email.valid && pass.valid) {
-      fetch("http://localhost:5000/auth/register", {
+      fetch(`${config.API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

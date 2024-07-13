@@ -131,7 +131,7 @@ router.get("/load-program-list", verifyAccessToken, (req, res) => {
   const index = req.query.index;
   const userID = req.userID;
   const inc = req.query.inc;
-
+  console.log(userID);
   new Users()
     .getProgramListStaggered(userID, index, inc)
     .then((programs) => {

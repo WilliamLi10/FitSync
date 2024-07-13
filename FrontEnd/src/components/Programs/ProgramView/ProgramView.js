@@ -13,7 +13,7 @@ import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { MdOutlineDragHandle } from "react-icons/md";
 import cloneDeep from "lodash/cloneDeep";
-
+import config from "../../../config";
 const ProgramView = () => {
   const ctx = useContext(AuthContext);
   const program = useLoaderData();
@@ -163,7 +163,7 @@ const ProgramView = () => {
       setTitle(program.name);
       refreshToken()
         .then(() => {
-          return fetch(`http://localhost:5000/program/update-last-opened?programID=${program._id}`, {
+          return fetch(`${config.API_URL}/program/update-last-opened?programID=${program._id}`, {
             method: "POST",
             headers: {
               "Content-type": "application/json",
@@ -245,7 +245,7 @@ const ProgramView = () => {
 
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/program/save-program?programID=${program._id}`, {
+        return fetch(`${config.API_URL}/program/save-program?programID=${program._id}`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",

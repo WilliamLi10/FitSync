@@ -1,10 +1,10 @@
 import Cookies from "js-cookie";
 import { refreshToken } from "../util/auth.js";
-
+import config from "../config.js";
 export const programLoader = ({ params }) => {
   return refreshToken()
     .then(() => {
-      return fetch(`http://localhost:5000/program/load-program?programID=${params.programID}`, {
+      return fetch(`${config.API_URL}/program/load-program?programID=${params.programID}`, {
         method: "GET",
         headers: {
           "Content-type": "application/json",
