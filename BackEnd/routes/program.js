@@ -185,6 +185,40 @@ router.post(
   }
 );
 
+router.post(
+  "/duplicate-program",
+  [verifyAccessToken, getPermissions],
+  async (req, res) => {
+    console.log("+++");
+    console.log("Duplicating program...");
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const duplicatedProgramId = await Programs.duplicateProgram(
+        req.query.programID,
+        req.userID,
+        { session }
+      );
+      await new Users().addProgramToManyUsers(
+        duplicatedProgramId,
+        [req.userID],
+        { session }
+      );
+
+      await session.commitTransaction();
+
+      res.status(200).json({ duplicatedProgramId });
+    } catch (error) {
+      await session.abortTransaction();
+
+      res.status(500).json({ error: error.message });
+    } finally {
+      session.endSession();
+    }
+  }
+);
 
 /*
 delete-program endpoint used for deleting a program and updating users who reference the program
