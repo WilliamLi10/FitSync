@@ -121,7 +121,6 @@ router.post("/update-last-opened", verifyAccessToken, (req, res) => {
 Get endpoint for loading a users list of programs
 Params:
   index: index of the first program to load from the total list of programs
-  userId: user id of the user who made the request
   inc: number of programs after index to include
 */
 router.get("/load-program-list", verifyAccessToken, (req, res) => {
@@ -220,6 +219,79 @@ router.post(
     }
   }
 );
+
+/*
+delete-program endpoint used for deleting a program and updating users who reference the program
+Params:
+  programID: the id of the program to be deleted
+Returns:
+  onSuccess: success status code
+  onFailure: failure status code
+*/
+router.delete(
+  "/delete-program",
+  [verifyAccessToken, getPermissions],
+  async (req, res) => {
+    if (req.permissions.userRole !== "owner") {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const programId = req.query.programID;
+
+    if (!programId) {
+      return res.status(400).json({ error: "Program ID is required" });
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const program = await Programs.findById(programId).session(session);
+
+      if (!program) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(404).json({ error: "Program not found" });
+      }
+
+      const ownerId = program.owner;
+      const editors = program.editors;
+      const viewers = program.viewers;
+
+      await Programs.findByIdAndDelete(programId).session(session);
+
+      await Users.updateOne(
+        { _id: ownerId },
+        { $pull: { programs: { _id: programId } } }
+      ).session(session);
+
+
+      await Users.updateMany(
+        { _id: { $in: viewers } },
+        { $pull: { programs: { _id: programId } } }
+      ).session(session);
+
+
+      await Users.updateMany(
+        { _id: { $in: editors } },
+        { $pull: { programs: { _id: programId } } }
+      ).session(session);
+
+      await session.commitTransaction();
+      session.endSession();
+
+      console.log("Successfully deleted program and updated users");
+      return res.status(200).json({ message: "Program deleted successfully" });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.error("Error deleting program:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+  }
+);
+
+module.exports = router;
 
 /* 
 Will get permissions of a given program
@@ -340,6 +412,11 @@ request body format will look like this:
     Upper 2: 4,
     Lower 1: 5
     Lower 2: 3,
+  },
+  maxes: {
+    squatMax: number,
+    benchMax: number,
+    deadliftMax: number
   }
 }
 */
@@ -373,12 +450,6 @@ router.post(
           program.workouts[i].Exercises.forEach((exercise, j) => {
             const intensity = program.workouts[i].Exercises[j].Intensity;
             delete program.workouts[i].Exercises[j].Intensity;
-            console.log(
-              intensity,
-              user.benchMax,
-              user.squatMax,
-              user.deadliftMax
-            );
             program.workouts[i].Exercises[j].Weight = null;
             if (intensity != "") {
               if (
@@ -387,19 +458,20 @@ router.post(
                 )
               ) {
                 program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  user.benchMax * (parseInt(intensity, 10) / 100)
+                  req.body.maxes["benchMax"] * (parseInt(intensity, 10) / 100)
                 );
               } else if (
                 program.workouts[i].Name.toLowerCase().includes("squat")
               ) {
                 program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  user.squatMax * (parseInt(intensity, 10) / 100)
+                  req.body.maxes["squatMax"] * (parseInt(intensity, 10) / 100)
                 );
               } else if (
                 program.workouts[i].Name.toLowerCase().includes("deadlift")
               ) {
                 program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  user.deadliftMax * (parseInt(intensity, 10) / 100)
+                  req.body.maxes["deadliftMax"] *
+                    (parseInt(intensity, 10) / 100)
                 );
               }
             }
