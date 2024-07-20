@@ -8,40 +8,21 @@ import StatusBanner from "../components/StatusBanner";
 
 const Root = () => {
   const ctx = useContext(AuthContext);
-  const [loginModal, setLoginModal] = useState(ctx.loginModal);
-  const [redirectModal, setRedirectModal] = useState(ctx.redirectModal);
-  const [status, setStatus] = useState(ctx.status);
-
-  useEffect(() => {
-    setLoginModal(ctx.loginModal);
-  }, [ctx.loginModal]);
-
-  useEffect(() => {
-    setRedirectModal(ctx.redirectModal);
-  }, [ctx.redirectModal]);
-
-  useEffect(() => {
-    setStatus(ctx.status);
-  }, [ctx.status]);
-
-  const statusCloseHandler = () => {
-    ctx.setStatus("");
-  };
 
   return (
     <div className="h-screen">
       <TopBar />
-      {status && (
-        <StatusBanner msg={status} closeHandler={statusCloseHandler} />
+      {ctx.status && (
+        <StatusBanner msg={ctx.status} closeHandler={() => {ctx.setStatus("")}}/>
       )}
       <div className="pt-16">
         <Outlet />
-        {loginModal && <LoginModal />}
-        {loginModal && (
+        {ctx.loginModal.isOpen && <LoginModal />}
+        {ctx.loginModal.isOpen && (
           <div className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-auto bg-black opacity-[15%]" />
         )}
-        {redirectModal && <SignUpRedirect />}
-        {redirectModal && (
+        {ctx.redirectModal && <SignUpRedirect />}
+        {ctx.redirectModal && (
           <div className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-auto bg-black opacity-[15%]" />
         )}
       </div>

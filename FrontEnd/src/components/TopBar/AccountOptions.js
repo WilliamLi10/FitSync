@@ -40,7 +40,7 @@ const AccountOptions = () => {
           Cookies.remove("accessToken");
           Cookies.remove("refreshToken");
           window.location.reload();
-          ctx.setLoginModal(true);
+          ctx.setLoginModal({type: "login"});
           ctx.setStatus("Session timed out: You have been logged out");
         } else {
           navigate("/error", {

@@ -1,9 +1,34 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useReducer } from "react";
 
 const AuthContext = createContext();
 
+const loginModalReducer = (state, action) => {
+  switch (action.type) {
+    case "login":
+      return {
+        isOpen: true,
+        isLogin: true
+      }
+    case "signup":
+      return {
+        isOpen: true,
+        isLogin: false
+      }
+    case "close":
+      return {
+        ...state,
+        isOpen: false
+      }
+    default:
+      return state
+  }
+}
+
 export const AuthContextProvider = (props) => {
-  const [loginModal, setLoginModal] = useState(false);
+  const [loginModal, setLoginModal] = useReducer(loginModalReducer, {
+    isOpen: false,
+    isLogin: true
+  })
   const [redirectModal, setRedirectModal] = useState(false);
   const [status, setStatus] = useState("");
 
