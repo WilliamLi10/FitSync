@@ -6,8 +6,6 @@ import Home from "./pages/Home";
 import Programs from "./pages/LoggedIn/Programs";
 import Progress from "./pages/LoggedIn/Progress";
 import LogWorkout from "./pages/LoggedIn/LogWorkout";
-import Product from "./pages/LoggedOut/Product";
-import Contact from "./pages/LoggedOut/Contact";
 import ProgramView from "./components/Programs/ProgramView/ProgramView";
 import { programLoader } from "./loaders/ProgramLoader";
 

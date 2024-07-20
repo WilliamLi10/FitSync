@@ -1,6 +1,5 @@
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
-
 export const checkAccessToken = () => {
   const jwt = Cookies.get("accessToken");
   return jwt ? true : false;
@@ -26,7 +25,7 @@ export const refreshToken = () => {
     : true;
 
   if (isAccessExpired && !isRefreshExpired) {
-    return fetch("http://localhost:5000/auth/refresh-token", {
+    return fetch(`${process.env.REACT_APP_API_URL}/auth/refresh-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

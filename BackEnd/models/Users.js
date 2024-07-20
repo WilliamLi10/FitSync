@@ -228,6 +228,7 @@ userSchema.methods.getUserByID = (userID) => {
   }]
 */
 userSchema.methods.getProgramListStaggered = (userID, index, inc) => {
+  console.log(userID);
   return mongoose
     .model("users")
     .findOne({ _id: userID })

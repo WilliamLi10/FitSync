@@ -7,7 +7,7 @@ const programRouter = require("./routes/program");
 const userRouter = require("./routes/user");
 const workoutRouter = require("./routes/workout")
 const redisClient = require("./config/redis");
-const port = 5000;
+const port = 5001;
 
 const app = express();
 

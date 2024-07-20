@@ -22,7 +22,7 @@ const SignUp = (props) => {
     setSubmit(true);
 
     if (user.valid && dob.valid && email.valid && pass.valid) {
-      fetch("http://localhost:5000/auth/register", {
+      fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
