@@ -121,7 +121,6 @@ router.post("/update-last-opened", verifyAccessToken, (req, res) => {
 Get endpoint for loading a users list of programs
 Params:
   index: index of the first program to load from the total list of programs
-  userId: user id of the user who made the request
   inc: number of programs after index to include
 */
 router.get("/load-program-list", verifyAccessToken, (req, res) => {
@@ -186,6 +185,15 @@ router.post(
   }
 );
 
+
+/*
+delete-program endpoint used for deleting a program and updating users who reference the program
+Params:
+  programID: the id of the program to be deleted
+Returns:
+  onSuccess: success status code
+  onFailure: failure status code
+*/
 router.delete(
   "/delete-program",
   [verifyAccessToken, getPermissions],
