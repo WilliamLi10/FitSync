@@ -147,7 +147,6 @@ router.get("/load-program-list", verifyAccessToken, (req, res) => {
     });
 });
 
-
 /*
 Saves new data to an existing workout program
 Params:
@@ -187,6 +186,40 @@ router.post(
   }
 );
 
+router.post(
+  "/duplicate-program",
+  [verifyAccessToken, getPermissions],
+  async (req, res) => {
+    console.log("+++");
+    console.log("Duplicating program...");
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const duplicatedProgramId = await Programs.duplicateProgram(
+        req.query.programID,
+        req.userID,
+        { session }
+      );
+      await new Users().addProgramToManyUsers(
+        duplicatedProgramId,
+        [req.userID],
+        { session }
+      );
+
+      await session.commitTransaction();
+
+      res.status(200).json({ duplicatedProgramId });
+    } catch (error) {
+      await session.abortTransaction();
+
+      res.status(500).json({ error: error.message });
+    } finally {
+      session.endSession();
+    }
+  }
+);
 
 /* 
 Will get permissions of a given program
@@ -340,7 +373,12 @@ router.post(
           program.workouts[i].Exercises.forEach((exercise, j) => {
             const intensity = program.workouts[i].Exercises[j].Intensity;
             delete program.workouts[i].Exercises[j].Intensity;
-            console.log(intensity,user.benchMax,user.squatMax,user.deadliftMax);
+            console.log(
+              intensity,
+              user.benchMax,
+              user.squatMax,
+              user.deadliftMax
+            );
             program.workouts[i].Exercises[j].Weight = null;
             if (intensity != "") {
               if (
