@@ -75,7 +75,7 @@ const TopBar = (props) => {
           <div
             className="flex items-center h-full self-center py-4 px-4 cursor-pointer hover:bg-slate-50"
             onClick={() => {
-              ctx.setLoginModal(true);
+              ctx.setLoginModal({type: "login"});
             }}
           >
             <p>Log In</p>

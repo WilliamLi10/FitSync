@@ -15,7 +15,7 @@ const Landing = () => {
         </p>
         <button
           onClick={() => {
-            ctx.setLoginModal(true);
+            ctx.setLoginModal({type: "signup"});
           }}
           className="text-white text-xl w-[300px] font-light bg-slate-700 px-3 py-2 rounded-full border border-slate-700 hover:text-slate-700 hover:bg-white"
         >

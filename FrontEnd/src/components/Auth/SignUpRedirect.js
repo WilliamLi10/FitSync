@@ -20,7 +20,7 @@ const SignUpRedirect = () => {
 
   const redirectHandler = () => {
     ctx.setRedirectModal(false);
-    ctx.setLoginModal(true);
+    ctx.setLoginModal({type: "login"});
   };
 
   return (

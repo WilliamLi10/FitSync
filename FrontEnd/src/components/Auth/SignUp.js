@@ -44,7 +44,7 @@ const SignUp = (props) => {
         })
         .then((data) => {
           if (data.success) {
-            ctx.setLoginModal(false);
+            ctx.setLoginModal({type: "close"});
             ctx.setRedirectModal(true);
           } else {
             setEmailError(data.email);
