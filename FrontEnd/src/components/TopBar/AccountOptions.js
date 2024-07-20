@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import AuthContext from "../../context/auth-context";
-import config from "../../config";
+
 const AccountOptions = () => {
   const navigate = useNavigate();
   const ctx = useContext(AuthContext);
@@ -14,7 +14,7 @@ const AccountOptions = () => {
     "transition-all duration-150 hover:bg-slate-200 px-2 py-1 cursor-pointer flex flex-row items-center";
 
   const logoutHandler = () => {
-    fetch(`${config.API_URL}/auth/logout`, {
+    fetch(`${process.env.REACT_APP_API_URL}/auth/logout`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",

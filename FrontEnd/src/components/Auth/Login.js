@@ -4,7 +4,7 @@ import { HiOutlineMail } from "react-icons/hi";
 import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import Cookies from "js-cookie";
-import config from "../../config";
+
 
 const Login = (props) => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Login = (props) => {
     setSubmit(true);
 
     if (email.valid && pass.valid) {
-      fetch(`${config.API_URL}/auth/login`, {
+      fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
