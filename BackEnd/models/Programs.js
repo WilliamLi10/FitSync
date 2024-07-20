@@ -119,8 +119,9 @@ programsSchema.statics.duplicateProgram = async function (programId, userId) {
 
     const newProgram = new this(program.toObject());
     newProgram.owner = userId;
-    newProgram._id = mongoose.Types.ObjectId();
+    newProgram._id = new mongoose.Types.ObjectId();
     newProgram.isNew = true;
+    newProgram.name = `Copy of ${program.name}`;
 
     await newProgram.save();
     return newProgram._id;

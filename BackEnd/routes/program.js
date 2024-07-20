@@ -189,24 +189,35 @@ router.post(
 router.post(
   "/duplicate-program",
   [verifyAccessToken, getPermissions],
-  (req, res) => {
+  async (req, res) => {
     console.log("+++");
     console.log("Duplicating program...");
-    if (
-      req.permissions.userRole !== "owner" &&
-      req.permissions.userRole !== "editor" &&
-      req.permissions.userRole !== "viewer"
-    ) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
 
-    Programs.duplicateProgram(req.query.programID, req.userID)
-      .then((duplicatedProgramId) => {
-        res.status(200).json({ duplicatedProgramId });
-      })
-      .catch((error) => {
-        res.status(500).json({ error: error.message });
-      });
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      const duplicatedProgramId = await Programs.duplicateProgram(
+        req.query.programID,
+        req.userID,
+        { session }
+      );
+      await new Users().addProgramToManyUsers(
+        duplicatedProgramId,
+        [req.userID],
+        { session }
+      );
+
+      await session.commitTransaction();
+
+      res.status(200).json({ duplicatedProgramId });
+    } catch (error) {
+      await session.abortTransaction();
+
+      res.status(500).json({ error: error.message });
+    } finally {
+      session.endSession();
+    }
   }
 );
 
