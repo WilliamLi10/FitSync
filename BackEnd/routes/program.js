@@ -219,7 +219,7 @@ router.delete(
       await Programs.findByIdAndDelete(programId).session(session);
 
       await Users.updateOne(
-        { _id: owner },
+        { _id: ownerId },
         { $pull: { programs: { _id: programId } } }
       ).session(session);
 
