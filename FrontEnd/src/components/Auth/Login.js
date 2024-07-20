@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { HiOutlineMail } from "react-icons/hi";
 import { BiLockAlt } from "react-icons/bi";
 import { FaGooglePlusG } from "react-icons/fa";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
+
 
 const Login = (props) => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const Login = (props) => {
     setSubmit(true);
 
     if (email.valid && pass.valid) {
-      fetch("http://localhost:5000/auth/login", {
+      fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

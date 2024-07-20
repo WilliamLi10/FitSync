@@ -22,7 +22,7 @@ const ProgramItem = (props) => {
     <div
       className="flex flex-row text-sm font-thin border-solid border-b-[1px] py-2 cursor-pointer transition-all duration-300 hover:bg-gray-50"
       onClick={() => {
-        navigate(`/programs/myprograms/${props.program._id}`);
+        navigate(`/programs/${props.program._id}`);
       }}
     >
       <div className="w-[60%] overflow-hidden overflow-ellipsis whitespace-nowrap pr-3">

@@ -2,12 +2,12 @@ import { useState, useEffect, useContext } from "react";
 import { BiArrowBack } from "react-icons/bi";
 import { RiAddLine } from "react-icons/ri";
 import { CiSaveDown2 } from "react-icons/ci";
-import { refreshToken, getAccessToken } from "../../../../util/auth";
+import { refreshToken, getAccessToken } from "../../../util/auth";
 import Workout from "./Workout";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import AuthContext from "../../../../context/auth-context";
+import AuthContext from "../../../context/auth-context";
 import Cookies from "js-cookie";
-import StatusBanner from "../../../StatusBanner";
+import StatusBanner from "../../StatusBanner";
 import { BsShare } from "react-icons/bs";
 import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -163,7 +163,7 @@ const ProgramView = () => {
       setTitle(program.name);
       refreshToken()
         .then(() => {
-          return fetch(`http://localhost:5000/program/update-last-opened?programID=${program._id}`, {
+          return fetch(`${process.env.REACT_APP_API_URL}/program/update-last-opened?programID=${program._id}`, {
             method: "POST",
             headers: {
               "Content-type": "application/json",
@@ -245,7 +245,7 @@ const ProgramView = () => {
 
     refreshToken()
       .then(() => {
-        return fetch(`http://localhost:5000/program/save-program?programID=${program._id}`, {
+        return fetch(`${process.env.REACT_APP_API_URL}/program/save-program?programID=${program._id}`, {
           method: "POST",
           headers: {
             "Content-type": "application/json",
@@ -306,7 +306,7 @@ const ProgramView = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-w-[900px] h-full px-5 py-5">
+    <div className="bg-gray-50 min-w-[900px] h-screen px-5 py-5">
       {shareModal && (
         <ProgramShareModal
           modalHandler={setShareModal}
@@ -334,7 +334,7 @@ const ProgramView = () => {
           <div className="flex flex-row items-center">
             <button
               onClick={() => {
-                navigate("/programs/myprograms");
+                navigate("/programs");
               }}
             >
               <BiArrowBack className="h-8" />

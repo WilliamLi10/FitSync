@@ -14,7 +14,7 @@ const AccountOptions = () => {
     "transition-all duration-150 hover:bg-slate-200 px-2 py-1 cursor-pointer flex flex-row items-center";
 
   const logoutHandler = () => {
-    fetch("http://localhost:5000/auth/logout", {
+    fetch(`${process.env.REACT_APP_API_URL}/auth/logout`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
