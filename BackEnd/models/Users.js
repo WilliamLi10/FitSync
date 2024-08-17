@@ -213,7 +213,7 @@ userSchema.methods.getProgramListStaggered = (userID, index, inc) => {
     .findOne({ _id: userID })
     .populate({
       path: "programs._id",
-      select: "name owner",
+      select: "name owner editors viewers",
       populate: [{ path: "owner", select: "username" }],
     })
     .then((user) => {

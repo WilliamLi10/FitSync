@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { VscDebugStart } from "react-icons/vsc";
 import { BiArrowBack } from "react-icons/bi";
 import { RiAddLine } from "react-icons/ri";
 import { CiSaveDown2 } from "react-icons/ci";
@@ -13,6 +14,7 @@ import ProgramShareModal from "../ProgramShareModal/ProgramShareModal";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { MdOutlineDragHandle } from "react-icons/md";
 import cloneDeep from "lodash/cloneDeep";
+import StartProgramModal from "../StartProgramModal/StartProgramModal";
 
 const ProgramView = () => {
   const ctx = useContext(AuthContext);
@@ -22,8 +24,10 @@ const ProgramView = () => {
   const [workouts, setWorkouts] = useState([]);
   const [status, setStatus] = useState("");
   const [shareModal, setShareModal] = useState(false);
+  const [startProgramModal, setStartProgramModal] = useState(false);
   const [drag, setDrag] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [disableStartProgram, setDisableStartProgram] = useState(true);
 
   const titleHandler = (event) => {
     setTitle(event.target.value);
@@ -33,7 +37,7 @@ const ProgramView = () => {
     setWorkouts((prevWorkouts) => {
       const newWorkouts = [...prevWorkouts];
       newWorkouts[index] = workout;
-      console.log(workout.Unit)
+      console.log(workout.Unit);
       return newWorkouts;
     });
   };
@@ -161,18 +165,24 @@ const ProgramView = () => {
     } else {
       setWorkouts(program.workouts);
       setTitle(program.name);
+      setDisableStartProgram(
+        program.missingExerciseName || program.missingValue
+      );
       refreshToken()
         .then(() => {
-          return fetch(`${process.env.REACT_APP_API_URL}/program/update-last-opened?programID=${program._id}`, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json",
-              Authorization: `Bearer ${Cookies.get("accessToken")}`,
-            },
-            body: JSON.stringify({
-              id: program._id,
-            }),
-          });
+          return fetch(
+            `${process.env.REACT_APP_API_URL}/program/update-last-opened?programID=${program._id}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-type": "application/json",
+                Authorization: `Bearer ${Cookies.get("accessToken")}`,
+              },
+              body: JSON.stringify({
+                id: program._id,
+              }),
+            }
+          );
         })
         .then((response) => {
           if (!response.ok) {
@@ -186,7 +196,7 @@ const ProgramView = () => {
             Cookies.remove("accessToken");
             Cookies.remove("refreshToken");
             window.location.reload();
-            ctx.setLoginModal({type: "login"});
+            ctx.setLoginModal({ type: "login" });
             ctx.setStatus("Session timed out: You have been logged out");
           } else {
             navigate("/error", {
@@ -245,24 +255,27 @@ const ProgramView = () => {
 
     refreshToken()
       .then(() => {
-        return fetch(`${process.env.REACT_APP_API_URL}/program/save-program?programID=${program._id}`, {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${Cookies.get("accessToken")}`,
-          },
-          body: JSON.stringify({
-            program: {
-              workouts: workouts,
-              name: title == "" ? "Untitled" : title,
-              missingValue: missingValue,
-              dupTitle: dupTitle,
-              missingExerciseName: missingExerciseName,
-              lastModified: { user: getAccessToken().userID, date: Date() },
+        return fetch(
+          `${process.env.REACT_APP_API_URL}/program/save-program?programID=${program._id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              Authorization: `Bearer ${Cookies.get("accessToken")}`,
             },
-            programID: program._id,
-          }),
-        });
+            body: JSON.stringify({
+              program: {
+                workouts: workouts,
+                name: title == "" ? "Untitled" : title,
+                missingValue: missingValue,
+                dupTitle: dupTitle,
+                missingExerciseName: missingExerciseName,
+                lastModified: { user: getAccessToken().userID, date: Date() },
+              },
+              programID: program._id,
+            }),
+          }
+        );
       })
       .then((response) => {
         if (!response.ok) {
@@ -284,13 +297,14 @@ const ProgramView = () => {
               : ""
           }`
         );
+        setDisableStartProgram(missingExerciseName || missingValue);
       })
       .catch((error) => {
         if (error.response === 401) {
           Cookies.remove("accessToken");
           Cookies.remove("refreshToken");
           window.location.reload();
-          ctx.setLoginModal({type: "login"});
+          ctx.setLoginModal({ type: "login" });
           ctx.setStatus("Session timed out: You have been logged out");
         } else {
           navigate("/error", {
@@ -305,8 +319,23 @@ const ProgramView = () => {
     setShareModal(true);
   };
 
+  const startProgramModalHandler = (event) => {
+    event.preventDefault();
+    setStartProgramModal(true);
+  };
+
   return (
     <div className="bg-gray-50 min-w-[900px] h-screen px-5 py-5">
+      {startProgramModal && (
+        <StartProgramModal
+          modalHandler={setStartProgramModal}
+          workouts={workouts}
+          programID={program._id}
+        />
+      )}
+      {startProgramModal && (
+        <div className="fixed top-0 left-0 w-full h-full z-[1] pointer-events-auto bg-black opacity-[15%]" />
+      )}
       {shareModal && (
         <ProgramShareModal
           modalHandler={setShareModal}
@@ -352,7 +381,23 @@ const ProgramView = () => {
               }`}
             />
           </div>
-          <div>
+          <div className="flex">
+            <button
+              className={`flex flex-row items-center font-thin text-sm px-4 py-2 mr-3 border-solid border-[1px] transition-all duration-150 rounded-full ${
+                disableStartProgram
+                  ? "cursor-not-allowed bg-red-100"
+                  : "hover:bg-slate-100 bg-green-100"
+              }`}
+              onClick={startProgramModalHandler}
+              disabled={disableStartProgram}
+              title={
+                disableStartProgram
+                  ? "This program cannot be started because one or more of its fields are filled incorrectl.y"
+                  : ""
+              }
+            >
+              <VscDebugStart /> &#160;Start Program
+            </button>
             <button
               className="flex flex-row items-center font-thin text-sm px-4 py-2 bg-white border-solid border-[1px] transition-all duration-150 rounded-full hover:bg-slate-100"
               onClick={shareModalHandler}
