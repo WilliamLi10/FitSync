@@ -265,12 +265,10 @@ router.delete(
         { $pull: { programs: { _id: programId } } }
       ).session(session);
 
-
       await Users.updateMany(
         { _id: { $in: viewers } },
         { $pull: { programs: { _id: programId } } }
       ).session(session);
-
 
       await Users.updateMany(
         { _id: { $in: editors } },
@@ -414,9 +412,10 @@ request body format will look like this:
     Lower 2: 3,
   },
   maxes: {
-    squatMax: number,
-    benchMax: number,
-    deadliftMax: number
+    uniqueExerciseName1: number,
+    uniqueExerciseName2: number,
+    uniqueExerciseName3: number,
+    ...
   }
 }
 */
@@ -424,88 +423,89 @@ request body format will look like this:
 router.post(
   "/start-program",
   [verifyAccessToken, getPermissions],
-  (req, res) => {
-    console.log("+++");
-    console.log("Starting User Program");
-    const username = req.query.username;
-    const programID = req.query.programID;
-    const [year, month, day] = req.body.startDate.split("-").map(Number);
-    const startDate = new Date(year, month - 1, day);
-    new Users()
-      .getFullUser(username)
-      .then(async (user) => {
-        console.log(user);
-        const program = await Programs.getProgram(programID);
-        for (let i = 0; i < program.workouts.length; ++i) {
-          let workoutDate = new Date(startDate);
-          workoutDate.setUTCHours(0, 0, 0, 0);
-          console.log(req.body.workoutDays);
-          console.log();
-          while (
-            workoutDate.getDay() !=
-            req.body.workoutDays[program.workouts[i].Name]
-          ) {
-            workoutDate.setDate(workoutDate.getDate() + 1);
-          }
-          program.workouts[i].Exercises.forEach((exercise, j) => {
-            const intensity = program.workouts[i].Exercises[j].Intensity;
-            delete program.workouts[i].Exercises[j].Intensity;
-            program.workouts[i].Exercises[j].Weight = null;
-            if (intensity != "") {
-              if (
-                program.workouts[i].Exercises[j].Name.toLowerCase().includes(
-                  "bench"
-                )
-              ) {
-                program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  req.body.maxes["benchMax"] * (parseInt(intensity, 10) / 100)
+  async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      console.log("+++");
+      console.log("Starting User Program");
+      const userID = req.userID;
+      const programID = req.query.programID;
+      const [year, month, day] = req.body.startDate.split("-").map(Number);
+      const startDate = new Date(year, month - 1, day);
+
+      new Users()
+        .getUserById(userID)
+        .then(async (user) => {
+          console.log(user);
+          const program = await Programs.getProgram(programID);
+
+          program.workouts.forEach(async (workout) => {
+            let workoutData = [];
+            let workoutDate = new Date(
+              startDate.getDate() +
+                ((req.body.workoutDays[workout.Name] + 7 - startDate.getDay()) %
+                  7)
+            );
+            workoutDate.setUTCHours(0, 0, 0, 0);
+
+            workout.Exercises.forEach((exercise, j) => {
+              let exerciseData = {};
+              if (workout.Unit.intensity === "%ORM") {
+                let ORM = req.body.maxes[exercise.Name];
+                exerciseData.weight = (exercise.intensity / 100) * ORM;
+                exerciseData.isMetric = req.body.isMetric;
+                exerciseData.intensityType = "%ORM";
+              } else {
+                exerciseData.intensity = exercise.intensity;
+                exerciseData.intensityType = "RPE";
+              }
+              exerciseData.sets = exercise.sets;
+              exerciseData.reps = exercise.reps;
+              exerciseData.rest = exercise.rest + " " + workout.Unit.rest;
+              workoutData.push(exerciseData);
+            });
+
+            for (let i = 0; i < req.body.duration; ++i) {
+              try {
+                await UpcomingWorkouts.addWorkout(
+                  username,
+                  workoutDate,
+                  workoutData,
+                  session 
                 );
-              } else if (
-                program.workouts[i].Name.toLowerCase().includes("squat")
-              ) {
-                program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  req.body.maxes["squatMax"] * (parseInt(intensity, 10) / 100)
-                );
-              } else if (
-                program.workouts[i].Name.toLowerCase().includes("deadlift")
-              ) {
-                program.workouts[i].Exercises[j].Weight = roundToNearestFive(
-                  req.body.maxes["deadliftMax"] *
-                    (parseInt(intensity, 10) / 100)
-                );
+                workoutDate.setDate(workoutDate.getDate() + 7);
+                console.log("Successfully added Workout %s", workout.Name);
+              } catch (error) {
+                console.log("Failed adding Workout %s", workout.Name);
+                console.log(error);
+                throw error; 
               }
             }
-            console.log("Successfully Set Exercise %s", exercise.Name);
           });
-          for (let j = 0; j < req.body.duration; ++j) {
-            try {
-              await UpcomingWorkouts.addWorkout(
-                username,
-                workoutDate,
-                program.workouts[i]
-              );
-              workoutDate.setDate(workoutDate.getDate() + 7);
-              console.log(
-                "Successfully added Workout %s",
-                program.workouts[i].Name
-              );
-            } catch (error) {
-              console.log("Failed adding Workout %s", program.workouts[i].Name);
-              console.log(error);
-              throw error;
-            }
-          }
-        }
-        user.activeProgram = true;
-        return user.save();
-      })
-      .then((updatedUser) => {
-        res.status(200).send();
-      })
-      .catch((error) => {
-        console.log(error);
-        res.status(500).json({ error: "Internal server error" });
-      });
+
+          user.activeProgram = true;
+          return user.save({ session }); 
+        })
+        .then(async (updatedUser) => {
+          await session.commitTransaction(); 
+          res.status(200).send();
+        })
+        .catch(async (error) => {
+          await session.abortTransaction(); 
+          console.log(error);
+          res.status(500).json({ error: "Internal server error" });
+        })
+        .finally(() => {
+          session.endSession(); 
+        });
+    } catch (error) {
+      await session.abortTransaction();
+      session.endSession();
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 );
 

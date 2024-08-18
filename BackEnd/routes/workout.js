@@ -8,12 +8,9 @@ const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 const getPermissions = require("../middleware/programs/getPermissions");
 const mongoose = require("mongoose");
 
-
 /* 
 
 */
-
-
 
 /* 
 Get endpoint for getting an upcoming workout given a request date
@@ -27,14 +24,14 @@ Returns:
 */
 
 router.get("/get-workout", verifyAccessToken, (req, res) => {
-  console.log("+++\nGetting Workout")
-  const username = req.query.username;
+  console.log("+++\nGetting Workout");
+  const userID = req.userID;
   console.log(req.query.date);
-  
+
   const workoutDate = new Date(req.query.date);
   workoutDate.setUTCHours(0, 0, 0, 0);
   new UpcomingWorkouts()
-    .getWorkout(username, workoutDate)
+    .getWorkout(userID, workoutDate)
     .then((workoutData) => {
       if (workoutData.exists) {
         if (workoutData.workout.user != req.username) {
@@ -43,7 +40,6 @@ router.get("/get-workout", verifyAccessToken, (req, res) => {
           return res.status(200).json(workoutData.workout.workoutData);
         }
       } else {
-
         return res.status(404).json({ error: "Workout Not Found" });
       }
     })
@@ -52,57 +48,67 @@ router.get("/get-workout", verifyAccessToken, (req, res) => {
     });
 });
 
-
 /* 
 post request that uploads workout data that corresponds to an upcoming workout document
 Params:
-  username: username of the user who is logging the workout
   date: date of the workout 
-  workoutData: Uploads data about the workout that the user just performed. see ExerciseLogs model for more info 
+  workoutData: map where key is exercise  name and value is another map containing exericse data like sets reps weight etc
 */
-router.post("/log-workout", verifyAccessToken, (req, res) => {
-  username = req.query.username;
-  workoutDate = req.query.date;
-  workoutData = req.body.workoutData;
-  new UpcomingWorkouts()
-    .getWorkout(username, workoutDate)
-    .then((workoutObj) => {
-      if (workoutObj.exists) {
-        if (workoutObj.workout.user != req.username || workoutObj.workout.completed) {
-          return res.status(403).json({ error: "Forbidden" });
-        } else {
-          console.log("Logging Workout", workoutData)
-          for (var exerciseName in workoutData) {
-            ExerciseLogs.uploadData(
-              username,
-              exerciseName,
-              workoutDate,
-              workoutData[exerciseName]
-            ).catch((error) => {
 
-              return res.status(500).json({ error: "Workout Logging Error 1" });
-            });
-          }
-          console.log("Saved Workouts")
-          workoutObj.workout.completed = true;
-          workoutObj
-            .workout
-            .save()
-            .then((savedWorkout) => {
-              return res.status(200).send();;
-            })
-            .catch((error) => {
-                return res.status(500).json({ error: "Workout Logging Error 2" });
-            });
-        }
-      } else {
-        return res.status(404).json({ error: "Workout Not Found" });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(500).json({ error: "Workout Logging Error 3" });
-    });
+router.post("/log-workout", verifyAccessToken, async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const userID = req.userID;
+    const workoutDate = req.body.date;
+    const workoutData = req.body.workoutData;
+
+    // Read operation outside of the transaction
+    const workoutObj = await new UpcomingWorkouts().getWorkout(
+      userID,
+      workoutDate
+    );
+
+    if (!workoutObj.exists) {
+      return res.status(404).json({ error: "Workout Not Found" });
+    }
+
+    if (
+      workoutObj.workout.user !== req.username ||
+      workoutObj.workout.completed
+    ) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    console.log("Logging Workout", workoutData);
+
+    for (const exerciseName in workoutData) {
+      const newLogEntry = new ExerciseLogs({
+        userId: req.userID,
+        date: req.body.date,
+        exerciseName: exerciseName,
+        performanceData: workoutData[exerciseName],
+      });
+
+      await newLogEntry.save({ session });
+    }
+
+    console.log("Saved Workouts");
+
+    workoutObj.workout.completed = true;
+    await workoutObj.workout.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).send();
+  } catch (err) {
+    console.log(err);
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(500).json({ error: "Workout Logging Error" });
+  }
 });
 
 module.exports = router;
