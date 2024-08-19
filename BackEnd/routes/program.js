@@ -411,6 +411,7 @@ request body format will look like this:
     Lower 1: 5
     Lower 2: 3,
   },
+  unit: String,
   maxes: {
     uniqueExerciseName1: number,
     uniqueExerciseName2: number,
