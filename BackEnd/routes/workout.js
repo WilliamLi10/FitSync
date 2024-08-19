@@ -8,101 +8,103 @@ const verifyAccessToken = require("../middleware/jwt/verifyAccessToken");
 const getPermissions = require("../middleware/programs/getPermissions");
 const mongoose = require("mongoose");
 
-
 /* 
 
 */
 
-
-
 /* 
-Get endpoint for getting an upcoming workout given a request date
+Get endpoint for getting an upcoming workouts given a request date range
 Params:
-  username: username of user
-  date; date of the workout 
+
+  startDate; startDate of range
+  endDate: endDate of range 
 
 Returns: 
-  onSuccess: workout data in the form of a json (see upcomingWorkout model for fields)
+  onSuccess: upcoming workout documents containing all upcomingWorkouts within date range
   onFailure: status error
 */
+router.get("/get-workouts", verifyAccessToken, (req, res) => {
+  console.log("+++\nGetting Workouts");
 
-router.get("/get-workout", verifyAccessToken, (req, res) => {
-  console.log("+++\nGetting Workout")
-  const username = req.query.username;
-  console.log(req.query.date);
-  
-  const workoutDate = new Date(req.query.date);
-  workoutDate.setUTCHours(0, 0, 0, 0);
-  new UpcomingWorkouts()
-    .getWorkout(username, workoutDate)
-    .then((workoutData) => {
-      if (workoutData.exists) {
-        if (workoutData.workout.user != req.username) {
-          return res.status(403).json({ error: "Forbidden" });
-        } else {
-          return res.status(200).json(workoutData.workout.workoutData);
-        }
-      } else {
+  const userID = req.userID;
+  const startDate = new Date(req.query.startDate);
+  const endDate = new Date(req.query.endDate);
+  console.log(startDate,endDate);
 
-        return res.status(404).json({ error: "Workout Not Found" });
-      }
+  // Ensure the start and end dates cover the full days in UTC
+  startDate.setUTCHours(0, 0, 0, 0);
+  endDate.setUTCHours(23, 59, 59, 999);
+
+  UpcomingWorkouts
+    .getWorkoutGivenDateRange(userID, startDate, endDate)
+    .then((workouts) => {
+      return res.status(200).json(workouts);
     })
     .catch((error) => {
+      console.error(error);
       return res.status(500).json({ error: "Internal server error" });
     });
 });
 
 
+
 /* 
 post request that uploads workout data that corresponds to an upcoming workout document
 Params:
-  username: username of the user who is logging the workout
   date: date of the workout 
-  workoutData: Uploads data about the workout that the user just performed. see ExerciseLogs model for more info 
+  workoutData: map where key is exercise  name and value is another map containing exericse data like sets reps weight etc
 */
-router.post("/log-workout", verifyAccessToken, (req, res) => {
-  username = req.query.username;
-  workoutDate = req.query.date;
-  workoutData = req.body.workoutData;
-  new UpcomingWorkouts()
-    .getWorkout(username, workoutDate)
-    .then((workoutObj) => {
-      if (workoutObj.exists) {
-        if (workoutObj.workout.user != req.username || workoutObj.workout.completed) {
-          return res.status(403).json({ error: "Forbidden" });
-        } else {
-          console.log("Logging Workout", workoutData)
-          for (var exerciseName in workoutData) {
-            ExerciseLogs.uploadData(
-              username,
-              exerciseName,
-              workoutDate,
-              workoutData[exerciseName]
-            ).catch((error) => {
 
-              return res.status(500).json({ error: "Workout Logging Error 1" });
-            });
-          }
-          console.log("Saved Workouts")
-          workoutObj.workout.completed = true;
-          workoutObj
-            .workout
-            .save()
-            .then((savedWorkout) => {
-              return res.status(200).send();;
-            })
-            .catch((error) => {
-                return res.status(500).json({ error: "Workout Logging Error 2" });
-            });
-        }
-      } else {
-        return res.status(404).json({ error: "Workout Not Found" });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(500).json({ error: "Workout Logging Error 3" });
-    });
+router.post("/log-workout", verifyAccessToken, async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const userID = req.userID;
+    const workoutDate = req.body.date;
+    const workoutID = req.body.workoutId;
+    const workoutData = req.body.workoutData;
+
+    // Read operation outside of the transaction
+    const workoutObj = await UpcomingWorkouts.getWorkout(workoutID);
+    if (!workoutObj) {
+      return res.status(404).json({ error: "Workout Not Found" });
+    }
+
+    if (
+      workoutObj.userID.toString() !== req.userID ||
+      workoutObj.completed
+    ) {
+      console.log(workoutObj.userID, req.userID)
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    for (const exerciseName in workoutData) {
+      const newLogEntry = new ExerciseLogs({
+        userID: new mongoose.Types.ObjectId(req.userID),
+        date: req.body.date,
+        exerciseName: exerciseName,
+        performanceData: workoutData[exerciseName],
+      });
+
+      await newLogEntry.save({ session });
+    }
+
+    console.log("Saved Workouts");
+
+    workoutObj.completed = true;
+    await workoutObj.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).send();
+  } catch (err) {
+    console.log(err);
+    await session.abortTransaction();
+    session.endSession();
+    return res.status(500).json({ error: "Workout Logging Error" });
+  }
 });
 
 module.exports = router;

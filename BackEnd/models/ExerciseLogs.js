@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const ExerciseLogsSchema = new mongoose.Schema({
-  user: {
-    type: String,
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
   },

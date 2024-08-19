@@ -7,8 +7,8 @@ An upcoming workout document's username can not be changed but the date can be c
 
 
 const upcomingWorkoutsSchema = new mongoose.Schema({
-  user: {
-    type: String,
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
     ref: "users",
     required: true,
   },
@@ -27,20 +27,22 @@ const upcomingWorkoutsSchema = new mongoose.Schema({
 @param username: username of the workout needed
 @param date: date of the workout needed
 */
-upcomingWorkoutsSchema.methods.getWorkout = function (username, date) {
-  console.log(username);
-  console.log(date);
-  return this.model("upcomingWorkouts")
-    .findOne({ user: username, date: date })
-    .then((workout) => {
-      console.log(workout);
-      return { exists: !!workout, workout: workout };
-    })
-    .catch((error) => {
-      console.log(error)
-      throw error;
-    });
+upcomingWorkoutsSchema.statics.getWorkout = function (workoutID) {
+  const objId = new mongoose.Types.ObjectId(workoutID);
+  return this
+    .findOne({ _id: objId});
 };
+
+upcomingWorkoutsSchema.statics.getWorkoutGivenDateRange = function (userID, startDate, endDate) {
+  console.log(userID);
+  const objId = new mongoose.Types.ObjectId(userID);
+  console.log(objId)
+  return this.find({
+    userID: objId,
+    date: { $gte: startDate, $lte: endDate }
+  });
+};
+
 
 /* 
 @param username: username of the user associated with the workout trying to be deleted
@@ -59,29 +61,23 @@ upcomingWorkoutsSchema.methods.deleteWorkout = function (username, data)  {
     });
 };
 
-/* 
-@param username: username of the user that will run the new upcoming workout
-@param date: the date the user will run the new program
-@param workoutData: a json object containing all the information pertaining to this specific workout.
-@modifies: Upcoming workout collection
-@returns: returns an error if there was an error creating the new workout otherwise it will return a mongoose object
-          of the new workout
-
-*/
 upcomingWorkoutsSchema.statics.addWorkout = async function (
-  username,
+  userID,
   date,
-  workoutData
+  workoutData,
+  session = null
 )  {
   const newWorkout = new mongoose.model("upcomingWorkouts")({
-    user: username,
+    userID: username,
     date: date,
     workoutData: workoutData,
     completed: false,
   });
 
+  const saveOptions = session ? { session } : {}; 
+
   return await newWorkout
-    .save()
+    .save(saveOptions) 
     .then((savedWorkout) => {
       return savedWorkout;
     })
@@ -90,6 +86,7 @@ upcomingWorkoutsSchema.statics.addWorkout = async function (
       throw error;
     });
 };
+
 
 const upcomingWorkouts = mongoose.model(
   "upcomingWorkouts",
