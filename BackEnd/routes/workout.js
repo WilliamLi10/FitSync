@@ -13,40 +13,40 @@ const mongoose = require("mongoose");
 */
 
 /* 
-Get endpoint for getting an upcoming workout given a request date
+Get endpoint for getting an upcoming workouts given a request date range
 Params:
-  username: username of user
-  date; date of the workout 
+
+  startDate; startDate of range
+  endDate: endDate of range 
 
 Returns: 
-  onSuccess: workout data in the form of a json (see upcomingWorkout model for fields)
+  onSuccess: upcoming workout documents containing all upcomingWorkouts within date range
   onFailure: status error
 */
+router.get("/get-workouts", verifyAccessToken, (req, res) => {
+  console.log("+++\nGetting Workouts");
 
-router.get("/get-workout", verifyAccessToken, (req, res) => {
-  console.log("+++\nGetting Workout");
   const userID = req.userID;
-  console.log(req.query.date);
+  const startDate = new Date(req.query.startDate);
+  const endDate = new Date(req.query.endDate);
+  console.log(startDate,endDate);
 
-  const workoutDate = new Date(req.query.date);
-  workoutDate.setUTCHours(0, 0, 0, 0);
-  new UpcomingWorkouts()
-    .getWorkout(userID, workoutDate)
-    .then((workoutData) => {
-      if (workoutData.exists) {
-        if (workoutData.workout.user != req.username) {
-          return res.status(403).json({ error: "Forbidden" });
-        } else {
-          return res.status(200).json(workoutData.workout.workoutData);
-        }
-      } else {
-        return res.status(404).json({ error: "Workout Not Found" });
-      }
+  // Ensure the start and end dates cover the full days in UTC
+  startDate.setUTCHours(0, 0, 0, 0);
+  endDate.setUTCHours(23, 59, 59, 999);
+
+  UpcomingWorkouts
+    .getWorkoutGivenDateRange(userID, startDate, endDate)
+    .then((workouts) => {
+      return res.status(200).json(workouts);
     })
     .catch((error) => {
+      console.error(error);
       return res.status(500).json({ error: "Internal server error" });
     });
 });
+
+
 
 /* 
 post request that uploads workout data that corresponds to an upcoming workout document
@@ -62,30 +62,26 @@ router.post("/log-workout", verifyAccessToken, async (req, res) => {
   try {
     const userID = req.userID;
     const workoutDate = req.body.date;
+    const workoutID = req.body.workoutId;
     const workoutData = req.body.workoutData;
 
     // Read operation outside of the transaction
-    const workoutObj = await new UpcomingWorkouts().getWorkout(
-      userID,
-      workoutDate
-    );
-
-    if (!workoutObj.exists) {
+    const workoutObj = await UpcomingWorkouts.getWorkout(workoutID);
+    if (!workoutObj) {
       return res.status(404).json({ error: "Workout Not Found" });
     }
 
     if (
-      workoutObj.workout.user !== req.username ||
-      workoutObj.workout.completed
+      workoutObj.userID.toString() !== req.userID ||
+      workoutObj.completed
     ) {
+      console.log(workoutObj.userID, req.userID)
       return res.status(403).json({ error: "Forbidden" });
     }
 
-    console.log("Logging Workout", workoutData);
-
     for (const exerciseName in workoutData) {
       const newLogEntry = new ExerciseLogs({
-        userId: req.userID,
+        userID: new mongoose.Types.ObjectId(req.userID),
         date: req.body.date,
         exerciseName: exerciseName,
         performanceData: workoutData[exerciseName],
@@ -96,8 +92,8 @@ router.post("/log-workout", verifyAccessToken, async (req, res) => {
 
     console.log("Saved Workouts");
 
-    workoutObj.workout.completed = true;
-    await workoutObj.workout.save({ session });
+    workoutObj.completed = true;
+    await workoutObj.save({ session });
 
     await session.commitTransaction();
     session.endSession();

@@ -470,7 +470,7 @@ router.post(
             for (let i = 0; i < req.body.duration; ++i) {
               try {
                 await UpcomingWorkouts.addWorkout(
-                  username,
+                  userID,
                   workoutDate,
                   workoutData,
                   session 

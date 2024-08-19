@@ -27,20 +27,22 @@ const upcomingWorkoutsSchema = new mongoose.Schema({
 @param username: username of the workout needed
 @param date: date of the workout needed
 */
-upcomingWorkoutsSchema.methods.getWorkout = function (userID, date) {
-  console.log(username);
-  console.log(date);
-  return this.model("upcomingWorkouts")
-    .findOne({ userID: userID, date: date })
-    .then((workout) => {
-      console.log(workout);
-      return { exists: !!workout, workout: workout };
-    })
-    .catch((error) => {
-      console.log(error)
-      throw error;
-    });
+upcomingWorkoutsSchema.statics.getWorkout = function (workoutID) {
+  const objId = new mongoose.Types.ObjectId(workoutID);
+  return this
+    .findOne({ _id: objId});
 };
+
+upcomingWorkoutsSchema.statics.getWorkoutGivenDateRange = function (userID, startDate, endDate) {
+  console.log(userID);
+  const objId = new mongoose.Types.ObjectId(userID);
+  console.log(objId)
+  return this.find({
+    userID: objId,
+    date: { $gte: startDate, $lte: endDate }
+  });
+};
+
 
 /* 
 @param username: username of the user associated with the workout trying to be deleted
@@ -60,13 +62,13 @@ upcomingWorkoutsSchema.methods.deleteWorkout = function (username, data)  {
 };
 
 upcomingWorkoutsSchema.statics.addWorkout = async function (
-  username,
+  userID,
   date,
   workoutData,
   session = null
 )  {
   const newWorkout = new mongoose.model("upcomingWorkouts")({
-    user: username,
+    userID: username,
     date: date,
     workoutData: workoutData,
     completed: false,
