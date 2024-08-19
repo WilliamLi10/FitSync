@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import AuthContext from "../../context/auth-context";
 import { checkAccessToken, getAccessToken } from "../../util/auth";
 
-const TopBar = (props) => {
+const TopBar = () => {
   const ctx = useContext(AuthContext);
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
@@ -45,7 +45,6 @@ const TopBar = (props) => {
             <>
               <TopLink link="/" name="Dashboard" />
               <TopLink link="/logworkout" name="Log Workout" />
-              <TopLink link="/progress" name="Progress" />
               <TopLink link="/programs" name="Programs" />
             </>
           ) : (

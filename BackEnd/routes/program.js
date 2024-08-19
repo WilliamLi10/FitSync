@@ -413,6 +413,7 @@ request body format will look like this:
     Lower 1: 5
     Lower 2: 3,
   },
+  unit: String,
   maxes: {
     squatMax: number,
     benchMax: number,
@@ -427,12 +428,14 @@ router.post(
   (req, res) => {
     console.log("+++");
     console.log("Starting User Program");
-    const username = req.query.username;
+    const userID = req.userID;
     const programID = req.query.programID;
+    console.log(userID)
+    console.log(programID)
     const [year, month, day] = req.body.startDate.split("-").map(Number);
     const startDate = new Date(year, month - 1, day);
     new Users()
-      .getFullUser(username)
+      .getUserByID(userID)
       .then(async (user) => {
         console.log(user);
         const program = await Programs.getProgram(programID);
@@ -480,7 +483,7 @@ router.post(
           for (let j = 0; j < req.body.duration; ++j) {
             try {
               await UpcomingWorkouts.addWorkout(
-                username,
+                user.username,
                 workoutDate,
                 program.workouts[i]
               );
