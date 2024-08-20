@@ -455,6 +455,7 @@ router.post(
 
         workout.Exercises.forEach((exercise, j) => {
           let exerciseData = {};
+          exerciseData.name = exercise.Name;
           if (workout.Unit.intensity === "%ORM") {
             let ORM = -1;
             const exerciseNameLower = exercise.Name.toLowerCase();
