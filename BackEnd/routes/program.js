@@ -436,76 +436,81 @@ router.post(
       const [year, month, day] = req.body.startDate.split("-").map(Number);
       const startDate = new Date(year, month - 1, day);
 
-      new Users()
-        .getUserById(userID)
-        .then(async (user) => {
-          console.log(user);
-          const program = await Programs.getProgram(programID);
+      const user = await new Users().getUserByID(userID);
+      console.log(user);
 
-          program.workouts.forEach(async (workout) => {
-            let workoutData = [];
-            let workoutDate = new Date(
-              startDate.getDate() +
-                ((req.body.workoutDays[workout.Name] + 7 - startDate.getDay()) %
-                  7)
-            );
-            workoutDate.setUTCHours(0, 0, 0, 0);
+      const program = await Programs.getProgram(programID);
 
-            workout.Exercises.forEach((exercise, j) => {
-              let exerciseData = {};
-              if (workout.Unit.intensity === "%ORM") {
-                let ORM = req.body.maxes[exercise.Name];
-                exerciseData.weight = (exercise.intensity / 100) * ORM;
-                exerciseData.isMetric = req.body.isMetric;
-                exerciseData.intensityType = "%ORM";
-              } else {
-                exerciseData.intensity = exercise.intensity;
-                exerciseData.intensityType = "RPE";
-              }
-              exerciseData.sets = exercise.sets;
-              exerciseData.reps = exercise.reps;
-              exerciseData.rest = exercise.rest + " " + workout.Unit.rest;
-              workoutData.push(exerciseData);
-            });
+      if (user.activeProgram == true) {
+        return res.status(403).json({ error: "Already has active program" });
+      }
 
-            for (let i = 0; i < req.body.duration; ++i) {
-              try {
-                await UpcomingWorkouts.addWorkout(
-                  userID,
-                  workoutDate,
-                  workoutData,
-                  session 
-                );
-                workoutDate.setDate(workoutDate.getDate() + 7);
-                console.log("Successfully added Workout %s", workout.Name);
-              } catch (error) {
-                console.log("Failed adding Workout %s", workout.Name);
-                console.log(error);
-                throw error; 
-              }
+      for (const workout of program.workouts) {
+        let workoutData = [];
+        let workoutDate = new Date(startDate);
+        workoutDate.setDate(
+          startDate.getDate() +
+            ((req.body.workoutDays[workout.Name] + 7 - startDate.getDay()) % 7)
+        );
+
+        workout.Exercises.forEach((exercise, j) => {
+          let exerciseData = {};
+          exerciseData.name = exercise.Name;
+          if (workout.Unit.intensity === "%ORM") {
+            let ORM = -1;
+            const exerciseNameLower = exercise.Name.toLowerCase();
+
+            // Check which max to use based on exercise name
+            if (/squat/.test(exerciseNameLower)) {
+              ORM = req.body.maxes.squatMax;
+            } else if (/bench\s*press/.test(exerciseNameLower)) {
+              ORM = req.body.maxes.benchMax;
+            } else if (/deadlift/.test(exerciseNameLower)) {
+              ORM = req.body.maxes.deadliftMax;
             }
-          });
-
-          user.activeProgram = true;
-          return user.save({ session }); 
-        })
-        .then(async (updatedUser) => {
-          await session.commitTransaction(); 
-          res.status(200).send();
-        })
-        .catch(async (error) => {
-          await session.abortTransaction(); 
-          console.log(error);
-          res.status(500).json({ error: "Internal server error" });
-        })
-        .finally(() => {
-          session.endSession(); 
+            exerciseData.weight =
+              ORM !== -1 ? (Number(exercise.Intensity) / 100) * ORM : -1;
+            exerciseData.unit = req.body.unit;
+            exerciseData.intensityType = "%ORM";
+          } else {
+            exerciseData.intensity = exercise.intensity;
+            exerciseData.intensityType = "RPE";
+          }
+          exerciseData.sets = exercise.Sets;
+          exerciseData.reps = exercise.Reps;
+          exerciseData.rest = exercise.Rest + " " + workout.Unit.rest;
+          workoutData.push(exerciseData);
         });
+
+        for (let i = 0; i < req.body.duration; ++i) {
+          try {
+            await UpcomingWorkouts.addWorkout(
+              userID,
+              workoutDate,
+              workoutData,
+              session
+            );
+            workoutDate.setDate(workoutDate.getDate() + 7);
+            console.log("Successfully added Workout %s", workout.Name);
+          } catch (error) {
+            console.log("Failed adding Workout %s", workout.Name);
+            console.log(error);
+            throw error;
+          }
+        }
+      }
+
+      user.activeProgram = true;
+      await user.save({ session });
+
+      await session.commitTransaction();
+      res.status(200).send();
     } catch (error) {
       await session.abortTransaction();
-      session.endSession();
       console.log(error);
       res.status(500).json({ error: "Internal server error" });
+    } finally {
+      session.endSession();
     }
   }
 );
