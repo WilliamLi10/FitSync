@@ -68,7 +68,7 @@ upcomingWorkoutsSchema.statics.addWorkout = async function (
   session = null
 )  {
   const newWorkout = new mongoose.model("upcomingWorkouts")({
-    userID: username,
+    userID: userID,
     date: date,
     workoutData: workoutData,
     completed: false,
@@ -76,15 +76,7 @@ upcomingWorkoutsSchema.statics.addWorkout = async function (
 
   const saveOptions = session ? { session } : {}; 
 
-  return await newWorkout
-    .save(saveOptions) 
-    .then((savedWorkout) => {
-      return savedWorkout;
-    })
-    .catch((error) => {
-      console.log("Error with creating new upcoming workout");
-      throw error;
-    });
+  await newWorkout.save(saveOptions);
 };
 
 
