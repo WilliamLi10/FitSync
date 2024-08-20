@@ -476,9 +476,9 @@ router.post(
             exerciseData.intensity = exercise.intensity;
             exerciseData.intensityType = "RPE";
           }
-          exerciseData.sets = exercise.sets;
-          exerciseData.reps = exercise.reps;
-          exerciseData.rest = exercise.rest + " " + workout.Unit.rest;
+          exerciseData.sets = exercise.Sets;
+          exerciseData.reps = exercise.Reps;
+          exerciseData.rest = exercise.Rest + " " + workout.Unit.rest;
           workoutData.push(exerciseData);
         });
 
