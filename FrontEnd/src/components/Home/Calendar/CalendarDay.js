@@ -4,54 +4,6 @@ import CalendarWorkout from "./CalendarWorkout";
 const CalendarDay = (props) => {
   const isToday = moment(moment().toISOString()).isSame(props.date, "day");
 
-  const workout = {
-    Name: "Workout 1",
-    ID: 1,
-    Date: "Monday, June 26, 2023",
-    Exercises: [
-      {
-        Name: "Exercise 1",
-        Description: "Description for Exercise 1",
-        Weight: 50,
-        Sets: 3,
-        Reps: 10,
-        Rest: 60,
-        TimeUnit: 2,
-        Notes: "Notes for Exercise 1",
-      },
-      {
-        Name: "Exercise 2",
-        Description: "Description for Exercise 2",
-        Weight: 70,
-        Sets: 4,
-        Reps: 12,
-        Rest: 90,
-        TimeUnit: 2,
-        Notes: "Notes for Exercise 2",
-      },
-      {
-        Name: "Exercise 3",
-        Description: "Description for Exercise 1",
-        Weight: 50,
-        Sets: 3,
-        Reps: 10,
-        Rest: 60,
-        TimeUnit: 2,
-        Notes: "Notes for Exercise 3",
-      },
-      {
-        Name: "Exercise 4",
-        Description: "Description for Exercise 2",
-        Weight: 70,
-        Sets: 4,
-        Reps: 12,
-        Rest: 90,
-        TimeUnit: 2,
-        Notes: "Notes for Exercise 4",
-      },
-    ],
-  };
-
   return (
     <div
       className={`w-[14.28%] h-full my-2 border-gray border-solid ${
@@ -75,9 +27,9 @@ const CalendarDay = (props) => {
         </div>
       </div>
       <div className="h-[90%]">
-        {Object.keys(workout).length !== 0 && (
-          <CalendarWorkout workout={workout} />
-        )}
+        {props.workouts.map((workout) => (
+          <CalendarWorkout workout={workout.workoutData} />
+        ))}
       </div>
     </div>
   );

@@ -14,15 +14,14 @@ const TaskItem = (props) => {
         className="flex flex-row items-center pt-2 border-solid border-b-[1px] pb-2 cursor-pointer"
       >
         <div className="w-2 h-2 rounded-full bg-slate-700" />
-        <div className="pl-2">{props.task.Name}</div>
+        <div className="pl-2">{props.item.name}</div>
       </div>
       {open && (
         <div className="ml-4 pt-1">
-          <div className="text-gray-500">{props.task.Description}</div>
+          <div className="text-gray-500">{props.item.Description}</div>
           <span className="font-semibold">Sets: </span>
-          {props.task.Sets} <span className="font-semibold">Reps: </span>
-          {props.task.Reps} <span className="font-semibold">Weight: </span>
-          {props.task.Weight}
+          {props.item.sets} <span className="font-semibold">Reps: </span>
+          {props.item.reps}
         </div>
       )}
     </div>

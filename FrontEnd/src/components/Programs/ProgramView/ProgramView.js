@@ -384,15 +384,17 @@ const ProgramView = () => {
           <div className="flex">
             <button
               className={`flex flex-row items-center font-thin text-sm px-4 py-2 mr-3 border-solid border-[1px] transition-all duration-150 rounded-full ${
-                disableStartProgram
+                disableStartProgram || getAccessToken().activeProgram
                   ? "cursor-not-allowed bg-red-100"
                   : "hover:bg-slate-100 bg-green-100"
               }`}
               onClick={startProgramModalHandler}
-              disabled={disableStartProgram}
+              disabled={disableStartProgram || getAccessToken().activeProgram}
               title={
                 disableStartProgram
-                  ? "This program cannot be started because one or more of its fields are filled incorrectl.y"
+                  ? "This program cannot be started because one or more of its fields are filled incorrectly."
+                  : getAccessToken().activeProgram
+                  ? "You already have an active program"
                   : ""
               }
             >

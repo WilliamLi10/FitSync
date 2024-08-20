@@ -13,7 +13,7 @@ export const getAccessToken = () => {
   }
 };
 
-export const refreshToken = () => {
+export const refreshToken = (force = false) => {
   const accessJWT = Cookies.get("accessToken");
   const refreshJWT = Cookies.get("refreshToken");
 
@@ -24,7 +24,7 @@ export const refreshToken = () => {
     ? new Date().getTime() > jwt_decode(refreshJWT).exp * 1000
     : true;
 
-  if (isAccessExpired && !isRefreshExpired) {
+  if ((isAccessExpired && !isRefreshExpired) || force) {
     return fetch(`${process.env.REACT_APP_API_URL}/auth/refresh-token`, {
       method: "POST",
       headers: {
