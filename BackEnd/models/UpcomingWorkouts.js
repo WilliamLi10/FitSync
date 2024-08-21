@@ -7,6 +7,10 @@ An upcoming workout document's username can not be changed but the date can be c
 
 
 const upcomingWorkoutsSchema = new mongoose.Schema({
+  workoutName: {
+    type: String,
+    required: true
+  },
   userID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
@@ -65,12 +69,14 @@ upcomingWorkoutsSchema.statics.addWorkout = async function (
   userID,
   date,
   workoutData,
+  workoutName,
   session = null
 )  {
   const newWorkout = new mongoose.model("upcomingWorkouts")({
     userID: userID,
     date: date,
     workoutData: workoutData,
+    workoutName: workoutName,
     completed: false,
   });
 

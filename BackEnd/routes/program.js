@@ -488,6 +488,7 @@ router.post(
               userID,
               workoutDate,
               workoutData,
+              workout.Name,
               session
             );
             workoutDate.setDate(workoutDate.getDate() + 7);
