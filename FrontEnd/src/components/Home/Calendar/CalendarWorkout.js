@@ -4,7 +4,7 @@ const CalendarWorkout = (props) => {
   const navigate = useNavigate();
 
   const logHandler = () => {
-    navigate("/LogWorkout");
+    navigate(`/LogWorkout/${props.date.split("T")[0]}`);
   };
   
   return (

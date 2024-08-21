@@ -7,6 +7,7 @@ import Programs from "./pages/LoggedIn/Programs";
 import LogWorkout from "./pages/LoggedIn/LogWorkout";
 import ProgramView from "./components/Programs/ProgramView/ProgramView";
 import { programLoader } from "./loaders/ProgramLoader";
+import { workoutLoader } from "./loaders/WorkoutLoader";
 
 const router = createBrowserRouter([
   {
@@ -15,7 +16,16 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       { path: "/", element: <Home /> },
-      { path: "logworkout", element: <LogWorkout /> },
+      {
+        path: "logworkout",
+        element: <LogWorkout />,
+        loader: workoutLoader,
+      },
+      {
+        path: "logworkout/:date",
+        element: <LogWorkout />,
+        loader: workoutLoader,
+      },
       { path: "programs", element: <Programs /> },
       {
         path: "programs/:programID",

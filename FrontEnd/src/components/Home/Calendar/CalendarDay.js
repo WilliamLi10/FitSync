@@ -31,6 +31,7 @@ const CalendarDay = (props) => {
           <CalendarWorkout
             workout={workout.workoutData}
             name={workout.workoutName}
+            date={workout.date}
           />
         ))}
       </div>

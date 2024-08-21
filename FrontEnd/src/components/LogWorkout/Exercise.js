@@ -36,8 +36,8 @@ const Exercise = (props) => {
   };
 
   const [data, setData] = useReducer(dataReducer, {
-    reps: Array(props.exercise.Sets).fill(props.exercise.Reps),
-    weights: Array(props.exercise.Sets).fill(props.exercise.Weight),
+    reps: Array(props.exercise.sets).fill(props.exercise.reps),
+    weights: Array(props.exercise.sets).fill(props.exercise.weight),
     notes: "",
   });
 
@@ -55,9 +55,9 @@ const Exercise = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    for (let i = 0; i < data.reps.length; i++){
-      const rep = Number(data.rep[i])
-      const weight = Number(data.weight[i])
+    for (let i = 0; i < data.reps.length; i++) {
+      const rep = Number(data.rep[i]);
+      const weight = Number(data.weight[i]);
     }
   };
 
@@ -76,7 +76,7 @@ const Exercise = (props) => {
           !open && "border-solid border-b-2"
         }`}
       >
-        {props.exercise.Name}
+        {props.exercise.name}
       </div>
       {open && (
         <div className="flex flex-row justify-between bg-white">
@@ -84,7 +84,7 @@ const Exercise = (props) => {
             <div className={`${titleCSS} border-r-[1px] border-white`}>
               Sets
             </div>
-            {Array.from({ length: props.exercise.Sets }, (_, index) => (
+            {Array.from({ length: props.exercise.sets }, (_, index) => (
               <div className={`${itemCSS} border-l-[1px]`} key={index}>
                 {index + 1}
               </div>
@@ -94,10 +94,10 @@ const Exercise = (props) => {
             <div className={`${titleCSS} border-r-[1px] border-white`}>
               Reps
             </div>
-            {Array.from({ length: props.exercise.Sets }, (_, index) => (
+            {Array.from({ length: props.exercise.sets }, (_, index) => (
               <div key={index} className={itemCSS}>
                 <input
-                  placeholder={props.exercise.Reps}
+                  placeholder={props.exercise.reps}
                   className={inputCSS}
                   value={data.reps[index]}
                   onChange={repsHandler(index)}
@@ -107,12 +107,12 @@ const Exercise = (props) => {
           </div>
           <div className={`${tableCSS} w-[10%]`}>
             <div className={`${titleCSS} border-r-[1px] border-white`}>
-              Weights ({props.unit.Weight})
+              Intensity ({props.exercise.intensity})
             </div>
-            {Array.from({ length: props.exercise.Sets }, (_, index) => (
+            {Array.from({ length: props.exercise.sets }, (_, index) => (
               <div key={index} className={itemCSS}>
                 <input
-                  placeholder={props.exercise.Weight}
+                  placeholder={props.exercise.intensity}
                   className={inputCSS}
                   value={data.weights[index]}
                   onChange={weightsHandler(index)}
@@ -122,11 +122,11 @@ const Exercise = (props) => {
           </div>
           <div className={`${tableCSS} w-[10%]`}>
             <div className={`${titleCSS} border-r-[1px] border-white`}>
-              Rest ({props.unit.Rest})
+              Rest
             </div>
-            {Array.from({ length: props.exercise.Sets }, (_, index) => (
+            {Array.from({ length: props.exercise.sets }, (_, index) => (
               <div className={`${itemCSS} border-r-[1px]`} key={index}>
-                {props.exercise.Rest}
+                {props.exercise.rest}
               </div>
             ))}
           </div>
@@ -143,7 +143,7 @@ const Exercise = (props) => {
           <div className={`${tableCSS} w-[30%]`}>
             <div className={titleCSS}>Description</div>
             <div className="px-2 border-solid border-b-[1px] border-r-[1px] flex-grow text-gray-500">
-              {props.exercise.Description}
+              {props.exercise.description}
             </div>
           </div>
         </div>
