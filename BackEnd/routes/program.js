@@ -479,6 +479,7 @@ router.post(
           exerciseData.sets = exercise.Sets;
           exerciseData.reps = exercise.Reps;
           exerciseData.rest = exercise.Rest + " " + workout.Unit.rest;
+          exerciseData.description = exercise.Description;
           workoutData.push(exerciseData);
         });
 
