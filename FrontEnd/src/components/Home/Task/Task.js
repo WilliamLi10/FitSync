@@ -30,9 +30,14 @@ const Task = () => {
           <div>No workouts</div>
         ) : (
           ctx.tasks.map((task) => {
-            return task.workoutData.map((item) => {
-              return <TaskItem item={item} />;
-            });
+            return (
+              <div>
+                <p className="bg-slate-100 px-2 py-1">{task.workoutName}</p>
+                {task.workoutData.map((item) => {
+                  return <TaskItem item={item} />;
+                })}
+              </div>
+            );
           })
         )}
       </div>

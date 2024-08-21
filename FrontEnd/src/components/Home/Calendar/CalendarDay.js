@@ -28,7 +28,10 @@ const CalendarDay = (props) => {
       </div>
       <div className="h-[90%]">
         {props.workouts.map((workout) => (
-          <CalendarWorkout workout={workout.workoutData} />
+          <CalendarWorkout
+            workout={workout.workoutData}
+            name={workout.workoutName}
+          />
         ))}
       </div>
     </div>
