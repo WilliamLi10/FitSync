@@ -473,7 +473,7 @@ router.post(
             exerciseData.unit = req.body.unit;
             exerciseData.intensityType = "%ORM";
           } else {
-            exerciseData.intensity = exercise.intensity;
+            exerciseData.intensity = exercise.Intensity;
             exerciseData.intensityType = "RPE";
           }
           exerciseData.sets = exercise.Sets;
@@ -488,6 +488,7 @@ router.post(
               userID,
               workoutDate,
               workoutData,
+              workout.Name,
               session
             );
             workoutDate.setDate(workoutDate.getDate() + 7);
