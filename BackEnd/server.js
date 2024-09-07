@@ -20,7 +20,7 @@ connectDB()
     console.log("Connected to Redis");
   })
   .then(() => {
-    app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+    app.use(cors({ origin: "https://fitsync-jeeg.onrender.com", credentials: true }));
     app.use(express.json());
     app.use(passport.initialize());
 
