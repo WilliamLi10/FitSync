@@ -52,7 +52,7 @@ export const refreshToken = (force = false) => {
             expires: expirationDate15Min,
             secure: true,
             sameSite: "strict",
-            domain: "localhost",
+            domain: process.env.DOMAIN,
             path: "/",
           });
 
@@ -63,7 +63,7 @@ export const refreshToken = (force = false) => {
             expires: expirationDate1Hour,
             secure: true,
             sameSite: "strict",
-            domain: "localhost",
+            domain: process.env.DOMAIN,
             path: "/",
           });
         }
