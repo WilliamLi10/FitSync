@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./MiniCalendar.css";
+import WorkoutContext from "../../../context/workout-context";
 
-const MiniCalendar = (props) => {
+const MiniCalendar = () => {
+  const ctx = useContext(WorkoutContext);
   const [date, setDate] = useState(null);
 
   const dateHandler = (newDate) => {
-    props.weekHandler(newDate);
+    ctx.weekHandler(newDate);
     setDate(newDate);
   };
 

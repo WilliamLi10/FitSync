@@ -1,10 +1,11 @@
 import { useEffect, useRef, useReducer, useContext } from "react";
 import StartProgramWorkout from "./StartProgramWorkout";
 import Cookies from "js-cookie";
-import { refreshToken, getAccessToken } from "../../../util/auth";
+import { refreshToken } from "../../../util/auth";
 import moment from "moment";
 import AuthContext from "../../../context/auth-context";
 import { useNavigate } from "react-router-dom";
+import WorkoutContext from "../../../context/workout-context";
 
 const formReducer = (state, action) => {
   switch (action.type) {
@@ -90,8 +91,9 @@ const StartProgramModal = (props) => {
   const minStart = moment().format("YYYY-MM-DD");
   const minWeeks = 1;
   const modalRef = useRef(null);
-  const ctx = useContext(AuthContext)
-  const navigate = useNavigate()
+  const authCTX = useContext(AuthContext);
+  const workoutCTX = useContext(WorkoutContext)
+  const navigate = useNavigate();
 
   const [form, setForm] = useReducer(formReducer, {
     startDate: minStart,
@@ -134,7 +136,7 @@ const StartProgramModal = (props) => {
               startDate: form.startDate,
               duration: form.duration,
               workoutDays: form.workouts,
-              unit: form.unit,
+              isMetric: form.unit === "kg",
               maxes: {
                 squatMax: form.squat,
                 benchMax: form.bench,
@@ -150,14 +152,16 @@ const StartProgramModal = (props) => {
             throw { error: data.error, status: response.status };
           });
         }
+        navigate("/");
+        workoutCTX.setStartProgramSuccessModal(true)
       })
       .catch((error) => {
         if (error.response === 401) {
           Cookies.remove("accessToken");
           Cookies.remove("refreshToken");
           window.location.reload();
-          ctx.setLoginModal({ type: "login" });
-          ctx.setStatus("Session timed out: You have been logged out");
+          authCTX.setLoginModal({ type: "login" });
+          authCTX.setStatus("Session timed out: You have been logged out");
         } else {
           navigate("/error", {
             state: { error: error.error, status: error.status },
@@ -174,7 +178,7 @@ const StartProgramModal = (props) => {
       <p className="text-xl mb-5">Start Program</p>
       <div className="max-h-[500px] overflow-y-auto">
         <div className="flex">
-          <div>
+          <div className="flex flex-col mr-5">
             <label>Start Date</label>
             <input
               type="date"
@@ -186,7 +190,7 @@ const StartProgramModal = (props) => {
               }}
             />
           </div>
-          <div>
+          <div className="flex flex-col">
             <label>Duration in Weeks</label>
             <input
               type="number"
@@ -199,7 +203,7 @@ const StartProgramModal = (props) => {
             />
           </div>
         </div>
-        <div className="mt-5">
+        <div className="mt-5 mr-5">
           <p className="mb-5 font-bold">
             Enter the day of the week each workout will be performed
           </p>

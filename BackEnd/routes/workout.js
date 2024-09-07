@@ -23,28 +23,34 @@ Returns:
   onSuccess: upcoming workout documents containing all upcomingWorkouts within date range
   onFailure: status error
 */
-router.get("/get-workouts", verifyAccessToken, (req, res) => {
-  console.log("+++\nGetting Workouts");
+router.get("/get-workouts", verifyAccessToken, async (req, res) => {
+  try {
+    console.log("+++\nGetting Workouts");
 
-  const userID = req.userID;
-  const startDate = new Date(req.query.startDate);
-  const endDate = new Date(req.query.endDate);
-  console.log(startDate,endDate);
+    const userID = req.userID;
+    const startDate = new Date(req.query.startDate);
+    const endDate = new Date(req.query.endDate);
+    console.log(startDate, endDate);
 
-  // Ensure the start and end dates cover the full days in UTC
-  startDate.setUTCHours(0, 0, 0, 0);
-  endDate.setUTCHours(23, 59, 59, 999);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
 
-  UpcomingWorkouts
-    .getWorkoutGivenDateRange(userID, startDate, endDate)
-    .then((workouts) => {
-      return res.status(200).json(workouts);
-    })
-    .catch((error) => {
-      console.error(error);
-      return res.status(500).json({ error: "Internal server error" });
-    });
+    const workouts = await UpcomingWorkouts.getWorkoutGivenDateRange(userID, startDate, endDate);
+
+    const user = await Users.findById(userID).select('activeProgram');
+
+    const response = {
+      workouts,
+      activeProgram: user.activeProgram,
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
+
 
 
 
